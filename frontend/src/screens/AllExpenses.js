@@ -1,79 +1,59 @@
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import ChartPie from "../components/chart";
-import { useParams } from "react-router-dom";
+import Stack from "@mui/material/Stack";
+import Paper from "@mui/material/Paper";
+import { styled as styledMUI } from "@mui/material/styles";
+import Grid from "@mui/system/Unstable_Grid";
+
+const Item = styledMUI(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.primary,
+  maxWidth: "500px",
+  width: "100%",
+  marginLeft: "auto",
+  marginRight: "auto",
+}));
 
 function AllExpenses(props) {
-  const [totalExpenses, setTotalExpenses] = useState(undefined);
-  const [keys, setKeys] = useState(undefined);
-  const [values, setValues] = useState(undefined);
-  const [expenses, setExpenses] = useState(undefined);
-  const [groupID, setGroupID] = useState(undefined);
-  const params = useParams();
+  const [userExpenses, setUserExpenses] = useState(undefined);
 
-  const getTotalExpenses = () => {
-    fetch("http://127.0.0.1:8000/api/chartData", {
+  const getExpenses = () => {
+    fetch("http://127.0.0.1:8000/api/userExpenses", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ id: groupID }),
     })
       .then((response) => response.json())
       .then((data) => {
-        setKeys(data["keys"]);
-        setValues(data["values"]);
-      });
-  };
-
-  const getGroups = () => {
-    fetch("http://127.0.0.1:8000/api/groupExpenses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ id: groupID }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setExpenses(data);
+        setUserExpenses(data);
       });
   };
 
   useEffect(() => {
-    setGroupID(params.id);
-    console.log(params);
-    console.log(params.id);
-    if (groupID != undefined) {
-      console.log("ASdasd");
-      getGroups();
-      getTotalExpenses();
-    }
+    getExpenses();
     const interval = setInterval(() => {
-      getGroups();
-      getTotalExpenses();
+      getExpenses();
     }, 80000);
     return () => clearInterval(interval);
-  }, [groupID]);
-  if (expenses === undefined || keys === undefined || values === undefined) {
+  }, []);
+  if (userExpenses === undefined) {
     return <p>Loading...</p>;
   }
   return (
     <div>
-      <p>Your grups:</p>
+      <p>Your expenses:</p>
       <div>
-        {expenses.map((expense, index) => (
-          <p key={index}>
-            {expense.name}: {expense.total}$
-          </p>
-        ))}
-      </div>
-      <div style={chart}>
-        <ChartPie keys={keys} values={values} />
+        <Stack spacing={2}>
+          {userExpenses.map((expense, index) => (
+            <Item key={index} style={center}>
+              {expense.name}: {expense.total}$
+            </Item>
+          ))}
+        </Stack>
       </div>
     </div>
   );
@@ -81,9 +61,23 @@ function AllExpenses(props) {
 
 export default AllExpenses;
 
-const chart = {
-  width: "30%",
-  minWidth: "300px",
+const center = {
   marginLeft: "auto",
   marginRight: "auto",
 };
+
+const grid = {
+  display: "grid",
+};
+
+const PostWrapper = styled.div`
+  height: 50px;
+  flex-direction: column;
+  align-self: stretch;
+  justify-content: space-around;
+  display: flex;
+  width: fit-content;
+  padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
+`;

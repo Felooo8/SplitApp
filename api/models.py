@@ -18,6 +18,7 @@ class Expense(models.Model):
     category = models.CharField(choices=types, default=types[0], max_length=15)
     total = models.DecimalField(default=0, blank=True, max_digits=8, decimal_places=2)
     splitted = models.BooleanField(choices = TRUE_FALSE_CHOICES, blank=False, default=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         if self.name == '':

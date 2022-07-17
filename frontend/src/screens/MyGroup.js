@@ -46,10 +46,7 @@ function Group(props) {
 
   useEffect(() => {
     setGroupID(params.id);
-    console.log(params);
-    console.log(params.id);
     if (groupID != undefined) {
-      console.log("ASdasd");
       getGroups();
       getTotalExpenses();
     }

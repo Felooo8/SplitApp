@@ -6,5 +6,5 @@ urlpatterns = [
     path('group', GetUsersGroups.as_view()),
     path('groupExpenses', GetGroupExpenses.as_view()),
     path('chartData', GetChartValues.as_view()),
-    path('usersExpenses', GetUsersExpenses.as_view()),
+    path('userExpenses', GetUsersExpenses.as_view()),
 ]

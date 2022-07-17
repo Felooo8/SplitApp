@@ -58,6 +58,7 @@ function NavbarTop(props) {
           <Nav className="me-auto">
             <Nav.Link href="/">Home</Nav.Link>
             <Nav.Link href="/groups">My Groups</Nav.Link>
+            <Nav.Link href="/all-expenses">All Expenses</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
               <NavDropdown.Item href="#action/3.2">

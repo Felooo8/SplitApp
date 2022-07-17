@@ -4,8 +4,6 @@ from .models import (Expense, Group)
 # Register your models here.
 
 
-
-
 class GroupAdmin(admin.ModelAdmin):
     pass
 
