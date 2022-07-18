@@ -1,3 +1,4 @@
+from tkinter import CASCADE
 from django.db import models
 from django.conf import settings
 
@@ -13,6 +14,7 @@ TRUE_FALSE_CHOICES = (
 )
 
 class Expense(models.Model):
+    payer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="pay")
     users = models.ManyToManyField(settings.AUTH_USER_MODEL)
     name = models.TextField(default='', blank=True)
     category = models.CharField(choices=types, default=types[0], max_length=15)

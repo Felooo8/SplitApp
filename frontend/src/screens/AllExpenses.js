@@ -7,22 +7,17 @@ import Grid from "@mui/system/Unstable_Grid";
 import ExpsenseStack from "../components/ExpsenseStack";
 import LiquorIcon from "@mui/icons-material/Liquor";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-
-const Item = styledMUI(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.primary,
-  maxWidth: "500px",
-  width: "100%",
-  marginLeft: "auto",
-  marginRight: "auto",
-}));
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const categoryIconSize = "60px";
 
 function AllExpenses(props) {
   const [userExpenses, setUserExpenses] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(undefined);
 
   const getExpenses = () => {
     fetch("http://127.0.0.1:8000/api/userExpenses", {
@@ -35,11 +30,40 @@ function AllExpenses(props) {
       .then((response) => response.json())
       .then((data) => {
         setUserExpenses(data);
+        console.log(data);
       });
+  };
+
+  const getUser = () => {
+    fetch("http://127.0.0.1:8000/api/auth/users/me/", {
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    }).then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
+          setCurrentUser(data);
+        });
+      } else {
+        console.log("Not logged in");
+      }
+    });
+  };
+
+  const ifBorrowed = (expense) => {
+    console.log(expense);
+    console.log(currentUser);
+    console.log(expense.payer);
+    console.log(currentUser.id);
+    if (expense.payer == currentUser.id) {
+      return false;
+    }
+    return true;
   };
 
   useEffect(() => {
     getExpenses();
+    getUser();
     const interval = setInterval(() => {
       getExpenses();
     }, 80000);
@@ -54,47 +78,64 @@ function AllExpenses(props) {
       <div>
         <Stack spacing={2}>
           {userExpenses.map((expense, index) => (
-            <div>
-              <Item key={index} style={center}>
+            <Expense>
+              <div key={index} style={center}>
                 {/* {expense.name}: {expense.total}$ */}
 
-                <WholeStack>
-                  <StackColumn>
-                    <RowStack>
-                      <LiquorIcon
-                        style={{
-                          top: 0,
-                          left: 0,
-                          color: "rgba(128,128,128,1)",
-                          fontSize: 56,
-                          height: categoryIconSize,
-                          width: categoryIconSize,
-                          display: "table-column-group",
-                        }}
-                      ></LiquorIcon>
-                      <Text>Lithuania Gold before club</Text>
-                      <Date>On: 15 June</Date>
-                    </RowStack>
-                  </StackColumn>
-                  <StackColumn>
-                    <RowStack>
-                      <YouBorrowed>you borrowed</YouBorrowed>
-                      <Price>$5.99</Price>
-                    </RowStack>
-                  </StackColumn>
-                  <KeyboardArrowRightIcon
-                    style={{
-                      color: "rgba(128,128,128,1)",
-                      fontSize: 40,
-                      height: 44,
-                      width: 15,
-                      marginLeft: 8,
-                      marginTop: 9,
-                    }}
-                  ></KeyboardArrowRightIcon>
-                </WholeStack>
-              </Item>
-            </div>
+                <Accordion>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography
+                      style={{
+                        width: "-webkit-fill-available",
+                      }}
+                    >
+                      <WholeStack>
+                        <StackColumn>
+                          <LiquorIcon
+                            style={{
+                              top: 0,
+                              left: 0,
+                              color: "rgba(128,128,128,1)",
+                              fontSize: 56,
+                              height: categoryIconSize,
+                              width: categoryIconSize,
+                              display: "table",
+                            }}
+                          ></LiquorIcon>
+                          <RowStack style={{ float: "left " }}>
+                            <Text>{expense.name}</Text>
+                            <Date>On: {expense.short_date}</Date>
+                            <Date>{expense.payer_username}</Date>
+                          </RowStack>
+                        </StackColumn>
+                        <StackColumn>
+                          <RowStack
+                            style={{
+                              display: "table",
+                              width: "min-content",
+                              marginRight: "4px",
+                              color: ifBorrowed(expense) ? "orange" : "green",
+                            }}
+                          >
+                            <YouBorrowed>
+                              {ifBorrowed(expense)
+                                ? "you borrowed"
+                                : "you lent"}
+                            </YouBorrowed>
+                            <Price>${expense.total}</Price>
+                          </RowStack>
+                        </StackColumn>
+                      </WholeStack>
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>asdasd</AccordionDetails>
+                </Accordion>
+              </div>
+            </Expense>
           ))}
         </Stack>
       </div>
@@ -107,73 +148,58 @@ export default AllExpenses;
 const center = {
   marginLeft: "auto",
   marginRight: "auto",
+  padding: "5px",
 };
-
-const grid = {
-  display: "grid",
-};
-
-const PostWrapper = styled.div`
-  height: 50px;
-  flex-direction: column;
-  align-self: stretch;
-  justify-content: space-around;
-  display: flex;
-  width: fit-content;
-  padding: 10px;
-  margin-left: auto;
-  margin-right: auto;
-`;
 
 const Date = styled.span`
-  font-family: Roboto;
-  font-style: normal;
+  font-size: 14px;
+  font-style: italic;
   font-weight: 400;
   color: #121212;
-  height: 23px;
   position: relative;
-  display: table-row-group;
-  left: ${categoryIconSize};
+  display: flex;
+  // left: ${categoryIconSize};
+`;
+const Expense = styled.span`
+  max-width: 500px;
+  width: 100%;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center;
 `;
 
 const Text = styled.span`
-  font-family: Roboto;
+  font-size: 17px;
   font-style: normal;
   font-weight: 400;
   color: #121212;
-  height: 30px;
-  font-size: 16px;
   position: relative;
-  display: table-row-group;
-  left: ${categoryIconSize};
+  display: flex;
+  text-align: left;
 `;
 
 const YouBorrowed = styled.span`
-  font-family: Roboto;
-  font-style: normal;
+  font-style: italic;
   font-weight: 400;
-  color: #121212;
   height: 30px;
-  width: 120px;
+  width: max-content;
   font-size: 16px;
   text-align: right;
   position: relative;
-  display: table-row-group;
+  display: block;
   right: 0;
+  margin-left: auto;
 `;
 
 const RowStack = styled.div`
   width: -webkit-fill-available;
-  height: 61px;
-  display: table;
+  display: table-row-group;
 `;
 
 const Price = styled.span`
-  font-family: Roboto;
   position: relative;
   font-style: normal;
-  font-weight: 400;
-  color: #121212;
+  font-weight: 600;
   height: 37px;
   font-size: 24px;
   text-align: right;
@@ -182,14 +208,14 @@ const Price = styled.span`
 
 const StackColumn = styled.div`
   width: -webkit-fill-available;
-  height: 68px;
   position: relative;
+  display: contents;
 `;
 
 const WholeStack = styled.div`
-  height: 68px;
   flex-direction: row;
   display: flex;
   flex: 1 1 0%;
   margin-top: 14px;
+}
 `;

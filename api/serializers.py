@@ -36,6 +36,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class ExpenseSerializer(serializers.ModelSerializer):
     usernames = serializers.SerializerMethodField()
+    short_date = serializers.SerializerMethodField()
+    payer_username = serializers.SerializerMethodField()
 
     def get_usernames(self, obj):
         usernames = []
@@ -44,6 +46,13 @@ class ExpenseSerializer(serializers.ModelSerializer):
             usernames.append(user.username)
         return usernames
 
+    def get_payer_username(self, obj):
+        return obj.payer.username
+
+    def get_short_date(self, obj):
+        date = obj.date.strftime("%d %b")
+        return date
+
     class Meta:
         model = Expense
-        fields = ('id', 'users', 'usernames', 'name', 'category', 'total', 'splitted', 'date')
+        fields = ('id', 'users', 'usernames', 'name', 'category', 'total', 'splitted', 'date', 'short_date', 'payer', 'payer_username')
