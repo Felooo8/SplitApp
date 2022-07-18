@@ -76,3 +76,21 @@ class GetUsersExpenses(APIView):
             data = ExpenseSerializer(expenses, many=True).data
             return Response(data, status=status.HTTP_200_OK)
         return Response(None, status=status.HTTP_204_NO_CONTENT)
+
+
+class AddExpense(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, format=None):
+        body = json.loads(request.body)
+        users = body["users"]
+        name = body["name"]
+        category = body["category"]
+        total = body["total"]
+        splitted = body["splitted"]
+        payer = request.user
+        try:
+            new_expense = Expense(payer=payer,users=users,name=name,category=category,total=total,splitted=splitted)
+            new_expense.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(None, status=status.HTTP_422_UNPROCESSABLE_ENTITY)

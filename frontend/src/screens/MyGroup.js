@@ -4,14 +4,31 @@ import { Link, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import ChartPie from "../components/chart";
 import { useParams } from "react-router-dom";
+import ExpenseItem from "../components/Expense";
 
 function Group(props) {
-  const [totalExpenses, setTotalExpenses] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(undefined);
   const [keys, setKeys] = useState(undefined);
   const [values, setValues] = useState(undefined);
   const [expenses, setExpenses] = useState(undefined);
   const [groupID, setGroupID] = useState(undefined);
   const params = useParams();
+
+  const getUser = () => {
+    fetch("http://127.0.0.1:8000/api/auth/users/me/", {
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    }).then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
+          setCurrentUser(data);
+        });
+      } else {
+        console.log("Not logged in");
+      }
+    });
+  };
 
   const getTotalExpenses = () => {
     fetch("http://127.0.0.1:8000/api/chartData", {
@@ -46,6 +63,7 @@ function Group(props) {
 
   useEffect(() => {
     setGroupID(params.id);
+    getUser();
     if (groupID != undefined) {
       getGroups();
       getTotalExpenses();
@@ -53,6 +71,7 @@ function Group(props) {
     const interval = setInterval(() => {
       getGroups();
       getTotalExpenses();
+      getUser();
     }, 80000);
     return () => clearInterval(interval);
   }, [groupID]);
@@ -64,9 +83,12 @@ function Group(props) {
       <p>Your grups:</p>
       <div>
         {expenses.map((expense, index) => (
-          <p key={index}>
-            {expense.name}: {expense.total}$
-          </p>
+          <ExpenseItem
+            key={index}
+            expense={expense}
+            index={index}
+            currentUser={currentUser}
+          />
         ))}
       </div>
       <div style={chart}>

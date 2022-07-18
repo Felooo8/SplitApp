@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-import ExpenseItem from "../components/Expense";
+import AddingExpense from "../components/AddingExpense";
 
-function AllExpenses(props) {
+function AddExpense(props) {
   const [userExpenses, setUserExpenses] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
 
@@ -51,20 +51,9 @@ function AllExpenses(props) {
   return (
     <div>
       <p>Your expenses:</p>
-      <div>
-        <Stack spacing={2}>
-          {userExpenses.map((expense, index) => (
-            <ExpenseItem
-              key={index}
-              expense={expense}
-              index={index}
-              currentUser={currentUser}
-            />
-          ))}
-        </Stack>
-      </div>
+      <AddingExpense />
     </div>
   );
 }
 
-export default AllExpenses;
+export default AddExpense;

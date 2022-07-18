@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import LoginScreen from "./screens/Login";
 import AllExpenses from "./screens/AllExpenses";
+import AddExpense from "./screens/AddExpense";
 import Groups from "./screens/Groups";
 import Group from "./screens/MyGroup";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
@@ -59,7 +60,7 @@ function App() {
           <Route path="/groups" element={<Groups />} />
           <Route path="/mygroup/:id" element={<Group />} />
           <Route path="/all-expenses" element={<AllExpenses />} />
-          <Route path="/messages" />
+          <Route path="/add-expense" element={<AddExpense />} />
           <Route path="/chat" />
         </Routes>
       </Router>

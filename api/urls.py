@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import GetUserByID, GetGroupExpenses, GetUsersGroups, GetChartValues, GetUsersExpenses
+from .views import GetUserByID, GetGroupExpenses, GetUsersGroups, GetChartValues, GetUsersExpenses,AddExpense
 
 urlpatterns = [
     path('username', GetUserByID.as_view()),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('groupExpenses', GetGroupExpenses.as_view()),
     path('chartData', GetChartValues.as_view()),
     path('userExpenses', GetUsersExpenses.as_view()),
+    path('addExpense', AddExpense.as_view()),
 ]
