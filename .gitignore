@@ -25,3 +25,6 @@ yarn-error.log*
 *.pyc
 00*.py
 db.sqlite3
+frontend/node_modules/*
+frontend/npm
+frontend/README.md
