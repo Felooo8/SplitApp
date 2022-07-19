@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import (Expense,ExpenseGroup, Group)
+from .models import (Expense,GroupExpense, Group)
 
 # Register your models here.
 
@@ -11,10 +11,10 @@ class GroupAdmin(admin.ModelAdmin):
 class ExpenseAdmin(admin.ModelAdmin):
     pass
 
-class ExpenseGroupAdmin(admin.ModelAdmin):
+class GroupExpenseSerializer(admin.ModelAdmin):
     pass
 
 
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Expense, ExpenseAdmin)
-admin.site.register(ExpenseGroup, ExpenseGroupAdmin)
+admin.site.register(GroupExpense, GroupExpenseSerializer)

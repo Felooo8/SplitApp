@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from .serializers import UserSerializer, ExpenseSerializer, GroupSerializer,ExpenseGroupSerializer
-from .models import Expense, Group, types, ExpenseGroup
+from .serializers import UserSerializer, ExpenseSerializer, GroupSerializer,GroupExpenseSerializer
+from .models import Expense, Group, types, GroupExpense
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 import json
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
 
 # Create your views here.
 
@@ -46,7 +47,7 @@ class GetGroupExpenses(APIView):
         if len(groups) > 0:
             group = groups[0]
             expenses = group.group_expenses
-            data = ExpenseGroupSerializer(expenses, many=True).data
+            data = GroupExpenseSerializer(expenses, many=True).data
             return Response(data, status=status.HTTP_200_OK)
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
@@ -71,7 +72,7 @@ class GetUsersExpenses(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request, format=None):
         user = request.user
-        expenses = Expense.objects.filter(users=user)
+        expenses = Expense.objects.filter(Q(ower=user) | Q(payer=user)).order_by('-date')
         if len(expenses) > 0:
             data = ExpenseSerializer(expenses, many=True).data
             return Response(data, status=status.HTTP_200_OK)
@@ -82,15 +83,27 @@ class AddExpense(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request, format=None):
         body = json.loads(request.body)
-        users = body["users"]
-        name = body["name"]
-        category = body["category"]
-        total = body["total"]
-        splitted = body["splitted"]
-        payer = request.user
+        payer_id = body["values"]["payer"]
+        payer = User.objects.get(id=payer_id)
+        owers_ids = body["values"]["owers"]
+        name = body["values"]["name"]
+        category=""
+        category_name = body["values"]["category"]
+        for type in types:
+            if type[0] == category_name:
+                category=category_name
+        total = float(body["values"]["amount"])
+        splitted = body["values"]["splitted"]
+        is_paid = body["values"]["is_paid"]
         try:
-            new_expense = Expense(payer=payer,users=users,name=name,category=category,total=total,splitted=splitted)
-            new_expense.save()
+            new_group_expense = GroupExpense()
+            new_group_expense.save()
+            for ower_id in owers_ids:
+                ower = User.objects.get(id=ower_id)
+                new_expense = Expense(payer=payer,ower=ower,category=category,name=name,total=total,splitted=splitted,is_paid=is_paid)
+                new_expense.save()
+                new_group_expense.expenses.add(new_expense)
+            new_group_expense.save()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(None, status=status.HTTP_422_UNPROCESSABLE_ENTITY)

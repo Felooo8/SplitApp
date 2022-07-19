@@ -15,6 +15,10 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import SendIcon from "@mui/icons-material/Send";
 
 const categoryIconSize = "60px";
 
@@ -35,12 +39,31 @@ export default function AddingExpense(props) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [values, setValues] = React.useState({
-    amount: "",
+    amount: 0,
     name: "",
-    category: "",
-    splitted: "",
-    users: false,
+    category: "other",
+    splitted: false,
+    payer: "1",
+    owers: ["3"],
+    is_paid: false,
   });
+
+  const sendRequest = () => {
+    fetch("http://127.0.0.1:8000/api/addExpense", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ values: values }),
+    }).then((res) => {
+      if (res.ok) {
+        console.log("Good");
+      } else {
+        console.log("Failed");
+      }
+    });
+  };
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
@@ -53,15 +76,14 @@ export default function AddingExpense(props) {
   return (
     <Expense>
       <div style={center}>
-        <Accordion>
+        <Paper elevation={3}>
           <AccordionSummary
             expandIcon={
-              <ExpandMoreIcon
-                style={{
-                  marginTop: "auto",
-                  marginBottom: "auto",
-                }}
-              />
+              <ListItemButton onClick={sendRequest}>
+                <ListItemIcon style={{ minWidth: "0" }}>
+                  <SendIcon color="primary" />
+                </ListItemIcon>
+              </ListItemButton>
             }
             aria-controls="panel1a-content"
             id="panel1a-header"
@@ -117,8 +139,7 @@ export default function AddingExpense(props) {
               </WholeStack>
             </Typography>
           </AccordionSummary>
-          <AccordionDetails>asdasd</AccordionDetails>
-        </Accordion>
+        </Paper>
       </div>
     </Expense>
   );
