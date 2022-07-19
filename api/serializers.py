@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (Expense, Group)
+from .models import (Expense,ExpenseGroup, Group)
 from django.contrib.auth.models import User
 
 
@@ -30,21 +30,13 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ('id', 'users', 'usernames', 'expenses', 'group_name',
+        fields = ('id', 'users', 'usernames', 'group_expenses', 'group_name',
                   'created_at', 'total_spent', 'spent_by_category')
 
 
-class ExpenseSerializer(serializers.ModelSerializer):
-    usernames = serializers.SerializerMethodField()
+class ExpenseBaseSerializer(serializers.ModelSerializer):
     short_date = serializers.SerializerMethodField()
     payer_username = serializers.SerializerMethodField()
-
-    def get_usernames(self, obj):
-        usernames = []
-        users = obj.users.all()
-        for user in users:
-            usernames.append(user.username)
-        return usernames
 
     def get_payer_username(self, obj):
         return obj.payer.username
@@ -52,6 +44,21 @@ class ExpenseSerializer(serializers.ModelSerializer):
     def get_short_date(self, obj):
         date = obj.date.strftime("%d %b")
         return date
+
+class ExpenseGroupSerializer(ExpenseBaseSerializer):
+    class Meta:
+        model = ExpenseGroup
+        fields = ('id', 'name', 'category', 'total', 'splitted', 'date', 'short_date', 'payer', 'payer_username')
+
+class ExpenseSerializer(ExpenseBaseSerializer):
+    usernames = serializers.SerializerMethodField()
+
+    def get_usernames(self, obj):
+        usernames = []
+        users = obj.users.all()
+        for user in users:
+            usernames.append(user.username)
+        return usernames
 
     class Meta:
         model = Expense

@@ -67,17 +67,6 @@ export default function ExpenseItem(props) {
               <WholeStack>
                 <StackColumn>
                   {returnIcon(props.expense)}
-                  {/* <LiquorIcon
-                    style={{
-                      top: 0,
-                      left: 0,
-                      color: "rgba(128,128,128,1)",
-                      fontSize: 56,
-                      height: categoryIconSize,
-                      width: categoryIconSize,
-                      display: "table",
-                    }}
-                  ></LiquorIcon> */}
                   <RowStack style={{ float: "left " }}>
                     <Text>{props.expense.name}</Text>
                     <Date>On: {props.expense.short_date}</Date>

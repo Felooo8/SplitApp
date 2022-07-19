@@ -13,9 +13,7 @@ TRUE_FALSE_CHOICES = (
     (False, 'Each')
 )
 
-class Expense(models.Model):
-    payer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="pay")
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL)
+class ExpenseBase(models.Model):
     name = models.TextField(default='', blank=True)
     category = models.CharField(choices=types, default=types[0], max_length=15)
     total = models.DecimalField(default=0, blank=True, max_digits=8, decimal_places=2)
@@ -27,10 +25,20 @@ class Expense(models.Model):
             return 'Some expense'
         return self.name
 
+    class Meta:
+        abstract = True
+
+class Expense(ExpenseBase):
+    payer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payer")
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL)
+
+class ExpenseGroup(ExpenseBase):
+    payer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="group_payer")
+
 
 class Group(models.Model):
     users = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    expenses = models.ManyToManyField(Expense, blank=True, null=True)
+    group_expenses = models.ManyToManyField(ExpenseGroup, blank=True, null=True)
     group_name = models.TextField(default='Group chat', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -40,10 +48,10 @@ class Group(models.Model):
         return self.group_name
 
     def total_spent(self):
-        return sum(expense.total for expense in self.expenses.all())
+        return sum(expense.total for expense in self.group_expenses.all())
 
     def spent_by_category(self):
         spent = {}
         for type in types:
-            spent[type[0]] = sum(expense.total for expense in self.expenses.all() if expense.category == type[0])
+            spent[type[0]] = sum(expense.total for expense in self.group_expenses.all() if expense.category == type[0])
         return spent

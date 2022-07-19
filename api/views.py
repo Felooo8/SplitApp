@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from .serializers import UserSerializer, ExpenseSerializer, GroupSerializer
-from .models import Expense, Group, types
+from .serializers import UserSerializer, ExpenseSerializer, GroupSerializer,ExpenseGroupSerializer
+from .models import Expense, Group, types, ExpenseGroup
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
@@ -45,8 +45,8 @@ class GetGroupExpenses(APIView):
         groups = Group.objects.filter(id=group_id)
         if len(groups) > 0:
             group = groups[0]
-            expenses = group.expenses
-            data = ExpenseSerializer(expenses, many=True).data
+            expenses = group.group_expenses
+            data = ExpenseGroupSerializer(expenses, many=True).data
             return Response(data, status=status.HTTP_200_OK)
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
