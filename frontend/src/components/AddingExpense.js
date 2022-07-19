@@ -1,65 +1,53 @@
 import React, { useEffect, useState } from "react";
+import "../App.css";
+import ListOfCategories from "./listOfCategoriesModal";
 import styled, { css } from "styled-components";
-import LiquorIcon from "@mui/icons-material/Liquor";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import LocalTaxiIcon from "@mui/icons-material/LocalTaxi";
-import HomeIcon from "@mui/icons-material/Home";
-import ConfirmationNumberRoundedIcon from "@mui/icons-material/ConfirmationNumberRounded";
-import RestaurantMenuRoundedIcon from "@mui/icons-material/RestaurantMenuRounded";
-import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
-import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import Input from "@mui/material/Input";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-
-// types =
-//   (("Other", "Other"),
-//   ("Restaurant", "Restaurant"),
-//   ("Transport", "Transport"),
-//   ("Rent", "Rent"),
-//   ("Alcohol", "Alcohol"),
-//   ("Groceries", "Groceries"),
-//   ("Tickets", "Tickets"));
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
 
 const categoryIconSize = "60px";
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 export default function AddingExpense(props) {
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const [values, setValues] = React.useState({
     amount: "",
     name: "",
-    weight: "",
-    weightRange: "",
-    showPassword: false,
+    category: "",
+    splitted: "",
+    users: false,
   });
-  console.log(props);
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
-
-  const returnIcon = (expense) => {
-    if (expense.category == "Restaurant") {
-      return <RestaurantMenuRoundedIcon style={icon} />;
-    } else if (expense.category == "Transport") {
-      return <LocalTaxiIcon style={icon} />;
-    } else if (expense.category == "Rent") {
-      return <HomeIcon style={icon} />;
-    } else if (expense.category == "Alcohol") {
-      return <LiquorIcon style={icon} />;
-    } else if (expense.category == "Groceries") {
-      return <KitchenRoundedIcon style={icon} />;
-    } else if (expense.category == "Tickets") {
-      return <ConfirmationNumberRoundedIcon style={icon} />;
-    }
-    return <PaidOutlinedIcon style={icon} />;
+  const toggleClose = (category) => {
+    setOpen(false);
+    setValues({ ...values, ["category"]: category });
   };
 
   return (
@@ -85,7 +73,17 @@ export default function AddingExpense(props) {
             >
               <WholeStack>
                 <StackColumn>
-                  <LiquorIcon style={icon} />
+                  <Button onClick={handleOpen}>Open modal</Button>
+                  <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={style}>
+                      <ListOfCategories toggle={toggleClose} />
+                    </Box>
+                  </Modal>
                   <RowStack style={{ float: "left " }}>
                     <TextField
                       id="standard-basic"
@@ -136,6 +134,10 @@ const icon = {
   display: "table",
   marginTop: "auto",
   marginBottom: "auto",
+};
+
+const dial = {
+  display: "flex",
 };
 
 const center = {

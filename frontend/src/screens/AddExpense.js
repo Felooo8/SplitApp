@@ -49,7 +49,12 @@ function AddExpense(props) {
     return <p>Loading...</p>;
   }
   return (
-    <div>
+    <div
+      style={{
+        maxWidth: "500px",
+        margin: "0 auto",
+      }}
+    >
       <p>Your expenses:</p>
       <AddingExpense />
     </div>
