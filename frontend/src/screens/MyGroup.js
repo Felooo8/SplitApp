@@ -30,6 +30,10 @@ function Group(props) {
     });
   };
 
+  // const setUsername = () => {
+  //   setCurrentUser(localStorage.getItem("UserName"));
+  // }
+
   const getTotalExpenses = () => {
     fetch("http://127.0.0.1:8000/api/chartData", {
       method: "POST",

@@ -37,6 +37,11 @@ function AllExpenses(props) {
     });
   };
 
+  // const setUsername = () => {
+  //   setCurrentUser(localStorage.getItem("UserName"));
+  //   console.log(currentUser);
+  // };
+
   useEffect(() => {
     getExpenses();
     getUser();
@@ -45,7 +50,7 @@ function AllExpenses(props) {
     }, 80000);
     return () => clearInterval(interval);
   }, []);
-  if (userExpenses === undefined) {
+  if (userExpenses === undefined || currentUser === undefined) {
     return <p>Loading...</p>;
   }
   return (

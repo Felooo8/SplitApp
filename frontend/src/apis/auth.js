@@ -10,7 +10,9 @@ export const logout = () => {
     },
   }).then((response) => {
     if (response.ok) {
+      localStorage.clear();
       console.log("logout successful");
+      // localStorage.removeItem("UserName");
     } else {
       console.log("invalid data");
     }

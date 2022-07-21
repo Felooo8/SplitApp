@@ -17,6 +17,7 @@ function NavbarTop(props) {
 
   const handleLogout = () => {
     logout();
+    localStorage.clear();
     window.location.replace("/login");
   };
 
@@ -42,19 +43,27 @@ function NavbarTop(props) {
         }
       });
   };
+  // setCurrentUser(localStorage.getItem("UserName"));
 
   const showUserName = () => {
-    if (currentUser != undefined) {
-      return currentUser.username;
+    if (currentUser != undefined || currentUser != null) {
+      return currentUser;
     }
     return "Guest";
   };
 
+  const getUsername = () => {
+    let username = localStorage.getItem("UserName");
+    if (username != undefined || username != null) {
+      setCurrentUser(localStorage.getItem("UserName"));
+    }
+  };
+
   useEffect(() => {
-    getUser();
+    getUsername();
     const interval = setInterval(() => {
-      getUser();
-    }, 50000);
+      getUsername();
+    }, 500);
     return () => clearInterval(interval);
   }, []);
 

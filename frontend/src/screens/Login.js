@@ -31,6 +31,7 @@ function LoginScreen(props) {
       .then((res) => res.json())
       .then((json) => {
         setUser(json.id);
+        localStorage.setItem("UserName", json.username);
       })
       .then(() => navigate("/"));
   };
