@@ -82,25 +82,26 @@ class GetUsersExpenses(APIView):
 class AddExpense(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request, format=None):
-        body = json.loads(request.body)
-        payer_id = body["values"]["payer"]
+        body = json.loads(request.body)["values"]
+        payer_id = body["payer"]
         payer = User.objects.get(id=payer_id)
-        owers_ids = body["values"]["owers"]
-        name = body["values"]["name"]
+        owers_ids = body["owers"]
+        name = body["name"]
         category=""
-        category_name = body["values"]["category"]
+        category_name = body["category"]
         for type in types:
             if type[0] == category_name:
                 category=category_name
-        total = float(body["values"]["amount"])
-        splitted = body["values"]["splitted"]
-        is_paid = body["values"]["is_paid"]
+        total = float(body["amount"])
+        splitted = body["splitted"]
+        is_paid = body["is_paid"]
+        settled = body["settled"]
         try:
             new_group_expense = GroupExpense()
             new_group_expense.save()
             for ower_id in owers_ids:
                 ower = User.objects.get(id=ower_id)
-                new_expense = Expense(payer=payer,ower=ower,category=category,name=name,total=total,splitted=splitted,is_paid=is_paid)
+                new_expense = Expense(payer=payer,ower=ower,category=category,name=name,total=total,splitted=splitted,is_paid=is_paid,settled=settled)
                 new_expense.save()
                 new_group_expense.expenses.add(new_expense)
             new_group_expense.save()

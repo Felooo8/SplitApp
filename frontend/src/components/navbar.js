@@ -7,6 +7,8 @@ import styled, { css } from "styled-components";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { logout } from "../apis/auth";
 import { Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
+
 // import IconButton from "@mui/material/IconButton";
 // import FavoriteIcon from "@mui/icons-material/Favorite";
 
@@ -15,7 +17,7 @@ function NavbarTop(props) {
 
   const handleLogout = () => {
     logout();
-    window.location.replace("http://localhost:3000/login");
+    window.location.replace("/login");
   };
 
   const getUser = () => {
@@ -23,15 +25,22 @@ function NavbarTop(props) {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-    }).then((res) => {
-      if (res.ok) {
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(res.statusText);
+        }
         res.json().then((data) => {
           setCurrentUser(data);
         });
-      } else {
+      })
+      .catch((err) => {
         console.log("Not logged in");
-      }
-    });
+        console.log(err);
+        if (window.location.pathname != "/login") {
+          window.location.replace("/login");
+        }
+      });
   };
 
   const showUserName = () => {

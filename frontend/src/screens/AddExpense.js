@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-import AddingExpense from "../components/AddingExpense";
+import AddingExpense from "../components/AddingExpenseComponent";
 
 function AddExpense(props) {
   const [userExpenses, setUserExpenses] = useState(undefined);
@@ -55,7 +55,7 @@ function AddExpense(props) {
         margin: "0 auto",
       }}
     >
-      <p>Your expenses:</p>
+      <p>Add expense:</p>
       <AddingExpense />
     </div>
   );

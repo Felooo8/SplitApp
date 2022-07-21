@@ -22,6 +22,7 @@ class Expense(models.Model):
     ower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user")
     payer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payer")
     is_paid = models.BooleanField(default=False)
+    settled = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         if self.name == '':

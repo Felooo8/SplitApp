@@ -1,28 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
-import LiquorIcon from "@mui/icons-material/Liquor";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import LocalTaxiIcon from "@mui/icons-material/LocalTaxi";
-import HomeIcon from "@mui/icons-material/Home";
-import ConfirmationNumberRoundedIcon from "@mui/icons-material/ConfirmationNumberRounded";
-import RestaurantMenuRoundedIcon from "@mui/icons-material/RestaurantMenuRounded";
-import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
-import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
-
-// types =
-//   (("Other", "Other"),
-//   ("Restaurant", "Restaurant"),
-//   ("Transport", "Transport"),
-//   ("Rent", "Rent"),
-//   ("Alcohol", "Alcohol"),
-//   ("Groceries", "Groceries"),
-//   ("Tickets", "Tickets"));
-
-const categoryIconSize = "60px";
+import "../App.css";
+import Fade from "@mui/material/Fade";
+import Slide from "@mui/material/Slide";
+import returnIcon from "../apis/returnIcon";
 
 export default function ExpenseItem(props) {
   console.log(props);
@@ -33,80 +19,61 @@ export default function ExpenseItem(props) {
     return true;
   };
 
-  const returnIcon = (expense) => {
-    if (expense.category == "Restaurant") {
-      return <RestaurantMenuRoundedIcon style={icon} />;
-    } else if (expense.category == "Transport") {
-      return <LocalTaxiIcon style={icon} />;
-    } else if (expense.category == "Rent") {
-      return <HomeIcon style={icon} />;
-    } else if (expense.category == "Alcohol") {
-      return <LiquorIcon style={icon} />;
-    } else if (expense.category == "Groceries") {
-      return <KitchenRoundedIcon style={icon} />;
-    } else if (expense.category == "Tickets") {
-      return <ConfirmationNumberRoundedIcon style={icon} />;
-    }
-    return <PaidOutlinedIcon style={icon} />;
-  };
-
   return (
     <Expense>
       <div key={props.index} style={center}>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Typography
-              style={{
-                width: "-webkit-fill-available",
-              }}
+        <Slide
+          direction="right"
+          in={true}
+          style={{ transitionDelay: `${props.index * 100}ms` }}
+        >
+          <Accordion className="boxMovementa">
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
             >
-              <WholeStack>
-                <StackColumn>
-                  {returnIcon(props.expense)}
-                  <RowStack style={{ float: "left " }}>
-                    <Text>{props.expense.name}</Text>
-                    <Date>On: {props.expense.short_date}</Date>
-                    <Date>{props.expense.payer_username}</Date>
-                  </RowStack>
-                </StackColumn>
-                <StackColumn>
-                  <RowStack
-                    style={{
-                      display: "table",
-                      width: "min-content",
-                      marginRight: "4px",
-                      color: ifBorrowed(props.expense) ? "orange" : "green",
-                    }}
-                  >
-                    <YouBorrowed>
-                      {ifBorrowed(props.expense) ? "you borrowed" : "you lent"}
-                    </YouBorrowed>
-                    <Price>${props.expense.total}</Price>
-                  </RowStack>
-                </StackColumn>
-              </WholeStack>
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>asdasd</AccordionDetails>
-        </Accordion>
+              <Typography
+                style={{
+                  width: "-webkit-fill-available",
+                }}
+              >
+                <WholeStack>
+                  <StackColumn>
+                    {returnIcon(props.expense.category)}
+                    <RowStack style={{ float: "left " }}>
+                      <Text>{props.expense.name}</Text>
+                      <Date>On: {props.expense.short_date}</Date>
+                      <Date>{props.expense.payer_username}</Date>
+                    </RowStack>
+                  </StackColumn>
+                  <StackColumn>
+                    <RowStack
+                      style={{
+                        display: "table",
+                        width: "min-content",
+                        marginRight: "4px",
+                        color: ifBorrowed(props.expense) ? "orange" : "green",
+                      }}
+                    >
+                      <YouBorrowed>
+                        {ifBorrowed(props.expense)
+                          ? "you borrowed"
+                          : "you lent"}
+                      </YouBorrowed>
+                      <Price>${props.expense.total}</Price>
+                    </RowStack>
+                  </StackColumn>
+                </WholeStack>
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>asdasd</AccordionDetails>
+          </Accordion>
+        </Slide>
       </div>
     </Expense>
   );
 }
-
-const icon = {
-  top: "0",
-  left: "0",
-  color: "rgba(128,128,128,1)",
-  fontSize: "56",
-  height: categoryIconSize,
-  width: categoryIconSize,
-  display: "table",
-};
 
 const center = {
   marginLeft: "auto",
