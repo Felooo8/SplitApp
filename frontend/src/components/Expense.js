@@ -61,7 +61,7 @@ export default function ExpenseItem(props) {
                           ? "you borrowed"
                           : "you lent"}
                       </YouBorrowed>
-                      <Price>${props.expense.total}</Price>
+                      <Price>${props.expense.amount}</Price>
                     </RowStack>
                   </StackColumn>
                 </WholeStack>

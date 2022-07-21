@@ -43,6 +43,17 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+const defaultValues = {
+  amount: "",
+  name: "",
+  category: "other",
+  splitted: false,
+  payer: 1,
+  is_paid: false,
+  settled: false,
+  owers: [],
+  is_group: true,
+};
 
 export default function AddingExpense(props) {
   const [open, setOpen] = useState(false);
@@ -61,10 +72,9 @@ export default function AddingExpense(props) {
     category: "other",
     splitted: false,
     payer: 1,
-    // owers: ["3"],
     is_paid: false,
     settled: false,
-    owers: 0,
+    owers: [],
     is_group: true,
   });
 
@@ -74,7 +84,7 @@ export default function AddingExpense(props) {
       values.payer != 0 &&
       // values.owers != [] &&
       values.amount > 0 &&
-      values.owers != 0
+      values.owers != []
     );
   };
 
@@ -136,6 +146,8 @@ export default function AddingExpense(props) {
     }).then((res) => {
       if (res.ok) {
         console.log("Good");
+        setValues(defaultValues);
+        setChosenGroupName("");
       } else {
         console.log("Failed");
       }
@@ -158,7 +170,7 @@ export default function AddingExpense(props) {
   const toggleCloseGroup = (group_friend_id, isGroup, group_friend_name) => {
     // setValues({ ...values, ["owers"]: group_friend_id });
     // setValues({ ...values, ["is_group"]: isGroup });
-    values.owers = group_friend_id;
+    values.owers = [group_friend_id];
     values.is_group = isGroup;
     setOpenGroup(false);
     setChosenGroupName(group_friend_name);
@@ -167,7 +179,7 @@ export default function AddingExpense(props) {
   const handleDeleteGroup = () => {
     setValues({
       ...values,
-      ["owers"]: 0,
+      ["owers"]: [],
     });
     setChosenGroupName("");
   };
@@ -225,6 +237,7 @@ export default function AddingExpense(props) {
                       <TextField
                         id="standard-basic"
                         label="Name"
+                        value={values.name}
                         variant="standard"
                         style={nameInput}
                         onChange={handleChange("name")}
@@ -258,6 +271,7 @@ export default function AddingExpense(props) {
             <FormGroup
               style={{
                 display: "block",
+                paddingBottom: "0.7rem",
               }}
             >
               <FormControlLabel
@@ -311,27 +325,13 @@ export default function AddingExpense(props) {
   );
 }
 
-const icon = {
-  top: "0",
-  left: "0",
-  color: "rgba(128,128,128,1)",
-  fontSize: "56",
-  height: categoryIconSize,
-  width: categoryIconSize,
-  display: "table",
-  marginTop: "auto",
-  marginBottom: "auto",
-};
-
 const chipstyling = {
   fontSize: "large",
-  maxWidth: "80%",
-  marginTop: "0.2rem",
-  marginBottom: "1rem",
-};
-
-const dial = {
+  maxWidth: "95%",
+  margin: "0.2rem auto 1rem",
   display: "flex",
+  width: "fit-content",
+  overflow: "hidden",
 };
 
 const center = {
@@ -347,14 +347,6 @@ const ammountInput = {
   display: "flex",
   margin: "0",
 };
-const Date = styled.span`
-  font-size: 14px;
-  font-style: italic;
-  font-weight: 400;
-  color: #121212;
-  position: relative;
-  display: flex;
-`;
 const Expense = styled.span`
   max-width: 500px;
   width: 100%;
@@ -365,16 +357,6 @@ const Expense = styled.span`
 
 const RowStack = styled.div`
   width: -webkit-fill-available;
-  display: table-row-group;
-`;
-
-const Price = styled.span`
-  position: relative;
-  font-style: normal;
-  font-weight: 600;
-  height: 37px;
-  font-size: 24px;
-  text-align: right;
   display: table-row-group;
 `;
 
