@@ -26,6 +26,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import GroupIcon from "@mui/icons-material/Group";
 import Fade from "@mui/material/Fade";
+import returnIcon from "../apis/returnIcon";
 
 const categoryIconSize = "60px";
 
@@ -45,6 +46,7 @@ export default function AddingExpense(props) {
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState(false);
   const [groups, setGroups] = useState(undefined);
+  const [friends, setFriends] = useState(undefined);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpenGroup = () => setOpenGroup(true);
@@ -63,7 +65,7 @@ export default function AddingExpense(props) {
 
   const getGroups = () => {
     fetch("http://127.0.0.1:8000/api/group", {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
@@ -79,10 +81,31 @@ export default function AddingExpense(props) {
     });
   };
 
+  const getFriends = () => {
+    fetch("http://127.0.0.1:8000/api/seeFriends", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          setFriends(data);
+          console.log(data);
+        });
+      } else {
+        console.log("Please log in!");
+      }
+    });
+  };
+
   useEffect(() => {
     getGroups();
+    getFriends();
     const interval = setInterval(() => {
       getGroups();
+      getFriends();
     }, 50000);
     return () => clearInterval(interval);
   }, []);
@@ -122,6 +145,18 @@ export default function AddingExpense(props) {
     setValues({ ...values, ["group"]: group });
   };
 
+  const categoryIcon = () => {
+    if (values["category"] == "other") {
+      return (
+        <CategoryOutlinedIcon
+          color="action"
+          style={{ width: "2em", height: "2em" }}
+        />
+      );
+    }
+    return returnIcon(values["category"]);
+  };
+
   return (
     <Expense>
       <div style={center}>
@@ -145,12 +180,7 @@ export default function AddingExpense(props) {
               >
                 <WholeStack>
                   <StackColumn>
-                    <Button onClick={handleOpen}>
-                      <CategoryOutlinedIcon
-                        color="action"
-                        style={{ width: "2em", height: "2em" }}
-                      />
-                    </Button>
+                    <Button onClick={handleOpen}>{categoryIcon()}</Button>
                     <Modal
                       open={open}
                       onClose={handleClose}
@@ -228,6 +258,7 @@ export default function AddingExpense(props) {
                   <ListOfGroupsModal
                     toggle={toggleCloseGroup}
                     groups={groups}
+                    friends={friends}
                   />
                 </Box>
               </Modal>

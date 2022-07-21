@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { styled as style } from "styled-components";
 import { styled, alpha } from "@mui/material/styles";
-import LiquorIcon from "@mui/icons-material/Liquor";
-import LocalTaxiIcon from "@mui/icons-material/LocalTaxi";
-import HomeIcon from "@mui/icons-material/Home";
-import ConfirmationNumberRoundedIcon from "@mui/icons-material/ConfirmationNumberRounded";
-import RestaurantMenuRoundedIcon from "@mui/icons-material/RestaurantMenuRounded";
-import KitchenRoundedIcon from "@mui/icons-material/KitchenRounded";
-import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -76,28 +69,10 @@ export default function ListOfGroupsModal(props) {
   const [groups, setGroups] = useState(undefined);
   const [search, setSearch] = useState("");
 
-  console.log(props.groups);
-
   const handleInputChange = (event) => {
     setSearch(event.target.value);
   };
 
-  const returnIcon = (category) => {
-    if (category == "Restaurant") {
-      return <RestaurantMenuRoundedIcon style={icon} />;
-    } else if (category == "Transport") {
-      return <LocalTaxiIcon style={icon} />;
-    } else if (category == "Rent") {
-      return <HomeIcon style={icon} />;
-    } else if (category == "Alcohol") {
-      return <LiquorIcon style={icon} />;
-    } else if (category == "Groceries") {
-      return <KitchenRoundedIcon style={icon} />;
-    } else if (category == "Tickets") {
-      return <ConfirmationNumberRoundedIcon style={icon} />;
-    }
-    return <PaidOutlinedIcon style={icon} />;
-  };
   const handleClose = (e) => {
     props.toggle(e);
   };
@@ -157,6 +132,7 @@ export default function ListOfGroupsModal(props) {
           </ListSubheader>
         }
       >
+        <ListItemButton>Your groups:</ListItemButton>
         {props.groups.map((group, index) => (
           <ListItemButton
             key={index}
@@ -171,6 +147,23 @@ export default function ListOfGroupsModal(props) {
               />
             </ListItemIcon>
             {group.group_name}
+          </ListItemButton>
+        ))}
+        <ListItemButton>Your friends:</ListItemButton>
+        {props.friends.map((friend, index) => (
+          <ListItemButton
+            key={index}
+            value={friend.id}
+            onClick={() => handleClose(friend.id)}
+            style={{ display: isFiltred(friend.username) }}
+          >
+            <ListItemIcon>
+              <GroupAddIcon
+                sx={{ color: colors[index % colors.length] }}
+                style={{ width: "2em", height: "2em" }}
+              />
+            </ListItemIcon>
+            {friend.username}
           </ListItemButton>
         ))}
       </List>

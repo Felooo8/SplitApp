@@ -67,6 +67,7 @@ class GroupExpenseSerializer(serializers.ModelSerializer):
         model = GroupExpense
         fields = ('id','payer', 'payer_username', 'short_date', 'name', 'category', 'total')
 
+
 class ExpenseSerializer(serializers.ModelSerializer):
     ower_username = serializers.SerializerMethodField()
     short_date = serializers.SerializerMethodField()
