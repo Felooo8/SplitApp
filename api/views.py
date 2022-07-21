@@ -105,33 +105,53 @@ class AddExpense(APIView):
         payer = User.objects.get(id=payer_id)
         owers_ids = body["owers"]
         name = body["name"]
-        category = ""
+        category = "Other"
         category_name = body["category"]
         for type in types:
             if type[0] == category_name:
                 category = category_name
-        total = float(body["amount"])
+                break
+        amount = float(body["amount"])
         splitted = body["splitted"]
         is_paid = body["is_paid"]
         settled = body["settled"]
+        is_group = body["is_group"]
         try:
-            new_group_expense = GroupExpense()
-            new_group_expense.save()
             for ower_id in owers_ids:
-                ower = User.objects.get(id=ower_id)
-                new_expense = Expense(
-                    payer=payer,
-                    ower=ower,
-                    category=category,
-                    name=name,
-                    total=total,
-                    splitted=splitted,
-                    is_paid=is_paid,
-                    settled=settled,
-                )
-                new_expense.save()
-                new_group_expense.expenses.add(new_expense)
-            new_group_expense.save()
+                if(is_group):
+                    print('is group')
+                    new_group_expense = GroupExpense()
+                    new_group_expense.save()
+                    group = Group.objects.get(id=ower_id)
+                    for ower in group.users.all():
+                        if(ower != payer):
+                            new_expense = Expense(
+                                payer=payer,
+                                ower=ower,
+                                category=category,
+                                name=name,
+                                amount=amount,
+                                splitted=splitted,
+                                is_paid=is_paid,
+                                settled=settled,
+                            )
+                            new_expense.save()
+                            new_group_expense.expenses.add(new_expense)
+                    new_group_expense.save()
+                    group.group_expenses.add(new_group_expense)
+                else:
+                    ower = User.objects.get(id=ower_id)
+                    new_expense = Expense(
+                        payer=payer,
+                        ower=ower,
+                        category=category,
+                        name=name,
+                        amount=amount,
+                        splitted=splitted,
+                        is_paid=is_paid,
+                        settled=settled,
+                    )
+                    new_expense.save()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(None, status=status.HTTP_422_UNPROCESSABLE_ENTITY)

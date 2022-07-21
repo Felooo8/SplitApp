@@ -1,3 +1,4 @@
+from unicodedata import category
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -19,11 +20,10 @@ class Account(models.Model):
     friends = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="friends")
 
 
-
 class Expense(models.Model):
     name = models.TextField(default='', blank=True)
     category = models.CharField(choices=types, default=types[0], max_length=15)
-    total = models.DecimalField(default=0, blank=True, max_digits=8, decimal_places=2)
+    amount = models.DecimalField(default=0, blank=True, max_digits=8, decimal_places=2)
     splitted = models.BooleanField(choices = TRUE_FALSE_CHOICES, blank=False, default=True)
     date = models.DateTimeField(auto_now_add=True)
     ower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ower")
@@ -35,6 +35,16 @@ class Expense(models.Model):
         if self.name == '':
             return 'Some expense'
         return self.name
+
+    def delete(self):
+        similar_expenses = Expense.objects.filter(name=self.name,payer=self.payer,amount=self.amount,category=self.category).exclude(id=self.id)
+        print(similar_expenses)
+        if not similar_expenses:
+            group_expense = GroupExpense.objects.get(expenses=self)
+            print(group_expense)
+            if group_expense:
+                group_expense.delete()
+        super(Expense, self).delete()
 
 
 class GroupExpense(models.Model):
@@ -59,12 +69,12 @@ class Group(models.Model):
         return self.group_name
 
     def total_spent(self):
-        return sum(expense.expenses.all()[0].total for expense in self.group_expenses.all())
+        return sum(expense.expenses.all()[0].amount for expense in self.group_expenses.all())
 
     def spent_by_category(self):
         spent = {}
         for type in types:
-            spent[type[0]] = sum(expense.expenses.all()[0].total for expense in self.group_expenses.all() if expense.expenses.all()[0].category == type[0])
+            spent[type[0]] = sum(expense.expenses.all()[0].amount for expense in self.group_expenses.all() if expense.expenses.all()[0].category == type[0])
         return spent
 
 

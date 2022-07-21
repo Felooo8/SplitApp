@@ -39,7 +39,7 @@ class GroupExpenseSerializer(serializers.ModelSerializer):
     short_date = serializers.SerializerMethodField()
     payer_username = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
-    total = serializers.SerializerMethodField()
+    amount = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     payer = serializers.SerializerMethodField()
 
@@ -52,8 +52,8 @@ class GroupExpenseSerializer(serializers.ModelSerializer):
     def get_name(self, obj):
         return obj.expenses.all()[0].name
 
-    def get_total(self, obj):
-        return obj.expenses.all()[0].total
+    def get_amount(self, obj):
+        return obj.expenses.all()[0].amount
 
     def get_category(self, obj):
         return obj.expenses.all()[0].category
@@ -65,7 +65,7 @@ class GroupExpenseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupExpense
-        fields = ('id','payer', 'payer_username', 'short_date', 'name', 'category', 'total')
+        fields = ('id','payer', 'payer_username', 'short_date', 'name', 'category', 'amount')
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
@@ -85,4 +85,4 @@ class ExpenseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Expense
-        fields = ('id', 'ower', 'ower_username', 'name', 'category', 'total', 'splitted', 'date', 'short_date', 'payer', 'payer_username', 'is_paid', 'settled')
+        fields = ('id', 'ower', 'ower_username', 'name', 'category', 'amount', 'splitted', 'date', 'short_date', 'payer', 'payer_username', 'is_paid', 'settled')
