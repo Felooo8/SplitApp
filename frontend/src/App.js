@@ -2,6 +2,7 @@ import "./App.css";
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import LoginScreen from "./screens/Login";
+import SignIn from "./screens/SignIn";
 import AllExpenses from "./screens/AllExpenses";
 import AddExpense from "./screens/AddExpense";
 import Groups from "./screens/Groups";
@@ -56,7 +57,7 @@ function App() {
         <Divider />
         <Routes>
           <Route exact path="/" />
-          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/login" element={<SignIn />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/mygroup/:id" element={<Group />} />
           <Route path="/all-expenses" element={<AllExpenses />} />

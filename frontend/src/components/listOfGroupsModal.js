@@ -10,6 +10,7 @@ import Toolbar from "@mui/material/Toolbar";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -73,8 +74,8 @@ export default function ListOfGroupsModal(props) {
     setSearch(event.target.value);
   };
 
-  const handleClose = (e) => {
-    props.toggle(e);
+  const handleClose = (group_friend_id, isGroup, group_friend_name) => {
+    props.toggle(group_friend_id, isGroup, group_friend_name);
   };
 
   const isFiltred = (category) => {
@@ -137,7 +138,7 @@ export default function ListOfGroupsModal(props) {
           <ListItemButton
             key={index}
             value={group.id}
-            onClick={() => handleClose(group.id)}
+            onClick={() => handleClose(group.id, true, group.group_name)}
             style={{ display: isFiltred(group.group_name) }}
           >
             <ListItemIcon>
@@ -154,11 +155,11 @@ export default function ListOfGroupsModal(props) {
           <ListItemButton
             key={index}
             value={friend.id}
-            onClick={() => handleClose(friend.id)}
+            onClick={() => handleClose(friend.id, false, friend.username)}
             style={{ display: isFiltred(friend.username) }}
           >
             <ListItemIcon>
-              <GroupAddIcon
+              <PersonAddIcon
                 sx={{ color: colors[index % colors.length] }}
                 style={{ width: "2em", height: "2em" }}
               />

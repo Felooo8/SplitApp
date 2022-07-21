@@ -24,9 +24,11 @@ import Switch from "@mui/material/Switch";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
-import GroupIcon from "@mui/icons-material/Group";
+import GroupsIcon from "@mui/icons-material/Groups";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import Fade from "@mui/material/Fade";
 import returnIcon from "../apis/returnIcon";
+import Chip from "@mui/material/Chip";
 
 const categoryIconSize = "60px";
 
@@ -47,21 +49,34 @@ export default function AddingExpense(props) {
   const [openGroup, setOpenGroup] = useState(false);
   const [groups, setGroups] = useState(undefined);
   const [friends, setFriends] = useState(undefined);
+  const [chosenGroupName, setChosenGroupName] = useState("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpenGroup = () => setOpenGroup(true);
   const handleCloseGroup = () => setOpenGroup(false);
+  // need to make it possible to add a few owers (list) and settled and chosing payer
   const [values, setValues] = useState({
-    amount: 0,
+    amount: "",
     name: "",
     category: "other",
     splitted: false,
-    payer: "1",
-    owers: ["3"],
+    payer: 1,
+    // owers: ["3"],
     is_paid: false,
     settled: false,
-    group: "",
+    owers: 0,
+    is_group: true,
   });
+
+  const validateForm = () => {
+    return (
+      values.name != "" &&
+      values.payer != 0 &&
+      // values.owers != [] &&
+      values.amount > 0 &&
+      values.owers != 0
+    );
+  };
 
   const getGroups = () => {
     fetch("http://127.0.0.1:8000/api/group", {
@@ -140,9 +155,21 @@ export default function AddingExpense(props) {
     setOpen(false);
     setValues({ ...values, ["category"]: category });
   };
-  const toggleCloseGroup = (group) => {
+  const toggleCloseGroup = (group_friend_id, isGroup, group_friend_name) => {
+    // setValues({ ...values, ["owers"]: group_friend_id });
+    // setValues({ ...values, ["is_group"]: isGroup });
+    values.owers = group_friend_id;
+    values.is_group = isGroup;
     setOpenGroup(false);
-    setValues({ ...values, ["group"]: group });
+    setChosenGroupName(group_friend_name);
+  };
+
+  const handleDeleteGroup = () => {
+    setValues({
+      ...values,
+      ["owers"]: 0,
+    });
+    setChosenGroupName("");
   };
 
   const categoryIcon = () => {
@@ -164,7 +191,10 @@ export default function AddingExpense(props) {
           <Paper elevation={3}>
             <AccordionSummary
               expandIcon={
-                <ListItemButton onClick={sendRequest}>
+                <ListItemButton
+                  onClick={sendRequest}
+                  disabled={!validateForm()}
+                >
                   <ListItemIcon style={{ minWidth: "0" }}>
                     <SendIcon color="primary" />
                   </ListItemIcon>
@@ -212,6 +242,7 @@ export default function AddingExpense(props) {
                         <Input
                           type="number"
                           id="standard-adornment-amount"
+                          label="Amount"
                           value={values.amount}
                           onChange={handleChange("amount")}
                           startAdornment={
@@ -243,7 +274,7 @@ export default function AddingExpense(props) {
                 onChange={handleChangeSwitch("splitted")}
               />
               <Button onClick={handleOpenGroup}>
-                <GroupIcon
+                <GroupsIcon
                   sx={{ color: "red" }}
                   style={{ width: "2em", height: "2em" }}
                 />
@@ -262,6 +293,16 @@ export default function AddingExpense(props) {
                   />
                 </Box>
               </Modal>
+              {chosenGroupName != "" ? (
+                <Chip
+                  color="success"
+                  style={chipstyling}
+                  label={chosenGroupName}
+                  variant="outlined"
+                  icon={<GroupOutlinedIcon />}
+                  onDelete={handleDeleteGroup}
+                />
+              ) : null}
             </FormGroup>
           </Paper>
         </Fade>
@@ -280,6 +321,13 @@ const icon = {
   display: "table",
   marginTop: "auto",
   marginBottom: "auto",
+};
+
+const chipstyling = {
+  fontSize: "large",
+  maxWidth: "80%",
+  marginTop: "0.2rem",
+  marginBottom: "1rem",
 };
 
 const dial = {

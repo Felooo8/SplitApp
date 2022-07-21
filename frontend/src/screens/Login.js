@@ -123,7 +123,6 @@ function LoginScreen(props) {
             </Form>
             <ValidData></ValidData>
           </LogoColumn>
-          <LogoColumnFiller></LogoColumnFiller>
           <FooterTexts>
             <Link to="/signup">
               <Button2>
@@ -171,7 +170,6 @@ const Background = styled.div`
 `;
 
 const Rect = styled.div`
-  background-image: linear-gradient(355deg, #202352 0%, rgb(7 20 45) 100%);
   flex-direction: column;
   display: flex;
   flex: 1 1 0%;
@@ -194,7 +192,6 @@ const EndWrapperFiller = styled.div`
 
 const Text3 = styled.span`
   font-family: Arial;
-  color: rgba(255, 255, 255, 1);
   font-size: 96px;
   margin-bottom: 4px;
 `;
@@ -222,7 +219,6 @@ const Text3Column = styled.div`
 
 const Username = styled.div`
   height: 59px;
-  background-color: rgba(251, 247, 247, 0.25);
   border-radius: 5px;
   flex-direction: row;
   display: flex;
@@ -231,7 +227,6 @@ const Username = styled.div`
 const UsernameInput = styled.input`
   font-family: Arial;
   height: 30px;
-  color: rgba(255, 255, 255, 1);
   flex: 1 1 0%;
   margin-right: 11px;
   margin-left: 11px;
@@ -244,7 +239,6 @@ const UsernameInput = styled.input`
 
 const Password = styled.div`
   height: 59px;
-  background-color: rgba(253, 251, 251, 0.25);
   border-radius: 5px;
   flex-direction: row;
   display: flex;
@@ -254,7 +248,6 @@ const Password = styled.div`
 const PasswordInput = styled.input`
   font-family: Arial;
   height: 30px;
-  color: rgba(255, 255, 255, 1);
   flex: 1 1 0%;
   margin-right: 17px;
   margin-left: 8px;
@@ -288,14 +281,13 @@ const Button = styled.div`
 
 const Text2 = styled.span`
   font-family: Arial;
-  color: rgba(255, 255, 255, 1);
   font-weight: 600;
   align-self: center;
 `;
 
 const LogoColumn = styled.div`
   flex-direction: column;
-  margin-top: 130px;
+  margin-top: 30px;
   margin-left: 41px;
   margin-right: 41px;
   display: flex;
@@ -308,12 +300,12 @@ const LogoColumnFiller = styled.div`
 `;
 
 const FooterTexts = styled.div`
-  height: 14px;
   flex-direction: row;
   display: flex;
   margin-bottom: 36px;
   margin-left: 37px;
   margin-right: 36px;
+  margin-top: 30px;
 `;
 
 const Button2 = styled.div`
@@ -333,7 +325,6 @@ const CreateAccountFiller = styled.div`
 
 const CreateAccount = styled.span`
   font-family: Arial;
-  color: rgba(255, 255, 255, 0.5);
 `;
 
 const Button2Filler = styled.div`
@@ -344,7 +335,6 @@ const Button2Filler = styled.div`
 
 const NeedHelp = styled.span`
   font-family: Arial;
-  color: rgba(255, 255, 255, 0.5);
   align-self: flex-end;
   margin-right: -1px;
 `;

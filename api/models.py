@@ -50,7 +50,7 @@ class GroupExpense(models.Model):
 class Group(models.Model):
     users = models.ManyToManyField(settings.AUTH_USER_MODEL)
     group_expenses = models.ManyToManyField(GroupExpense, blank=True)
-    group_name = models.TextField(default='Group chat', blank=True)
+    group_name = models.TextField(default='Group chat', blank=True, max_length=30)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
