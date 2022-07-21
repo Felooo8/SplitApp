@@ -30,20 +30,22 @@ class Expense(models.Model):
     payer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="payer")
     is_paid = models.BooleanField(default=False)
     settled = models.BooleanField(default=False)
+    hash = models.TextField(default='', blank=True)
 
     def __str__(self) -> str:
         if self.name == '':
             return 'Some expense'
         return self.name
 
-    def delete(self):
-        similar_expenses = Expense.objects.filter(name=self.name,payer=self.payer,amount=self.amount,category=self.category).exclude(id=self.id)
-        print(similar_expenses)
+    def delete_group_expense(self):
+        similar_expenses = Expense.objects.filter(hash=self.hash).exclude(id=self.id)
         if not similar_expenses:
             group_expense = GroupExpense.objects.get(expenses=self)
-            print(group_expense)
             if group_expense:
                 group_expense.delete()
+
+    def delete(self):
+        self.delete_group_expense()
         super(Expense, self).delete()
 
 

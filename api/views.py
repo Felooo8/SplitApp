@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 import json
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
-
+from django.utils.crypto import get_random_string
 # Create your views here.
 
 
@@ -119,7 +119,7 @@ class AddExpense(APIView):
         try:
             for ower_id in owers_ids:
                 if(is_group):
-                    print('is group')
+                    unique_id = get_random_string(length=16)
                     new_group_expense = GroupExpense()
                     new_group_expense.save()
                     group = Group.objects.get(id=ower_id)
@@ -134,6 +134,7 @@ class AddExpense(APIView):
                                 splitted=splitted,
                                 is_paid=is_paid,
                                 settled=settled,
+                                hash=unique_id,
                             )
                             new_expense.save()
                             new_group_expense.expenses.add(new_expense)
