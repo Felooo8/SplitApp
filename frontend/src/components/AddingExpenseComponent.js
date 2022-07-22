@@ -29,8 +29,8 @@ import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import Fade from "@mui/material/Fade";
 import returnIcon from "../apis/returnIcon";
 import Chip from "@mui/material/Chip";
-
-const categoryIconSize = "60px";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 const style = {
   position: "absolute",
@@ -59,6 +59,8 @@ export default function AddingExpense(props) {
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState(false);
   const [groups, setGroups] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(undefined);
+  const [payers, setPayers] = useState([]);
   const [friends, setFriends] = useState(undefined);
   const [chosenGroupName, setChosenGroupName] = useState("");
   const handleOpen = () => setOpen(true);
@@ -99,6 +101,7 @@ export default function AddingExpense(props) {
       if (response.ok) {
         response.json().then((data) => {
           setGroups(data);
+          console.log(data);
         });
       } else {
         console.log("Please log in!");
@@ -117,7 +120,6 @@ export default function AddingExpense(props) {
       if (response.ok) {
         response.json().then((data) => {
           setFriends(data);
-          console.log(data);
         });
       } else {
         console.log("Please log in!");
@@ -125,14 +127,33 @@ export default function AddingExpense(props) {
     });
   };
 
+  const getUser = () => {
+    fetch("http://127.0.0.1:8000/api/auth/users/me/", {
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    }).then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
+          setCurrentUser(data);
+          setPayers([{ id: data.id, username: "You" }]);
+        });
+      } else {
+        console.log("Not logged in");
+      }
+    });
+  };
+
   useEffect(() => {
     getGroups();
     getFriends();
-    const interval = setInterval(() => {
-      getGroups();
-      getFriends();
-    }, 50000);
-    return () => clearInterval(interval);
+    getUser();
+    // const interval = setInterval(() => {
+    //   getGroups();
+    //   getFriends();
+    //   getUser();
+    // }, 50000);
+    // return () => clearInterval(interval);
   }, []);
 
   const sendRequest = () => {
@@ -154,9 +175,59 @@ export default function AddingExpense(props) {
     });
   };
 
+  const setPayersData = (id, isGroup, username) => {
+    if (isGroup) {
+      for (const group of groups) {
+        if (group["id"] === id) {
+          setPayers([{ id: currentUser.id, username: "You" }]);
+          for (var i = 0; i < group["users"].length; i++) {
+            if (group["users"][i] != currentUser.id) {
+              let newArray = {
+                id: group["users"][i],
+                username: group["usernames"][i],
+              };
+              setPayers((payers) => [...payers, newArray]);
+            }
+          }
+          return;
+        }
+      }
+    } else {
+      setPayers([
+        { id: currentUser.id, username: "You" },
+        { id: id, username: username },
+      ]);
+    }
+  };
+
+  const isPayerUpdated = () => {
+    return payers.length > 0;
+  };
+
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
     console.log(values);
+  };
+
+  const handleChangePayer = () => (event) => {
+    console.log("CHANGE");
+    console.log(event.taget.value);
+    setValues({ ...values, ["payer"]: event.target.value });
+    if (event.target.value === values["owers"][0]) {
+      if (event.target.value === currentUser.id) {
+        let new_ower = payers[1]["id"];
+        setValues({
+          ...values,
+          ["owers"]: new_ower,
+        });
+      } else {
+        let new_ower = currentUser.id;
+        setValues({
+          ...values,
+          ["owers"]: new_ower,
+        });
+      }
+    }
   };
 
   const handleChangeSwitch = (prop) => (event) => {
@@ -168,12 +239,12 @@ export default function AddingExpense(props) {
     setValues({ ...values, ["category"]: category });
   };
   const toggleCloseGroup = (group_friend_id, isGroup, group_friend_name) => {
-    // setValues({ ...values, ["owers"]: group_friend_id });
-    // setValues({ ...values, ["is_group"]: isGroup });
     values.owers = [group_friend_id];
     values.is_group = isGroup;
     setOpenGroup(false);
     setChosenGroupName(group_friend_name);
+    setPayersData(group_friend_id, isGroup, group_friend_name);
+    console.log(payers);
   };
 
   const handleDeleteGroup = () => {
@@ -317,6 +388,29 @@ export default function AddingExpense(props) {
                   onDelete={handleDeleteGroup}
                 />
               ) : null}
+
+              {isPayerUpdated() ? (
+                <FormControl sx={{ m: 1, minWidth: 80 }}>
+                  <InputLabel id="demo-simple-select-autowidth-label">
+                    Payer
+                  </InputLabel>
+                  <Select
+                    labelId="payer-id"
+                    id="payer-id"
+                    value={values.payer}
+                    onChange={handleChangePayer()}
+                    autoWidth
+                    label="Payer"
+                    style={(chipstyling, noMaxWidth)}
+                  >
+                    {payers.map((payer, index) => (
+                      <MenuItem key={index} value={payer.id}>
+                        {payer.username}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : null}
             </FormGroup>
           </Paper>
         </Fade>
@@ -332,6 +426,10 @@ const chipstyling = {
   display: "flex",
   width: "fit-content",
   overflow: "hidden",
+};
+
+const noMaxWidth = {
+  maxWidth: "100%",
 };
 
 const center = {
