@@ -210,21 +210,19 @@ export default function AddingExpense(props) {
   };
 
   const handleChangePayer = () => (event) => {
-    console.log("CHANGE");
-    console.log(event.taget.value);
     setValues({ ...values, ["payer"]: event.target.value });
     if (event.target.value === values["owers"][0]) {
       if (event.target.value === currentUser.id) {
         let new_ower = payers[1]["id"];
         setValues({
           ...values,
-          ["owers"]: new_ower,
+          ["owers"]: [new_ower],
         });
       } else {
         let new_ower = currentUser.id;
         setValues({
           ...values,
-          ["owers"]: new_ower,
+          ["owers"]: [new_ower],
         });
       }
     }
