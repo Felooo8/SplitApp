@@ -6,7 +6,7 @@ from .serializers import (
     GroupSerializer,
     GroupExpenseSerializer,
 )
-from .models import Expense, Group, types, GroupExpense,Account
+from .models import (Expense, Group, types, GroupExpense,Account,FriendsInvitation)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
@@ -170,21 +170,83 @@ class SeeFriends(APIView):
 
 
 class FriendsInvitation(APIView):
-    # Sending friends invitation
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        friend_id = body["id"]
+        try:
+            friend = User.objects.get(id=friend_id)
+            invitation = FriendsInvitation(sender=user, invited=friend)
+            invitation.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except User.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class AcceptInvitation(APIView):
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        invitation_id = body["id"]
+        try:
+            invitation = FriendsInvitation.objects.get(id=invitation_id, invited=user)
+            invitation.accepted = True
+            invitation.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except FriendsInvitation.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DeclineInvitation(APIView):
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        invitation_id = body["id"]
+        try:
+            invitation = FriendsInvitation.objects.get(id=invitation_id, invited=user)
+            invitation.delete()
+            invitation.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except FriendsInvitation.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AddToGroup(APIView):
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        group_id = body["group_id"]
+        invited_id = body["invited_id"]
+        try:
+            group = Group.objects.get(id=group_id, users=user)
+            group.users.add(invited_id)
+            group.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Group.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LeaveGroup(APIView):
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        group_id = body["group_id"]
+        leaver_id = body["leaver_id"]
+        try:
+            group = Group.objects.get(id=group_id, users=[user, leaver_id],)
+            group.users.remove(leaver_id)
+            group.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Group.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
