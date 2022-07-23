@@ -30,3 +30,4 @@ frontend/npm
 frontend/README.md
 
 .vscode
+frontend/src/components/selectComponent.js

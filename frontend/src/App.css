@@ -51,29 +51,32 @@
 } */
 /* MuiSpeedDialAction-staticTooltip MuiSpeedDialAction-tooltipPlacementLeft css-1fgwdvu-MuiSpeedDialAction-staticTooltip */
 /* MuiSpeedDial-actions css-u1qjuz-MuiSpeedDial-actions */
-.css-i7rae6-MuiList-root{
-  max-width: none!important;
+.css-i7rae6-MuiList-root {
+  max-width: none !important;
 }
-
 
 .boxMovement {
-    /* position: absolute; */
-    /* left: 0px;
+  /* position: absolute; */
+  /* left: 0px;
     top: 20px; */
-    z-index: 2;
-    -webkit-animation: myfirst 5s infinite;
-    animation: myfirst 1s;
-    -webkit-animation-duration: 10s;
-    animation-duration: 2;
-    animation-direction: normal;
-    -webkit-animation-direction: normal;
-    text-align: left;
+  z-index: 2;
+  -webkit-animation: myfirst 5s infinite;
+  animation: myfirst 1s;
+  -webkit-animation-duration: 10s;
+  animation-duration: 2;
+  animation-direction: normal;
+  -webkit-animation-direction: normal;
+  text-align: left;
 }
 @keyframes myfirst {
-    0% {
-        left: -100%;
-    }
-    100% {
-        left: 0%;
-    }
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 0%;
+  }
 }
+
+/* .css-1p5q5e5-MuiStack-root > :not(style) + :not(style) {
+  margin-top: 0 !important;
+} */

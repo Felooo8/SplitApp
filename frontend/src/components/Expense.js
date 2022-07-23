@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Settling from "./SettlingComponent";
 import styled, { css } from "styled-components";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -9,19 +10,47 @@ import "../App.css";
 import Fade from "@mui/material/Fade";
 import Slide from "@mui/material/Slide";
 import returnIcon from "../apis/returnIcon";
+import Alert from "@mui/material/Alert";
+import Badge from "@mui/material/Badge";
 
 export default function ExpenseItem(props) {
-  console.log(props);
-  const ifBorrowed = (expense) => {
+  // console.log(props);
+  const displayUser = () => {
+    if (isBorrowed(props.expense)) {
+      return props.expense.payer_username;
+    }
+    return props.expense.ower_username;
+  };
+
+  const isBorrowed = (expense) => {
     if (expense.payer == props.currentUser.id) {
       return false;
     }
     return true;
   };
 
+  const isPendning = () => {
+    if (!isBorrowed(props.expense)) {
+      if (props.expense.is_paid) {
+        return true;
+      }
+    }
+  };
+
+  const marked = (expense) => {
+    if (isBorrowed(expense)) {
+      return expense.is_paid === true;
+    }
+    return expense.settled === true;
+  };
+
+  if (!props.show) {
+    return;
+  }
   return (
     <Expense>
       <div key={props.index} style={center}>
+        {/* <Badge color="warning" badgeContent={"!"} invisible={!isPendning()}> */}
         <Slide
           direction="right"
           in={true}
@@ -44,7 +73,7 @@ export default function ExpenseItem(props) {
                     <RowStack style={{ float: "left " }}>
                       <Text>{props.expense.name}</Text>
                       <Date>On: {props.expense.short_date}</Date>
-                      <Date>{props.expense.payer_username}</Date>
+                      <Date>{displayUser()}</Date>
                     </RowStack>
                   </StackColumn>
                   <StackColumn>
@@ -53,11 +82,11 @@ export default function ExpenseItem(props) {
                         display: "table",
                         width: "min-content",
                         marginRight: "4px",
-                        color: ifBorrowed(props.expense) ? "orange" : "green",
+                        color: isBorrowed(props.expense) ? "orange" : "green",
                       }}
                     >
                       <YouBorrowed>
-                        {ifBorrowed(props.expense)
+                        {isBorrowed(props.expense)
                           ? "you borrowed"
                           : "you lent"}
                       </YouBorrowed>
@@ -65,11 +94,24 @@ export default function ExpenseItem(props) {
                     </RowStack>
                   </StackColumn>
                 </WholeStack>
+                {isPendning() ? (
+                  <Alert severity="info">
+                    {displayUser()} has marked as paid
+                  </Alert>
+                ) : null}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails>asdasd</AccordionDetails>
+            <AccordionDetails>
+              <Settling
+                isBorrowed={isBorrowed(props.expense)}
+                id={props.expense.id}
+                expense={props.expense}
+                marked={marked(props.expense)}
+              />
+            </AccordionDetails>
           </Accordion>
         </Slide>
+        {/* </Badge> */}
       </div>
     </Expense>
   );

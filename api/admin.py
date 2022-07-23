@@ -10,7 +10,12 @@ class GroupAdmin(admin.ModelAdmin):
     pass
 
 class ExpenseAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['name', 'ower', 'payer', 'amount', 'category'
+                    ]
+    list_filter = ['ower', 'payer', 'category']
+    search_fields = [
+        'name',
+    ]
 
 class GroupExpenseAdmin(admin.ModelAdmin):
     pass

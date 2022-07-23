@@ -11,7 +11,10 @@ from .views import (
     DeclineInvitation,
     AddToGroup,
     LeaveGroup,
-    SeeFriends
+    SeeFriends,
+    SetAsPaid,
+    Settle,
+    GetUsersSummarize
 )
 
 urlpatterns = [
@@ -27,4 +30,7 @@ urlpatterns = [
     path("acceptInvitation", AcceptInvitation.as_view()),
     path("addToGroup", AddToGroup.as_view()),
     path("leaveGroup", LeaveGroup.as_view()),
+    path("setAsPaid", SetAsPaid.as_view()),
+    path("settle", Settle.as_view()),
+    path("summarize", GetUsersSummarize.as_view()),
 ]

@@ -15,6 +15,10 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.utils.crypto import get_random_string
+
+from collections import defaultdict
+  
+
 # Create your views here.
 
 
@@ -85,7 +89,7 @@ class GetChartValues(APIView):
 class GetUsersExpenses(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, format=None):
+    def get(self, request, format=None):
         user = request.user
         expenses = Expense.objects.filter(Q(ower=user) | Q(payer=user)).order_by(
             "-date"
@@ -250,3 +254,61 @@ class LeaveGroup(APIView):
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except Group.DoesNotExist:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SetAsPaid(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        expense_id = body["id"]
+        is_paid = body["paid"]
+        try:
+            expense = Expense.objects.get(id=expense_id, ower=user)
+            expense.is_paid = is_paid
+            expense.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Expense.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Settle(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        expense_id = body["id"]
+        settled = body["settled"]
+        try:
+            expense = Expense.objects.get(id=expense_id, payer=user)
+            expense.settled = settled
+            expense.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except Expense.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetUsersSummarize(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = request.user
+
+        def def_value():
+            return 0
+
+        all_debts = Expense.objects.filter(ower=user, settled=False).exclude(payer=user)
+        debts = defaultdict(def_value)
+
+        all_lents = Expense.objects.filter(payer=user, settled=False).exclude(ower=user)
+        lents = defaultdict(def_value)
+        if len(all_debts) > 0:
+            for expense in all_debts:
+                debts[expense.payer.username] += expense.amount
+        if len(all_lents) > 0:
+            for expense in all_lents:
+                debts[expense.ower.username] -= expense.amount
+
+        return Response([debts, lents], status=status.HTTP_200_OK)
