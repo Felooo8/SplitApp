@@ -3,11 +3,10 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import styled, { css } from "styled-components";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { logout } from "../apis/auth";
 import { Button } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import Search from "./Search";
 
 // import IconButton from "@mui/material/IconButton";
 // import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -68,7 +67,7 @@ function NavbarTop(props) {
   }, []);
 
   return (
-    <Navbar bg="light" expand="lg" style={navbar}>
+    <Navbar bg="primary" expand="lg" style={navbar} variant="dark">
       <Container>
         <Navbar.Brand href="#home">Split App</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -90,6 +89,7 @@ function NavbarTop(props) {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
+          <Search />
           <Navbar.Text style={login}>
             Signed in as:{" "}
             <a href="/login">

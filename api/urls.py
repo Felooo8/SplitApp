@@ -14,7 +14,8 @@ from .views import (
     SeeFriends,
     SetAsPaid,
     Settle,
-    GetUsersSummarize
+    GetUsersSummarize,
+    FindFriends
 )
 
 urlpatterns = [
@@ -33,4 +34,5 @@ urlpatterns = [
     path("setAsPaid", SetAsPaid.as_view()),
     path("settle", Settle.as_view()),
     path("summarize", GetUsersSummarize.as_view()),
+    path('findFriends/<str:username>', FindFriends.as_view(), name="find_friends"),
 ]

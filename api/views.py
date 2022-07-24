@@ -17,7 +17,8 @@ from django.db.models import Q
 from django.utils.crypto import get_random_string
 
 from collections import defaultdict
-  
+from itertools import chain 
+
 
 # Create your views here.
 
@@ -189,7 +190,6 @@ class FriendsInvitation(APIView):
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class AcceptInvitation(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -310,3 +310,18 @@ class GetUsersSummarize(APIView):
             for expense in all_lents:
                 debts[expense.ower.username] -= expense.amount
         return Response(debts, status=status.HTTP_200_OK)
+
+
+class FindFriends(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, username, format=None):
+        try:
+            username = self.kwargs['username']
+            users_starts = User.objects.filter(username__startswith=username)
+            users_contains = User.objects.filter(username__icontains=username).exclude(username__startswith=username)
+            users = list(chain(users_starts, users_contains))
+            users = UserSerializer(users, many=True).data
+            return Response(users, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
