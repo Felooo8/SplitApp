@@ -24,6 +24,7 @@ export default function Settling(props) {
       postSettled(props.id, event.target.checked);
       props.expense["settled"] = event.target.checked;
     }
+    props.toggle();
   };
 
   return (

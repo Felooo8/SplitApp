@@ -303,12 +303,10 @@ class GetUsersSummarize(APIView):
         debts = defaultdict(def_value)
 
         all_lents = Expense.objects.filter(payer=user, settled=False).exclude(ower=user)
-        lents = defaultdict(def_value)
         if len(all_debts) > 0:
             for expense in all_debts:
                 debts[expense.payer.username] += expense.amount
         if len(all_lents) > 0:
             for expense in all_lents:
                 debts[expense.ower.username] -= expense.amount
-
-        return Response([debts, lents], status=status.HTTP_200_OK)
+        return Response(debts, status=status.HTTP_200_OK)

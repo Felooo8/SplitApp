@@ -1,15 +1,17 @@
 import "./App.css";
 import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
-import LoginScreen from "./screens/Login";
 import SignIn from "./screens/SignIn";
 import AllExpenses from "./screens/AllExpenses";
 import AddExpense from "./screens/AddExpense";
+import Summary from "./screens/Summary";
 import Groups from "./screens/Groups";
 import Group from "./screens/MyGroup";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { Button } from "@material-ui/core";
+import Button from "@mui/material/Button";
 import NavbarTop from "./components/navbar";
+import Stack from "@mui/material/Stack";
+import Grid from "@mui/material/Grid";
 
 function App() {
   console.log(localStorage.getItem("token"));
@@ -21,40 +23,35 @@ function App() {
         Edit <code>src/App.js</code> and save to reload.
       </p>
       <Router>
-        <Button
-          component={Link}
-          to="/login"
-          variant="contained"
-          color="secondary"
-          style={button}
+        <Grid
+          container
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          rowSpacing={2}
+          columnSpacing={1}
         >
-          Login
-        </Button>
-        <Divider />
-        <Button component={Link} to="/" variant="contained" style={button}>
-          Home
-        </Button>
-        <Divider />
-        <Button
-          component={Link}
-          to="/groups"
-          variant="contained"
-          color="primary"
-          style={button}
-        >
-          See your groups
-        </Button>
-        <Divider />
-        <Button
-          component={Link}
-          to="/mygroup"
-          variant="contained"
-          color="secondary"
-          style={button}
-        >
-          See your groups
-        </Button>
-        <Divider />
+          <Grid item xs="auto">
+            <Button href="/login" variant="contained" color="error">
+              Login
+            </Button>
+          </Grid>
+          <Grid item xs="auto">
+            <Button href="/" variant="contained">
+              Home
+            </Button>
+          </Grid>
+          <Grid item xs="auto">
+            <Button href="/groups" variant="contained" color="warning">
+              See your groups
+            </Button>
+          </Grid>
+          <Grid item xs="auto">
+            <Button href="/summary" variant="outlined" color="success">
+              Summary
+            </Button>
+          </Grid>
+        </Grid>
         <Routes>
           <Route exact path="/" />
           <Route path="/login" element={<SignIn />} />
@@ -62,7 +59,7 @@ function App() {
           <Route path="/mygroup/:id" element={<Group />} />
           <Route path="/all-expenses" element={<AllExpenses />} />
           <Route path="/add-expense" element={<AddExpense />} />
-          <Route path="/chat" />
+          <Route path="/summary" element={<Summary />} />
         </Routes>
       </Router>
     </div>
@@ -70,13 +67,3 @@ function App() {
 }
 
 export default App;
-
-const button = {
-  marginRight: "auto",
-};
-
-const Divider = styled.div`
-  width: 10px;
-  height: auto;
-  display: inline-block;
-`;

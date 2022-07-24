@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import Stack from "@mui/material/Stack";
 import ExpenseItem from "../components/Expense";
 import Radio from "@mui/material/Radio";
@@ -13,6 +13,7 @@ function AllExpenses(props) {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [filter, setFilter] = useState("all");
   const [showSettled, setShowSettled] = useState(false);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const getExpenses = () => {
     fetch("http://127.0.0.1:8000/api/userExpenses", {
@@ -78,6 +79,10 @@ function AllExpenses(props) {
       return false;
     }
     return true;
+  };
+
+  const reRenderToggle = () => {
+    forceUpdate();
   };
 
   useEffect(() => {
@@ -174,6 +179,7 @@ function AllExpenses(props) {
               index={index}
               currentUser={currentUser}
               show={toShow(expense)}
+              toggle={reRenderToggle}
             />
           ))}
         </Stack>

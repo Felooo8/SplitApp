@@ -50,7 +50,6 @@ export default function ExpenseItem(props) {
   return (
     <Expense>
       <div key={props.index} style={center}>
-        {/* <Badge color="warning" badgeContent={"!"} invisible={!isPendning()}> */}
         <Slide
           direction="right"
           in={true}
@@ -107,6 +106,7 @@ export default function ExpenseItem(props) {
                 id={props.expense.id}
                 expense={props.expense}
                 marked={marked(props.expense)}
+                toggle={props.toggle}
               />
             </AccordionDetails>
           </Accordion>

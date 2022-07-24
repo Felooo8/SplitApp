@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import { Button } from "@material-ui/core";
-import { Button as ButtonB } from "react-bootstrap/Button";
+import Button from "@mui/material/Button";
 
 // import { getGroups } from "../apis/fetch";
 
@@ -35,7 +32,7 @@ function Groups(props) {
             setGroups(data);
           });
         } else {
-          console.log("PLease log in!");
+          console.log("Please log in!");
         }
       });
     };
@@ -46,7 +43,6 @@ function Groups(props) {
     return () => clearInterval(interval);
   }, []);
   if (groups == undefined) {
-    console.log(groups);
     return <p>No groups :(</p>;
   }
   console.log(groups);
@@ -55,9 +51,8 @@ function Groups(props) {
       <p>Your groups:</p>
       <div>
         {groups.map((group, index) => (
-          <div>
+          <div key={index}>
             <Button
-              key={group.id}
               component={Link}
               to={`/mygroup/${group.id}`}
               variant="contained"
