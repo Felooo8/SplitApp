@@ -6,12 +6,22 @@ import ChartPie from "../components/chart";
 import { useParams } from "react-router-dom";
 import ExpenseItem from "../components/Expense";
 
-function Group(props) {
+type params = {
+  id: number;
+};
+
+type Expense = {
+  id: number;
+  spent_by_category: number;
+  group_name: string;
+};
+
+function Group(): JSX.Element {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [keys, setKeys] = useState(undefined);
   const [values, setValues] = useState(undefined);
-  const [expenses, setExpenses] = useState(undefined);
-  const [groupID, setGroupID] = useState(undefined);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [groupID, setGroupID] = useState<any>(undefined);
   const params = useParams();
 
   const getUser = () => {
@@ -61,6 +71,8 @@ function Group(props) {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(groupID);
+        console.log(data);
         setExpenses(data);
       });
   };
@@ -92,6 +104,7 @@ function Group(props) {
             expense={expense}
             index={index}
             currentUser={currentUser}
+            show={true}
           />
         ))}
       </Stack>

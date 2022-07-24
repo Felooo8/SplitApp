@@ -56,7 +56,7 @@ function App() {
         </Button>
         <Divider />
         <Routes>
-          <Route exact path="/" />
+          <Route path="/" />
           <Route path="/login" element={<SignIn />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/mygroup/:id" element={<Group />} />

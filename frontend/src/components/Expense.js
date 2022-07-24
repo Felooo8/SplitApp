@@ -45,7 +45,7 @@ export default function ExpenseItem(props) {
   };
 
   if (!props.show) {
-    return;
+    return null;
   }
   return (
     <Expense>

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import Form from "react-bootstrap/Form";
-import { Button } from "@material-ui/core";
-import { Button as ButtonB } from "react-bootstrap/Button";
+import { Link } from "react-router-dom";
+import Button from "@mui/material/Button";
 
 // import { getGroups } from "../apis/fetch";
 
-function Groups(props) {
-  const [groups, setGroups] = useState(undefined);
+type Group = {
+  id: number;
+  spent_by_category: number;
+  group_name: string;
+};
+
+function Groups() {
+  const [groups, setGroups] = useState<Group[]>([]);
 
   const colors = [
     "#0275d8",
@@ -58,16 +61,15 @@ function Groups(props) {
           <div>
             <Button
               key={group.id}
-              component={Link}
-              to={`/mygroup/${group.id}`}
+              href={`/mygroup/${group.id}`}
               variant="contained"
               color="primary"
               style={{
                 backgroundColor: colors[index % colors.length],
                 marginTop: "10px",
               }}
-              spending={group.spent_by_category}
-              state={{ id: group.id }}
+              // spending={group.spent_by_category}
+              // state={{ id: group.id }}
             >
               {group.group_name}
             </Button>
@@ -79,8 +81,3 @@ function Groups(props) {
 }
 
 export default Groups;
-
-const groupButton = {
-  marginRight: "10px",
-  marginTop: "10px",
-};
