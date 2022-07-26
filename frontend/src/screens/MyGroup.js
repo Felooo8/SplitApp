@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import ChartPie from "../components/chart";
 import { useParams } from "react-router-dom";
@@ -68,7 +66,7 @@ function Group(props) {
   useEffect(() => {
     setGroupID(params.id);
     getUser();
-    if (groupID != undefined) {
+    if (groupID !== undefined) {
       getGroups();
       getTotalExpenses();
     }

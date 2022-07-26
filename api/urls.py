@@ -6,7 +6,7 @@ from .views import (
     GetChartValues,
     GetUsersExpenses,
     AddExpense,
-    FriendsInvitation,
+    InviteFriend,
     AcceptInvitation,
     DeclineInvitation,
     AddToGroup,
@@ -15,7 +15,8 @@ from .views import (
     SetAsPaid,
     Settle,
     GetUsersSummarize,
-    FindFriends
+    FindFriends,
+    RemoveFriend
 )
 
 urlpatterns = [
@@ -26,7 +27,8 @@ urlpatterns = [
     path("userExpenses", GetUsersExpenses.as_view()),
     path("addExpense", AddExpense.as_view()),
     path("seeFriends", SeeFriends.as_view()),
-    path("friendsInvitation", FriendsInvitation.as_view()),
+    path("inviteFriend", InviteFriend.as_view()),
+    path("removeFriend", RemoveFriend.as_view()),
     path("declineInvitation", DeclineInvitation.as_view()),
     path("acceptInvitation", AcceptInvitation.as_view()),
     path("addToGroup", AddToGroup.as_view()),

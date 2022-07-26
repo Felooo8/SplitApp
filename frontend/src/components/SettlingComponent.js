@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import "../App.css";
-import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
 import Switch from "@mui/material/Switch";
+import React, { useState } from "react";
 import { postSetAsPaid, postSettled } from "../apis/fetch";
+import "../App.css";
 
 export default function Settling(props) {
   const [settled, setSettled] = useState(props.marked);

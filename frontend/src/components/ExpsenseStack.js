@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import styled, { css } from "styled-components";
-import LiquorIcon from "@mui/icons-material/Liquor";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
+import LiquorIcon from "@mui/icons-material/Liquor";
+import React from "react";
+import styled from "styled-components";
 
 function ExpenseStack(props) {
   return (

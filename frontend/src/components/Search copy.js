@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
-import Form from "react-bootstrap/Form";
+import TextField from "@mui/material/TextField";
+import FormControl from "@mui/material/FormControl";
 
 const SearchBar = styled("div")(({ theme }) => ({
   position: "relative",
@@ -20,7 +21,7 @@ const SearchBar = styled("div")(({ theme }) => ({
   },
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
+const StyledInputBase = styled(TextField)(({ theme }) => ({
   color: "inherit",
   "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
@@ -41,8 +42,8 @@ export default function Search() {
   const [search, setSearch] = useState("");
 
   const handleSumbit = () => {
-    const location = "/friends/" + search;
-    window.history.pushState({ search: search }, undefined, location);
+    console.log(search);
+    window.location.replace("/login");
   };
 
   const isValid = () => {
@@ -56,7 +57,7 @@ export default function Search() {
         marginRight: "0px",
       }}
     >
-      <Form
+      <FormControl
         onSubmit={handleSumbit}
         style={{
           display: "block",
@@ -71,7 +72,16 @@ export default function Search() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-      </Form>
+      </FormControl>
     </SearchBar>
   );
 }
+
+const buttonstyling = {
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+};

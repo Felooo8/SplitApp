@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useReducer } from "react";
-import Stack from "@mui/material/Stack";
-import ExpenseItem from "../components/Expense";
+import Checkbox from "@mui/material/Checkbox";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormLabel from "@mui/material/FormLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import Checkbox from "@mui/material/Checkbox";
+import Stack from "@mui/material/Stack";
+import React, { useEffect, useReducer, useState } from "react";
+import ExpenseItem from "../components/Expense";
 
 function AllExpenses(props) {
   const [userExpenses, setUserExpenses] = useState(undefined);
@@ -69,10 +69,10 @@ function AllExpenses(props) {
   };
 
   const toShow = (expense) => {
-    if ((filter === "lent") & (expense.payer != currentUser.id)) {
+    if ((filter === "lent") & (expense.payer !== currentUser.id)) {
       return false;
     }
-    if ((filter === "borrowed") & (expense.payer == currentUser.id)) {
+    if ((filter === "borrowed") & (expense.payer === currentUser.id)) {
       return false;
     }
     if ((expense.settled === true) & (showSettled === false)) {

@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Settling from "./SettlingComponent";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "../App.css";
-import Fade from "@mui/material/Fade";
 import Slide from "@mui/material/Slide";
 import returnIcon from "../apis/returnIcon";
 import Alert from "@mui/material/Alert";
-import Badge from "@mui/material/Badge";
 
 export default function ExpenseItem(props) {
   // console.log(props);
@@ -23,7 +21,7 @@ export default function ExpenseItem(props) {
   };
 
   const isBorrowed = (expense) => {
-    if (expense.payer == props.currentUser.id) {
+    if (expense.payer === props.currentUser.id) {
       return false;
     }
     return true;
@@ -49,7 +47,7 @@ export default function ExpenseItem(props) {
   }
   return (
     <Expense>
-      <div key={props.index} style={center}>
+      <div style={center}>
         <Slide
           direction="right"
           in={true}

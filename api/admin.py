@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import (Expense,GroupExpense, Group,Account)
+from .models import (Expense,GroupExpense, Group,Account,FriendsInvitation)
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
@@ -21,10 +21,15 @@ class GroupExpenseAdmin(admin.ModelAdmin):
     pass
 
 
+class FriendsInvitationAdmin(admin.ModelAdmin):
+    pass
+
+
 class AccountInline(admin.StackedInline):
     model = Account
     can_delete = False
     verbose_name_plural = 'account'
+    
 
 class UserAdmin(BaseUserAdmin):
     inlines = (AccountInline,)
@@ -35,3 +40,4 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Expense, ExpenseAdmin)
 admin.site.register(GroupExpense, GroupExpenseAdmin)
+admin.site.register(FriendsInvitation, FriendsInvitationAdmin)

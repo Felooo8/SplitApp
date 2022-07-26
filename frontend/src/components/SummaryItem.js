@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import React from "react";
+import styled from "styled-components";
 import "../App.css";
 import Slide from "@mui/material/Slide";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
 
@@ -15,75 +14,58 @@ export default function SummaryItem(props) {
 
   return (
     <div style={summarizing}>
-      <div style={{ padding: "5px" }}>
+      {/* <div style={{ padding: "5px" }}> */}
+      <Slide
+        direction="right"
+        in={true}
+        style={{
+          transitionDelay: `${props.index * 100}ms`,
+          display: "inline-flex",
+          width: "90%",
+          padding: "16px",
+        }}
+      >
         <Paper
           elevation={5}
           style={{ minHeight: "100px", borderRadius: "10px" }}
         >
-          {/* <Badge color="warning" badgeContent={"!"} invisible={!isPendning()}> */}
-          {/* <Paper elevation={3}> */}
-          <Slide
-            direction="right"
-            in={true}
-            style={{
-              transitionDelay: `${props.index * 100}ms`,
-              display: "inline-flex",
-              width: "90%",
-            }}
-          >
-            <WholeStack>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  marginRight: "auto",
-                }}
-              >
-                <Avatar sx={{ width: 56, height: 56, fontSize: "2rem" }}>
-                  {props.username[0]}
-                </Avatar>
-                <Text>{props.username}</Text>
-              </div>
-              <RowStack
-                style={{
-                  display: "table",
-                  width: "min-content",
-                  marginRight: "4px",
-                  color: isBorrowed(props.debt) ? "orange" : "green",
-                }}
-              >
-                <YouBorrowed>
-                  {isBorrowed(props.debt) ? "you owe" : "owes you"}
-                </YouBorrowed>
-                <Price>${props.debt}</Price>
-              </RowStack>
-            </WholeStack>
-          </Slide>
-          {/* </Paper> */}
+          <WholeStack>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+                marginRight: "auto",
+              }}
+            >
+              <Avatar sx={{ width: 56, height: 56, fontSize: "2rem" }}>
+                {props.username[0]}
+              </Avatar>
+              <Text>{props.username}</Text>
+            </div>
+            <RowStack
+              style={{
+                display: "table",
+                width: "min-content",
+                marginRight: "4px",
+                color: isBorrowed(props.debt) ? "orange" : "green",
+              }}
+            >
+              <YouBorrowed>
+                {isBorrowed(props.debt) ? "you owe" : "owes you"}
+              </YouBorrowed>
+              <Price>${props.debt}</Price>
+            </RowStack>
+          </WholeStack>
         </Paper>
-      </div>
+      </Slide>
+      {/* </div> */}
     </div>
   );
 }
 
-const center = {
-  marginLeft: "auto",
-  marginRight: "auto",
-  padding: "5px",
-};
-
-const icon = {
-  top: "0",
-  left: "0",
-  fontSize: "56",
-  height: "60px",
-  width: "60px",
-  display: "table",
-};
-
 const summarizing = {
-  maxWidth: "500px",
+  maxWidth: "440px",
   width: "100%",
   marginLeft: "auto",
   marginRight: "auto",
@@ -128,16 +110,9 @@ const Price = styled.span`
   display: table-row-group;
 `;
 
-const StackColumn = styled.div`
-  width: -webkit-fill-available;
-  position: relative;
-  display: contents;
-`;
-
 const WholeStack = styled.div`
   flex-direction: row;
   display: flex;
   flex: 1 1 0%;
-  margin-top: 14px;
 }
 `;

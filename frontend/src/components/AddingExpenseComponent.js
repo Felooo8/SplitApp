@@ -1,36 +1,33 @@
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+import GroupsIcon from "@mui/icons-material/Groups";
+import SendIcon from "@mui/icons-material/Send";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import Fade from "@mui/material/Fade";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import Input from "@mui/material/Input";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import MenuItem from "@mui/material/MenuItem";
+import Modal from "@mui/material/Modal";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
+import Switch from "@mui/material/Switch";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import returnIcon from "../apis/returnIcon";
 import "../App.css";
 import ListOfCategories from "./listOfCategoriesModal";
 import ListOfGroupsModal from "./listOfGroupsModal";
-import styled, { css } from "styled-components";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import TextField from "@mui/material/TextField";
-import FormControl from "@mui/material/FormControl";
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import SendIcon from "@mui/icons-material/Send";
-import Switch from "@mui/material/Switch";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
-import GroupsIcon from "@mui/icons-material/Groups";
-import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
-import Fade from "@mui/material/Fade";
-import returnIcon from "../apis/returnIcon";
-import Chip from "@mui/material/Chip";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 
 const style = {
   position: "absolute",
@@ -82,11 +79,11 @@ export default function AddingExpense(props) {
 
   const validateForm = () => {
     return (
-      values.name != "" &&
-      values.payer != 0 &&
-      // values.owers != [] &&
+      values.name !== "" &&
+      values.payer !== 0 &&
+      // values.owers !== [] &&
       values.amount > 0 &&
-      values.owers != []
+      values.owers !== []
     );
   };
 
@@ -181,7 +178,7 @@ export default function AddingExpense(props) {
         if (group["id"] === id) {
           setPayers([{ id: currentUser.id, username: "You" }]);
           for (var i = 0; i < group["users"].length; i++) {
-            if (group["users"][i] != currentUser.id) {
+            if (group["users"][i] !== currentUser.id) {
               let newArray = {
                 id: group["users"][i],
                 username: group["usernames"][i],
@@ -210,19 +207,19 @@ export default function AddingExpense(props) {
   };
 
   const handleChangePayer = () => (event) => {
-    setValues({ ...values, ["payer"]: event.target.value });
+    setValues({ ...values, payer: event.target.value });
     if (event.target.value === values["owers"][0]) {
       if (event.target.value === currentUser.id) {
         let new_ower = payers[1]["id"];
         setValues({
           ...values,
-          ["owers"]: [new_ower],
+          owers: [new_ower],
         });
       } else {
         let new_ower = currentUser.id;
         setValues({
           ...values,
-          ["owers"]: [new_ower],
+          owers: [new_ower],
         });
       }
     }
@@ -234,7 +231,7 @@ export default function AddingExpense(props) {
   };
   const toggleClose = (category) => {
     setOpen(false);
-    setValues({ ...values, ["category"]: category });
+    setValues({ ...values, category: category });
   };
   const toggleCloseGroup = (group_friend_id, isGroup, group_friend_name) => {
     values.owers = [group_friend_id];
@@ -248,13 +245,13 @@ export default function AddingExpense(props) {
   const handleDeleteGroup = () => {
     setValues({
       ...values,
-      ["owers"]: [],
+      owers: [],
     });
     setChosenGroupName("");
   };
 
   const categoryIcon = () => {
-    if (values["category"] == "other") {
+    if (values["category"] === "other") {
       return (
         <CategoryOutlinedIcon
           color="action"
@@ -376,7 +373,7 @@ export default function AddingExpense(props) {
                   />
                 </Box>
               </Modal>
-              {chosenGroupName != "" ? (
+              {chosenGroupName !== "" ? (
                 <Chip
                   color="success"
                   style={chipstyling}

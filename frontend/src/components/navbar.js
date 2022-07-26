@@ -20,32 +20,8 @@ function NavbarTop(props) {
     window.location.replace("/login");
   };
 
-  const getUser = () => {
-    fetch("http://127.0.0.1:8000/api/auth/users/me/", {
-      headers: {
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText);
-        }
-        res.json().then((data) => {
-          setCurrentUser(data);
-        });
-      })
-      .catch((err) => {
-        console.log("Not logged in");
-        console.log(err);
-        if (window.location.pathname != "/login") {
-          window.location.replace("/login");
-        }
-      });
-  };
-  // setCurrentUser(localStorage.getItem("UserName"));
-
   const showUserName = () => {
-    if (currentUser != undefined || currentUser != null) {
+    if (currentUser !== undefined || currentUser !== null) {
       return currentUser;
     }
     return "Guest";
@@ -53,7 +29,7 @@ function NavbarTop(props) {
 
   const getUsername = () => {
     let username = localStorage.getItem("UserName");
-    if (username != undefined || username != null) {
+    if (username !== undefined || username !== null) {
       setCurrentUser(localStorage.getItem("UserName"));
     }
   };

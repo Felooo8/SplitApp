@@ -84,3 +84,6 @@ class FriendsInvitation(models.Model):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sender")
     invited = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="invited")
     accepted = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.sender.username + ": " + self.invited.username

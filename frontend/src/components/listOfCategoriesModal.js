@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { styled as style } from "styled-components";
-import { styled, alpha } from "@mui/material/styles";
+import SearchIcon from "@mui/icons-material/Search";
+import AppBar from "@mui/material/AppBar";
+import InputBase from "@mui/material/InputBase";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListSubheader from "@mui/material/ListSubheader";
-import AppBar from "@mui/material/AppBar";
+import { alpha, styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
-import InputBase from "@mui/material/InputBase";
-import SearchIcon from "@mui/icons-material/Search";
+import React, { useState } from "react";
 import returnIcon from "../apis/returnIcon";
 
 const Search = styled("div")(({ theme }) => ({
@@ -54,7 +53,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function ListOfCategories(props) {
-  const [open, setOpen] = React.useState(false);
+  const [open] = useState(false);
   const [search, setSearch] = useState("");
 
   const handleInputChange = (event) => {
@@ -71,28 +70,12 @@ export default function ListOfCategories(props) {
     "Tickets",
   ];
 
-  // const returnIcon = (category) => {
-  //   if (category == "Restaurant") {
-  //     return <RestaurantMenuRoundedIcon style={icon} />;
-  //   } else if (category == "Transport") {
-  //     return <LocalTaxiIcon style={icon} />;
-  //   } else if (category == "Rent") {
-  //     return <HomeIcon style={icon} />;
-  //   } else if (category == "Alcohol") {
-  //     return <LiquorIcon style={icon} />;
-  //   } else if (category == "Groceries") {
-  //     return <KitchenRoundedIcon style={icon} />;
-  //   } else if (category == "Tickets") {
-  //     return <ConfirmationNumberRoundedIcon style={icon} />;
-  //   }
-  //   return <PaidOutlinedIcon style={icon} />;
-  // };
   const handleClose = (e) => {
     props.toggle(e);
   };
 
   const isFiltred = (category) => {
-    if (search == "") {
+    if (search === "") {
       return;
     } else if (category.toLowerCase().includes(search.toLowerCase())) {
       return;
@@ -157,17 +140,3 @@ export default function ListOfCategories(props) {
     </div>
   );
 }
-
-const categoryIconSize = "60px";
-
-const icon = {
-  top: "0",
-  left: "0",
-  color: "rgba(128,128,128,1)",
-  fontSize: "56",
-  height: categoryIconSize,
-  width: categoryIconSize,
-  display: "table",
-  marginTop: "auto",
-  marginBottom: "auto",
-};

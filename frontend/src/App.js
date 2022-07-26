@@ -1,16 +1,15 @@
 import "./App.css";
-import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import React from "react";
 import SignIn from "./screens/SignIn";
 import AllExpenses from "./screens/AllExpenses";
 import AddExpense from "./screens/AddExpense";
 import Summary from "./screens/Summary";
+import FriendsFinder from "./screens/FriendsFinder";
 import Groups from "./screens/Groups";
 import Group from "./screens/MyGroup";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Button from "@mui/material/Button";
 import NavbarTop from "./components/navbar";
-import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 
 function App() {
@@ -53,13 +52,14 @@ function App() {
           </Grid>
         </Grid>
         <Routes>
-          <Route exact path="/" />
+          <Route exact path="/" element={<h1>Welcome!</h1>} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/mygroup/:id" element={<Group />} />
           <Route path="/all-expenses" element={<AllExpenses />} />
           <Route path="/add-expense" element={<AddExpense />} />
           <Route path="/summary" element={<Summary />} />
+          <Route path="/friends/:search" element={<FriendsFinder />} />
         </Routes>
       </Router>
     </div>

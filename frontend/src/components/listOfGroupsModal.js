@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { styled as style } from "styled-components";
+import React, { useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -66,8 +65,7 @@ const colors = [
 ];
 
 export default function ListOfGroupsModal(props) {
-  const [open, setOpen] = useState(false);
-  const [groups, setGroups] = useState(undefined);
+  const [open] = useState(false);
   const [search, setSearch] = useState("");
 
   const handleInputChange = (event) => {
@@ -79,7 +77,7 @@ export default function ListOfGroupsModal(props) {
   };
 
   const isFiltred = (category) => {
-    if (search == "") {
+    if (search === "") {
       return;
     } else if (category.toLowerCase().includes(search.toLowerCase())) {
       return;
@@ -171,17 +169,3 @@ export default function ListOfGroupsModal(props) {
     </div>
   );
 }
-
-const categoryIconSize = "60px";
-
-const icon = {
-  top: "0",
-  left: "0",
-  color: "rgba(128,128,128,1)",
-  fontSize: "56",
-  height: categoryIconSize,
-  width: categoryIconSize,
-  display: "table",
-  marginTop: "auto",
-  marginBottom: "auto",
-};

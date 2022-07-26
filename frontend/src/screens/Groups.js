@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 
 // import { getGroups } from "../apis/fetch";
 
 function Groups(props) {
-  const [groups, setGroups] = useState(undefined);
+  const [groups, setGroups] = useState([]);
 
   const colors = [
     "#0275d8",
@@ -42,7 +42,7 @@ function Groups(props) {
     }, 50000);
     return () => clearInterval(interval);
   }, []);
-  if (groups == undefined) {
+  if (groups === []) {
     return <p>No groups :(</p>;
   }
   console.log(groups);
@@ -74,8 +74,3 @@ function Groups(props) {
 }
 
 export default Groups;
-
-const groupButton = {
-  marginRight: "10px",
-  marginTop: "10px",
-};

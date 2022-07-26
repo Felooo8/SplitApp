@@ -1,3 +1,4 @@
+from django.forms import BooleanField
 from django.shortcuts import render
 from rest_framework import generics, status
 from .serializers import (
@@ -18,6 +19,7 @@ from django.utils.crypto import get_random_string
 
 from collections import defaultdict
 from itertools import chain 
+from django.db.models import Value
 
 
 # Create your views here.
@@ -174,7 +176,7 @@ class SeeFriends(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-class FriendsInvitation(APIView):
+class InviteFriend(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
@@ -185,6 +187,22 @@ class FriendsInvitation(APIView):
             friend = User.objects.get(id=friend_id)
             invitation = FriendsInvitation(sender=user, invited=friend)
             invitation.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except User.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RemoveFriend(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        friend_id = body["id"]
+        try:
+            friend = User.objects.get(id=friend_id)
+            account = Account.objects.get(user=user)
+            account.friends.remove(friend)
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except User.DoesNotExist:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
@@ -315,13 +333,25 @@ class GetUsersSummarize(APIView):
 class FindFriends(APIView):
     permission_classes = [IsAuthenticated]
 
+    def is_friend(self, request, user):
+        account = Account.objects.get(user=request.user)
+        return user in account.friends.all()
+
     def get(self, request, username, format=None):
+
         try:
             username = self.kwargs['username']
-            users_starts = User.objects.filter(username__startswith=username)
-            users_contains = User.objects.filter(username__icontains=username).exclude(username__startswith=username)
+            users_starts = User.objects.filter(username__startswith=username).exclude(id=request.user.id)
+            users_contains = User.objects.filter(username__icontains=username).exclude(username__startswith=username).exclude(id=request.user.id)
             users = list(chain(users_starts, users_contains))
+            account = Account.objects.get(user=request.user)
+            friends = [friend.id for friend in account.friends.all()]
+            # for user in users:
+            #     value = self.is_friend(request, user)
+            #     user.is_friend = value
+            #     print(user.is_friend)
+            # print(users)
             users = UserSerializer(users, many=True).data
-            return Response(users, status=status.HTTP_200_OK)
+            return Response([users, friends], status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
