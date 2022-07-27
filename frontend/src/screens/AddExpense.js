@@ -1,5 +1,6 @@
 import React from "react";
 import AddingExpense from "../components/AddingExpenseComponent";
+import BottomAppBar from "../components/Appbar";
 
 function AddExpense(props) {
   return (
@@ -11,6 +12,7 @@ function AddExpense(props) {
     >
       <p>Add expense:</p>
       <AddingExpense />
+      <BottomAppBar value="add expense" />
     </div>
   );
 }

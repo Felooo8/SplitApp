@@ -80,9 +80,10 @@ function Group(props) {
   if (expenses === undefined || keys === undefined || values === undefined) {
     return <p>Loading...</p>;
   }
+  console.log(expenses);
   return (
     <div>
-      <p>Your grups:</p>
+      <p>Your group:</p>
       <Stack spacing={2}>
         {expenses.map((expense, index) => (
           <ExpenseItem
@@ -90,6 +91,7 @@ function Group(props) {
             expense={expense}
             index={index}
             currentUser={currentUser}
+            show={!expense.settled}
           />
         ))}
       </Stack>

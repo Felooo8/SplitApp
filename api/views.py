@@ -52,7 +52,7 @@ class GetUsersGroups(APIView):
         user = request.user
         sorted_groups = Group.objects.filter(users=user)
         if len(sorted_groups) > 0:
-            data = GroupSerializer(sorted_groups, many=True).data
+            data = GroupSerializer(sorted_groups, many=True, context={'user': user}).data
             return Response(data, status=status.HTTP_200_OK)
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 

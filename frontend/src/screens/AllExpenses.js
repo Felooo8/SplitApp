@@ -7,6 +7,7 @@ import RadioGroup from "@mui/material/RadioGroup";
 import Stack from "@mui/material/Stack";
 import React, { useEffect, useReducer, useState } from "react";
 import ExpenseItem from "../components/Expense";
+import BottomAppBar from "../components/Appbar";
 
 function AllExpenses(props) {
   const [userExpenses, setUserExpenses] = useState(undefined);
@@ -184,6 +185,7 @@ function AllExpenses(props) {
           ))}
         </Stack>
       </div>
+      <BottomAppBar value="all expenses" />
     </div>
   );
 }

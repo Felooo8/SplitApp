@@ -10,6 +10,7 @@ import Group from "./screens/MyGroup";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Button from "@mui/material/Button";
 import NavbarTop from "./components/navbar";
+import BottomAppBar from "./components/Appbar";
 import Grid from "@mui/material/Grid";
 
 function App() {
@@ -52,7 +53,16 @@ function App() {
           </Grid>
         </Grid>
         <Routes>
-          <Route exact path="/" element={<h1>Welcome!</h1>} />
+          <Route
+            exact
+            path="/"
+            element={
+              <div>
+                <h1>Welcome!</h1>
+                <BottomAppBar value="home" />
+              </div>
+            }
+          />
           <Route path="/login" element={<SignIn />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/mygroup/:id" element={<Group />} />

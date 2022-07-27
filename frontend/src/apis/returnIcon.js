@@ -44,4 +44,5 @@ const icon = {
   height: categoryIconSize,
   width: categoryIconSize,
   display: "table",
+  margin: "auto",
 };

@@ -11,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     usernames = serializers.SerializerMethodField()
+    balance = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S")
     total_spent = serializers.SerializerMethodField('get_total_spent')
     spent_by_category = serializers.SerializerMethodField('get_spent_by_category')
@@ -28,10 +29,14 @@ class GroupSerializer(serializers.ModelSerializer):
             usernames.append(user.username)
         return usernames
 
+    def get_balance(self, obj):
+        user = self.context.get("user")
+        return obj.balance(user)
+
     class Meta:
         model = Group
         fields = ('id', 'users', 'usernames', 'group_expenses', 'group_name',
-                  'created_at', 'total_spent', 'spent_by_category')
+                  'created_at', 'total_spent', 'spent_by_category', 'balance')
 
 
 
@@ -42,12 +47,20 @@ class GroupExpenseSerializer(serializers.ModelSerializer):
     amount = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
     payer = serializers.SerializerMethodField()
+    settled = serializers.SerializerMethodField()
+    is_paid = serializers.SerializerMethodField()
 
     def get_payer(self, obj):
         return obj.expenses.all()[0].payer.id
 
     def get_payer_username(self, obj):
         return obj.expenses.all()[0].payer.username
+
+    def get_settled(self, obj):
+        return obj.expenses.all()[0].settled
+
+    def get_is_paid(self, obj):
+        return obj.expenses.all()[0].is_paid
 
     def get_name(self, obj):
         return obj.expenses.all()[0].name
@@ -65,7 +78,7 @@ class GroupExpenseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupExpense
-        fields = ('id','payer', 'payer_username', 'short_date', 'name', 'category', 'amount')
+        fields = ('id','payer', 'payer_username', 'short_date', 'name', 'category', 'amount', 'settled', 'is_paid')
 
 
 class ExpenseSerializer(serializers.ModelSerializer):

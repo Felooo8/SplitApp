@@ -2,6 +2,9 @@ from unicodedata import category
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from collections import defaultdict
+from collections import Counter
+from django.db.models import Q
 
 # Create your models here.
 
@@ -21,7 +24,7 @@ class Account(models.Model):
 
 
 class Expense(models.Model):
-    name = models.TextField(default='', blank=True)
+    name = models.TextField(default='', blank=True, max_length=40)
     category = models.CharField(choices=types, default=types[0], max_length=15)
     amount = models.DecimalField(default=0, blank=True, max_digits=8, decimal_places=2)
     splitted = models.BooleanField(choices = TRUE_FALSE_CHOICES, blank=False, default=True)
@@ -62,7 +65,7 @@ class GroupExpense(models.Model):
 class Group(models.Model):
     users = models.ManyToManyField(settings.AUTH_USER_MODEL)
     group_expenses = models.ManyToManyField(GroupExpense, blank=True)
-    group_name = models.TextField(default='Group chat', blank=True, max_length=30)
+    group_name = models.TextField(default='Group chat', blank=True, max_length=40)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
@@ -78,6 +81,43 @@ class Group(models.Model):
         for type in types:
             spent[type[0]] = sum(expense.expenses.all()[0].amount for expense in self.group_expenses.all() if expense.expenses.all()[0].category == type[0])
         return spent
+
+    def balance(self, user):
+
+        def def_value():
+            return 0
+
+        # debts = defaultdict(def_value)
+        # owes = defaultdict(def_value)
+        balance = 0
+
+        for group_expense in self.group_expenses.all():
+            expenses = group_expense.expenses.filter(Q(ower=user) | Q(payer=user) | Q(settled=False))
+            for expense in expenses.filter(Q(ower=user)):
+                balance -= expense.amount
+            for expense in expenses.filter(Q(payer=user)):
+                balance += expense.amount
+        # if merge:
+        return balance
+
+
+    def balance_all_usesrs(self, merge=True):
+
+        def def_value():
+            return 0
+
+        # debts = defaultdict(def_value)
+        # owes = defaultdict(def_value)
+        balance = defaultdict(def_value)
+
+        for group_expense in self.group_expenses.all():
+            for expense in group_expense.expenses.all():
+                balance[expense.ower.username] -= expense.amount
+                balance[expense.payer.username] += expense.amount
+        # if merge:
+        return balance
+        # return dict(Counter(debts)+Counter(owes))
+        # return {"debts": debts, "owes": owes}
 
 
 class FriendsInvitation(models.Model):

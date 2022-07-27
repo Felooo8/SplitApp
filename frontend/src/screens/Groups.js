@@ -1,6 +1,8 @@
+import { IconButton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
+import BottomAppBar from "../components/Appbar";
+import GroupItem from "../components/GroupItem";
 
 // import { getGroups } from "../apis/fetch";
 
@@ -52,23 +54,29 @@ function Groups(props) {
       <div>
         {groups.map((group, index) => (
           <div key={index}>
-            <Button
+            <IconButton
               component={Link}
               to={`/mygroup/${group.id}`}
-              variant="contained"
-              color="primary"
+              // variant="contained"
+              // color="primary"
               style={{
-                backgroundColor: colors[index % colors.length],
-                marginTop: "10px",
+                // backgroundColor: colors[index % colors.length],
+                // marginTop: "10px",
+                width: "100%",
               }}
               spending={group.spent_by_category}
               state={{ id: group.id }}
             >
-              {group.group_name}
-            </Button>
+              <GroupItem
+                name={group.group_name}
+                index={index}
+                balance={group.balance}
+              />
+            </IconButton>
           </div>
         ))}
       </div>
+      <BottomAppBar value="groups" />
     </div>
   );
 }

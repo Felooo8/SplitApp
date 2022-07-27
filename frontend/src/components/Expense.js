@@ -12,7 +12,7 @@ import returnIcon from "../apis/returnIcon";
 import Alert from "@mui/material/Alert";
 
 export default function ExpenseItem(props) {
-  // console.log(props);
+  console.log(props);
   const displayUser = () => {
     if (isBorrowed(props.expense)) {
       return props.expense.payer_username;
@@ -51,7 +51,11 @@ export default function ExpenseItem(props) {
         <Slide
           direction="right"
           in={true}
-          style={{ transitionDelay: `${props.index * 100}ms` }}
+          style={{
+            transitionDelay: `${props.index * 100}ms`,
+            borderRadius: "10px",
+          }}
+          sx={{ boxShadow: 5 }}
         >
           <Accordion className="boxMovementa">
             <AccordionSummary
@@ -185,6 +189,6 @@ const WholeStack = styled.div`
   flex-direction: row;
   display: flex;
   flex: 1 1 0%;
-  margin-top: 14px;
+  // margin-top: 14px;
 }
 `;

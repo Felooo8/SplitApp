@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import SummaryItem from "../components/SummaryItem";
+import BottomAppBar from "../components/Appbar";
 
 function Summary(props) {
   const [summaries, setSummaries] = useState({});
@@ -58,6 +59,7 @@ function Summary(props) {
           />
         ))}
       </Stack>
+      <BottomAppBar value="summary" />
     </div>
   );
 }
