@@ -133,7 +133,7 @@ export default function AddingExpense(props) {
       if (res.ok) {
         res.json().then((data) => {
           setCurrentUser(data);
-          setPayers([{ id: data.id, username: "You" }]);
+          // setPayers([{ id: data.id, username: "You" }]);
         });
       } else {
         console.log("Not logged in");
