@@ -55,11 +55,12 @@ const defaultValues = {
 export default function AddingExpense(props) {
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState(false);
-  const [groups, setGroups] = useState(undefined);
+  const [groups, setGroups] = useState([]);
   const [currentUser, setCurrentUser] = useState(undefined);
   const [payers, setPayers] = useState([]);
-  const [friends, setFriends] = useState(undefined);
+  const [friends, setFriends] = useState([]);
   const [chosenGroupName, setChosenGroupName] = useState("");
+  const [chosenGroupsName, setChosenGroupsName] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpenGroup = () => setOpenGroup(true);
@@ -74,6 +75,7 @@ export default function AddingExpense(props) {
     is_paid: false,
     settled: false,
     owers: [],
+    owers_groups: [],
     is_group: true,
   });
 
@@ -174,6 +176,7 @@ export default function AddingExpense(props) {
 
   const setPayersData = (id, isGroup, username) => {
     console.log("ASD");
+    console.log(id, isGroup, username);
     if (isGroup) {
       for (const group of groups) {
         if (group["id"] === id) {
@@ -240,6 +243,7 @@ export default function AddingExpense(props) {
   };
 
   const handleChangeSwitch = (prop) => (event) => {
+    console.log(chosenGroupsName);
     console.log(values);
     setValues({ ...values, [prop]: event.target.checked });
   };
@@ -248,24 +252,77 @@ export default function AddingExpense(props) {
     setValues({ ...values, category: category });
   };
   const toggleCloseGroup = (group_friend_id, isGroup, group_friend_name) => {
-    values.owers = [group_friend_id];
     values.is_group = isGroup;
+    if (isGroup) {
+      values.owers_groups = [...values.owers_groups, group_friend_id];
+      console.log(values);
+    } else {
+      values.owers = [...values.owers, group_friend_id];
+    }
     setOpenGroup(false);
-    setChosenGroupName(group_friend_name);
-    setPayersData(group_friend_id, isGroup, group_friend_name);
+    setChosenGroupsName((chosenGroupsName) => [
+      ...chosenGroupsName,
+      group_friend_name,
+    ]);
+    if (chosenGroupsName.length > 0) {
+      setValues({ ...values, payer: currentUser.id });
+      setPayers([{ id: currentUser.id, username: "You" }]);
+    } else {
+      setPayersData(group_friend_id, isGroup, group_friend_name);
+    }
     console.log(payers);
   };
 
-  const handleDeleteGroup = () => {
-    setValues({
-      ...values,
-      owers: [],
-    });
-    setPayers([]);
-    values.payer = null;
-    setValues({ ...values, payer: null });
-    setChosenGroupName("");
-    console.log(values);
+  const afterDeletingGroup = (index) => {
+    if (chosenGroupsName.length > 2) {
+      setValues({ ...values, payer: currentUser.id });
+      setPayers([{ id: currentUser.id, username: "You" }]);
+    } else if (chosenGroupsName.length === 2) {
+      if (values.owers.length === 0) {
+        values.is_group = true;
+        values.owers_groups = [
+          values.owers_groups[chosenGroupsName.length - index - 1],
+        ];
+        setChosenGroupsName([
+          chosenGroupsName[chosenGroupsName.length - index - 1],
+        ]);
+        setPayersData(
+          values.owers_groups[0],
+          true,
+          chosenGroupsName[chosenGroupsName.length - index - 1]
+        );
+      } else {
+        values.is_group = false;
+        values.owers_groups = [
+          values.owers[chosenGroupsName.length - index - 1],
+        ];
+        setChosenGroupsName([
+          chosenGroupsName[chosenGroupsName.length - index - 1],
+        ]);
+        setPayersData(
+          values.owers[0],
+          false,
+          chosenGroupsName[chosenGroupsName.length - index - 1]
+        );
+      }
+    } else {
+      setValues({ ...values, payer: null });
+      values.owers = [];
+      values.owers_groups = [];
+      values.payer = null;
+      setValues({ ...values, payer: null });
+      setValues({ ...values, owers_groups: [] });
+      setValues({ ...values, owers: [] });
+      setPayers([]);
+    }
+  };
+
+  const handleDeleteGroup = (index) => {
+    setChosenGroupsName([
+      ...chosenGroupsName.slice(0, index),
+      ...chosenGroupsName.slice(index + 1, chosenGroupsName.length),
+    ]);
+    afterDeletingGroup(index);
   };
 
   const categoryIcon = () => {
@@ -299,58 +356,52 @@ export default function AddingExpense(props) {
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography
-                style={{
-                  width: "-webkit-fill-available",
-                }}
-              >
-                <WholeStack>
-                  <StackColumn>
-                    <Button onClick={handleOpen}>{categoryIcon()}</Button>
-                    <Modal
-                      open={open}
-                      onClose={handleClose}
-                      aria-labelledby="modal-modal-title"
-                      aria-describedby="modal-modal-description"
-                    >
-                      <Box sx={style}>
-                        <ListOfCategories toggle={toggleClose} />
-                      </Box>
-                    </Modal>
-                    <RowStack style={{ float: "left " }}>
-                      <TextField
-                        id="standard-basic"
-                        label="Name"
-                        value={values.name}
-                        variant="standard"
-                        style={nameInput}
-                        onChange={handleChange("name")}
-                      />
+              <WholeStack>
+                <StackColumn>
+                  <Button onClick={handleOpen}>{categoryIcon()}</Button>
+                  <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={style}>
+                      <ListOfCategories toggle={toggleClose} />
+                    </Box>
+                  </Modal>
+                  <RowStack style={{ float: "left " }}>
+                    <TextField
+                      id="standard-basic"
+                      label="Name"
+                      value={values.name}
+                      variant="standard"
+                      style={nameInput}
+                      onChange={handleChange("name")}
+                    />
 
-                      <FormControl
-                        fullWidth
-                        sx={{ m: 1 }}
-                        variant="standard"
-                        style={ammountInput}
-                      >
-                        <InputLabel htmlFor="standard-adornment-amount">
-                          Amount
-                        </InputLabel>
-                        <Input
-                          type="number"
-                          id="standard-adornment-amount"
-                          label="Amount"
-                          value={values.amount}
-                          onChange={handleChange("amount")}
-                          startAdornment={
-                            <InputAdornment position="start">$</InputAdornment>
-                          }
-                        />
-                      </FormControl>
-                    </RowStack>
-                  </StackColumn>
-                </WholeStack>
-              </Typography>
+                    <FormControl
+                      fullWidth
+                      sx={{ m: 1 }}
+                      variant="standard"
+                      style={ammountInput}
+                    >
+                      <InputLabel htmlFor="standard-adornment-amount">
+                        Amount
+                      </InputLabel>
+                      <Input
+                        type="number"
+                        id="standard-adornment-amount"
+                        label="Amount"
+                        value={values.amount}
+                        onChange={handleChange("amount")}
+                        startAdornment={
+                          <InputAdornment position="start">$</InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                  </RowStack>
+                </StackColumn>
+              </WholeStack>
             </AccordionSummary>
             <FormGroup
               style={{
@@ -383,24 +434,30 @@ export default function AddingExpense(props) {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
               >
-                <Box sx={style}>
-                  <ListOfGroupsModal
-                    toggle={toggleCloseGroup}
-                    groups={groups}
-                    friends={friends}
-                  />
-                </Box>
+                {groups !== [] || friends !== [] ? (
+                  <Box sx={style}>
+                    <ListOfGroupsModal
+                      toggle={toggleCloseGroup}
+                      groups={groups}
+                      friends={friends}
+                    />
+                  </Box>
+                ) : null}
               </Modal>
-              {chosenGroupName !== "" ? (
-                <Chip
-                  color="success"
-                  style={chipstyling}
-                  label={chosenGroupName}
-                  variant="outlined"
-                  icon={<GroupOutlinedIcon />}
-                  onDelete={handleDeleteGroup}
-                />
-              ) : null}
+              {chosenGroupsName !== []
+                ? chosenGroupsName.map((group, index) => (
+                    <Chip
+                      color="success"
+                      style={chipstyling}
+                      label={group}
+                      value={group}
+                      key={index}
+                      variant="outlined"
+                      icon={<GroupOutlinedIcon />}
+                      onDelete={() => handleDeleteGroup(index)}
+                    />
+                  ))
+                : null}
 
               {isPayerUpdated() ? (
                 <FormControl sx={{ m: 1, minWidth: 80 }}>
@@ -458,7 +515,7 @@ const ammountInput = {
   display: "flex",
   margin: "0",
 };
-const Expense = styled.span`
+const Expense = styled.div`
   max-width: 500px;
   width: 100%;
   margin-left: auto !important;
