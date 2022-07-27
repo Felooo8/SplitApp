@@ -45,7 +45,7 @@ const defaultValues = {
   name: "",
   category: "other",
   splitted: false,
-  payer: 1,
+  payer: null,
   is_paid: false,
   settled: false,
   owers: [],
@@ -70,7 +70,7 @@ export default function AddingExpense(props) {
     name: "",
     category: "other",
     splitted: false,
-    payer: 1,
+    payer: null,
     is_paid: false,
     settled: false,
     owers: [],
@@ -173,6 +173,7 @@ export default function AddingExpense(props) {
   };
 
   const setPayersData = (id, isGroup, username) => {
+    console.log("ASD");
     if (isGroup) {
       for (const group of groups) {
         if (group["id"] === id) {
@@ -186,6 +187,11 @@ export default function AddingExpense(props) {
               setPayers((payers) => [...payers, newArray]);
             }
           }
+          values.payer = currentUser.id;
+          setValues({
+            ...values,
+            payer: currentUser.id,
+          });
           return;
         }
       }
@@ -194,6 +200,11 @@ export default function AddingExpense(props) {
         { id: currentUser.id, username: "You" },
         { id: id, username: username },
       ]);
+      values.payer = currentUser.id;
+      setValues({
+        ...values,
+        payer: currentUser.id,
+      });
     }
   };
 
@@ -207,6 +218,9 @@ export default function AddingExpense(props) {
   };
 
   const handleChangePayer = () => (event) => {
+    console.log("CHANGING");
+    console.log(event.target.value);
+    values.payer = event.target.value;
     setValues({ ...values, payer: event.target.value });
     if (event.target.value === values["owers"][0]) {
       if (event.target.value === currentUser.id) {
@@ -226,8 +240,8 @@ export default function AddingExpense(props) {
   };
 
   const handleChangeSwitch = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.checked });
     console.log(values);
+    setValues({ ...values, [prop]: event.target.checked });
   };
   const toggleClose = (category) => {
     setOpen(false);
@@ -247,7 +261,11 @@ export default function AddingExpense(props) {
       ...values,
       owers: [],
     });
+    setPayers([]);
+    values.payer = null;
+    setValues({ ...values, payer: null });
     setChosenGroupName("");
+    console.log(values);
   };
 
   const categoryIcon = () => {
