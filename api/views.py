@@ -108,9 +108,11 @@ class AddExpense(APIView):
 
     def post(self, request, format=None):
         body = json.loads(request.body)["values"]
+        print(body)
         payer_id = body["payer"]
         payer = User.objects.get(id=payer_id)
         owers_ids = body["owers"]
+        groups_ids = body["owers_groups"]
         name = body["name"]
         category = "Other"
         category_name = body["category"]
@@ -122,14 +124,28 @@ class AddExpense(APIView):
         splitted = body["splitted"]
         is_paid = body["is_paid"]
         settled = body["settled"]
-        is_group = body["is_group"]
         try:
-            for ower_id in owers_ids:
-                if(is_group):
+            if not owers_ids == [None]:
+                for ower_id in owers_ids:
+                    print(ower_id)
+                    ower = User.objects.get(id=ower_id)
+                    new_expense = Expense(
+                        payer=payer,
+                        ower=ower,
+                        category=category,
+                        name=name,
+                        amount=amount,
+                        splitted=splitted,
+                        is_paid=is_paid,
+                        settled=settled,
+                    )
+                    new_expense.save()
+            if not groups_ids == [None]:
+                for group_id in groups_ids:
                     unique_id = get_random_string(length=16)
                     new_group_expense = GroupExpense()
                     new_group_expense.save()
-                    group = Group.objects.get(id=ower_id)
+                    group = Group.objects.get(id=group_id)
                     for ower in group.users.all():
                         if(ower != payer):
                             new_expense = Expense(
@@ -147,19 +163,6 @@ class AddExpense(APIView):
                             new_group_expense.expenses.add(new_expense)
                     new_group_expense.save()
                     group.group_expenses.add(new_group_expense)
-                else:
-                    ower = User.objects.get(id=ower_id)
-                    new_expense = Expense(
-                        payer=payer,
-                        ower=ower,
-                        category=category,
-                        name=name,
-                        amount=amount,
-                        splitted=splitted,
-                        is_paid=is_paid,
-                        settled=settled,
-                    )
-                    new_expense.save()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(None, status=status.HTTP_422_UNPROCESSABLE_ENTITY)

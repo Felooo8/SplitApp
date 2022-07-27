@@ -45,11 +45,11 @@ const defaultValues = {
   name: "",
   category: "other",
   splitted: false,
-  payer: null,
+  payer: undefined,
   is_paid: false,
   settled: false,
   owers: [],
-  is_group: true,
+  owers_groups: [],
 };
 
 export default function AddingExpense(props) {
@@ -71,12 +71,11 @@ export default function AddingExpense(props) {
     name: "",
     category: "other",
     splitted: false,
-    payer: null,
+    payer: undefined,
     is_paid: false,
     settled: false,
     owers: [],
     owers_groups: [],
-    is_group: true,
   });
 
   const validateForm = () => {
@@ -167,7 +166,7 @@ export default function AddingExpense(props) {
       if (res.ok) {
         console.log("Good");
         setValues(defaultValues);
-        setChosenGroupName("");
+        setChosenGroupsName([]);
       } else {
         console.log("Failed");
       }
@@ -278,8 +277,9 @@ export default function AddingExpense(props) {
       setValues({ ...values, payer: currentUser.id });
       setPayers([{ id: currentUser.id, username: "You" }]);
     } else if (chosenGroupsName.length === 2) {
+      console.log(values);
       if (values.owers.length === 0) {
-        values.is_group = true;
+        console.log("1");
         values.owers_groups = [
           values.owers_groups[chosenGroupsName.length - index - 1],
         ];
@@ -292,7 +292,7 @@ export default function AddingExpense(props) {
           chosenGroupsName[chosenGroupsName.length - index - 1]
         );
       } else {
-        values.is_group = false;
+        console.log("2");
         values.owers_groups = [
           values.owers[chosenGroupsName.length - index - 1],
         ];
@@ -306,11 +306,11 @@ export default function AddingExpense(props) {
         );
       }
     } else {
-      setValues({ ...values, payer: null });
+      setValues({ ...values, payer: undefined });
       values.owers = [];
       values.owers_groups = [];
-      values.payer = null;
-      setValues({ ...values, payer: null });
+      values.payer = undefined;
+      setValues({ ...values, payer: undefined });
       setValues({ ...values, owers_groups: [] });
       setValues({ ...values, owers: [] });
       setPayers([]);
