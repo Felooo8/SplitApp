@@ -9,15 +9,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "../App.css";
 import Slide from "@mui/material/Slide";
 import returnIcon from "../apis/returnIcon";
-import Alert from "@mui/material/Alert";
 
-export default function ExpenseItem(props) {
+export default function ExpenseItemGroup(props) {
   console.log(props);
   const displayUser = () => {
     if (isBorrowed(props.expense)) {
       return props.expense.payer_username;
     }
-    return props.expense.ower_username;
+    return "You";
   };
 
   const isBorrowed = (expense) => {
@@ -25,15 +24,6 @@ export default function ExpenseItem(props) {
       return false;
     }
     return true;
-  };
-
-  const isPendning = () => {
-    if (!isBorrowed(props.expense)) {
-      if (props.expense.is_paid) {
-        return true;
-      }
-    }
-    return false;
   };
 
   const marked = (expense) => {
@@ -89,11 +79,6 @@ export default function ExpenseItem(props) {
                   </RowStack>
                 </StackColumn>
               </WholeStack>
-              {isPendning() ? (
-                <Alert severity="info">
-                  {displayUser()} has marked as paid
-                </Alert>
-              ) : null}
             </AccordionSummary>
             <AccordionDetails>
               <Settling

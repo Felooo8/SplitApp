@@ -5,6 +5,7 @@ import BottomAppBar from "../components/Appbar";
 
 function Summary(props) {
   const [summaries, setSummaries] = useState({});
+  const [total, setTotal] = useState(null);
   const [currentUser, setCurrentUser] = useState(undefined);
 
   const getSummarize = () => {
@@ -19,6 +20,7 @@ function Summary(props) {
       .then((data) => {
         console.log(data);
         setSummaries(data);
+        inTotal(data);
       });
   };
 
@@ -38,6 +40,29 @@ function Summary(props) {
     });
   };
 
+  const Overrall = () => {
+    if (total > 0) {
+      return (
+        <h5 style={{ color: "orange", padding: "10px" }}>
+          Overall, you owe ${Math.abs(total)}
+        </h5>
+      );
+    }
+    return (
+      <h5 style={{ color: "green", padding: "10px" }}>
+        Overall, people owe you ${Math.abs(total).toFixed(2)}
+      </h5>
+    );
+  };
+
+  const inTotal = (summaries) => {
+    var total = 0;
+    for (let key in summaries) {
+      total += summaries[key];
+    }
+    setTotal(total);
+  };
+
   useEffect(() => {
     getUser();
     getSummarize();
@@ -47,8 +72,8 @@ function Summary(props) {
   }
   return (
     <div>
-      <p>Your summary:</p>
-      <Stack spacing={2}>
+      {total !== null ? Overrall() : null}
+      <Stack spacing={2} style={{ marginBottom: "10px" }}>
         {Object.entries(summaries).map(([key, value], index) => (
           <SummaryItem
             key={index}

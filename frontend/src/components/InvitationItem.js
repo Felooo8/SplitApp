@@ -1,6 +1,4 @@
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
-import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
-import CancelIcon from "@mui/icons-material/Cancel";
 import PersonAddDisabledIcon from "@mui/icons-material/PersonAddDisabled";
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
@@ -10,13 +8,10 @@ import styled from "styled-components";
 import "../App.css";
 import ListItemButton from "@mui/material/ListItemButton";
 
-const inviteFriendUrl = "inviteFriend";
-const removeFriendUrl = "removeFriend";
-const acceptInvitationUrl = "acceptInvitation/byUser";
-const declineInvitationUrl = "declineInvitation/byUser";
-const cancelInvitationUrl = "cancelInvitation/byUser";
+const acceptInvitationUrl = "acceptInvitation";
+const declineInvitationUrl = "declineInvitation";
 
-export default function SearchResult(props) {
+export default function InvitationItem(props) {
   console.log(props);
   const manageRequest = (url) => {
     fetch("http://127.0.0.1:8000/api/" + url, {
@@ -25,7 +20,7 @@ export default function SearchResult(props) {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ id: props.user.id }),
+      body: JSON.stringify({ id: props.invitation.id }),
     }).then((res) => {
       if (res.ok) {
         props.toggle();
@@ -34,53 +29,6 @@ export default function SearchResult(props) {
       }
     });
   };
-
-  const sendInvitation = () => {
-    if (props.isFriend) {
-      manageRequest(removeFriendUrl);
-    } else if (props.isSent) {
-      manageRequest(cancelInvitationUrl);
-    } else {
-      manageRequest(inviteFriendUrl);
-    }
-  };
-
-  const showIcon = () => {
-    if (props.isFriend) {
-      return (
-        <PersonRemoveAlt1Icon
-          sx={{
-            width: 56,
-            height: 56,
-            fontSize: "2rem",
-          }}
-        />
-      );
-    }
-    if (props.isSent) {
-      return (
-        <CancelIcon
-          sx={{
-            width: 56,
-            height: 56,
-            fontSize: "2rem",
-          }}
-        />
-      );
-    }
-    return (
-      <PersonAddAltRoundedIcon
-        sx={{
-          width: 56,
-          height: 56,
-          fontSize: "2rem",
-        }}
-      />
-    );
-  };
-  // const isFriend = (debt) => {
-  //   return debt > 0;
-  // };
 
   return (
     <div style={summarizing}>
@@ -117,9 +65,9 @@ export default function SearchResult(props) {
                   fontSize: "2rem",
                 }}
               >
-                {props.user.username[0]}
+                {props.invitation.sender_username[0]}
               </Avatar>
-              <Text>{props.user.username}</Text>
+              <Text>{props.invitation.sender_username}</Text>
             </div>
             <RowStack
               style={{
@@ -129,36 +77,30 @@ export default function SearchResult(props) {
                 // color: isBorrowed(props.debt) ? "orange" : "green",
               }}
             >
-              {props.isPending ? (
-                <div style={{ display: "flex" }}>
-                  <ListItemButton
-                    onClick={() => manageRequest(acceptInvitationUrl)}
-                  >
-                    <PersonAddAltRoundedIcon
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        fontSize: "2rem",
-                      }}
-                    />
-                  </ListItemButton>
-                  <ListItemButton
-                    onClick={() => manageRequest(declineInvitationUrl)}
-                  >
-                    <PersonAddDisabledIcon
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        fontSize: "2rem",
-                      }}
-                    />
-                  </ListItemButton>
-                </div>
-              ) : (
-                <ListItemButton onClick={sendInvitation}>
-                  {showIcon()}
+              <div style={{ display: "flex" }}>
+                <ListItemButton
+                  onClick={() => manageRequest(acceptInvitationUrl)}
+                >
+                  <PersonAddAltRoundedIcon
+                    sx={{
+                      width: 56,
+                      height: 56,
+                      fontSize: "2rem",
+                    }}
+                  />
                 </ListItemButton>
-              )}
+                <ListItemButton
+                  onClick={() => manageRequest(declineInvitationUrl)}
+                >
+                  <PersonAddDisabledIcon
+                    sx={{
+                      width: 56,
+                      height: 56,
+                      fontSize: "2rem",
+                    }}
+                  />
+                </ListItemButton>
+              </div>
             </RowStack>
           </WholeStack>
         </Paper>

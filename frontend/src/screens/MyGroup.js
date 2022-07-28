@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import ChartPie from "../components/chart";
 import { useParams } from "react-router-dom";
-import ExpenseItem from "../components/Expense";
+import ExpenseItemGroup from "../components/ExpenseGroup";
 
 function Group(props) {
   const [currentUser, setCurrentUser] = useState(undefined);
@@ -86,7 +86,7 @@ function Group(props) {
       <p>Your group:</p>
       <Stack spacing={2}>
         {expenses.map((expense, index) => (
-          <ExpenseItem
+          <ExpenseItemGroup
             key={index}
             expense={expense}
             index={index}

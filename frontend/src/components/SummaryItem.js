@@ -54,7 +54,7 @@ export default function SummaryItem(props) {
               <YouBorrowed>
                 {isBorrowed(props.debt) ? "you owe" : "owes you"}
               </YouBorrowed>
-              <Price>${props.debt}</Price>
+              <Price>${Math.abs(props.debt)}</Price>
             </RowStack>
           </WholeStack>
         </Paper>

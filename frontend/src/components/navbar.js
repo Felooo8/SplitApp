@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
+// import NavDropdown from "react-bootstrap/NavDropdown";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { logout } from "../apis/auth";
 import { Button } from "@material-ui/core";
 import Search from "./Search";
+import Badge from "@mui/material/Badge";
+import MailIcon from "@mui/icons-material/Mail";
+import IconButton from "@mui/material/IconButton";
 
 // import IconButton from "@mui/material/IconButton";
 // import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -43,7 +46,7 @@ function NavbarTop(props) {
   }, []);
 
   return (
-    <Navbar bg="primary" expand="lg" style={navbar} variant="dark">
+    <Navbar bg="dark" expand="lg" style={navbar} variant="dark">
       <Container>
         <Navbar.Brand href="#home">Split App</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -53,20 +56,23 @@ function NavbarTop(props) {
             <Nav.Link href="/groups">My Groups</Nav.Link>
             <Nav.Link href="/all-expenses">All Expenses</Nav.Link>
             <Nav.Link href="/add-expense">Add Expense</Nav.Link>
-            <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
-                Another action
-              </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
-              </NavDropdown.Item>
-            </NavDropdown>
+            <Nav.Link href="/summary">Summary</Nav.Link>
           </Nav>
           <Search />
           <Navbar.Text style={login}>
+            <IconButton href="/notifications">
+              <Badge
+                badgeContent={4}
+                color="success"
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                overlap="circular"
+              >
+                <MailIcon color="primary" fontSize="medium" />
+              </Badge>
+            </IconButton>
             Signed in as:{" "}
             <a href="/login">
               {showUserName()}

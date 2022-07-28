@@ -9,17 +9,6 @@ import GroupItem from "../components/GroupItem";
 function Groups(props) {
   const [groups, setGroups] = useState([]);
 
-  const colors = [
-    "#0275d8",
-    "#5cb85c",
-    "#f50057",
-    "#5bc0de",
-    "#f0ad4e",
-    "#3f51b5",
-    "#d9534f",
-    "#292b2c",
-  ];
-
   useEffect(() => {
     const getGroups = () => {
       fetch("http://127.0.0.1:8000/api/group", {
@@ -62,6 +51,7 @@ function Groups(props) {
               style={{
                 // backgroundColor: colors[index % colors.length],
                 // marginTop: "10px",
+                textDecoration: "none",
                 width: "100%",
               }}
               spending={group.spent_by_category}

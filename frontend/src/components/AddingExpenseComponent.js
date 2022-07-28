@@ -21,7 +21,6 @@ import Paper from "@mui/material/Paper";
 import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import returnIcon from "../apis/returnIcon";
@@ -59,8 +58,8 @@ export default function AddingExpense(props) {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [payers, setPayers] = useState([]);
   const [friends, setFriends] = useState([]);
-  const [chosenGroupName, setChosenGroupName] = useState("");
   const [chosenGroupsName, setChosenGroupsName] = useState([]);
+  const [chosenIsGroup, setChosenIsGroup] = useState([]);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpenGroup = () => setOpenGroup(true);
@@ -263,6 +262,7 @@ export default function AddingExpense(props) {
       ...chosenGroupsName,
       group_friend_name,
     ]);
+    setChosenIsGroup((chosenIsGroup) => [...chosenIsGroup, isGroup]);
     if (chosenGroupsName.length > 0) {
       setValues({ ...values, payer: currentUser.id });
       setPayers([{ id: currentUser.id, username: "You" }]);
@@ -277,28 +277,19 @@ export default function AddingExpense(props) {
       setValues({ ...values, payer: currentUser.id });
       setPayers([{ id: currentUser.id, username: "You" }]);
     } else if (chosenGroupsName.length === 2) {
-      console.log(values);
-      if (values.owers.length === 0) {
-        console.log("1");
+      if (chosenIsGroup[chosenGroupsName.length - index - 1]) {
         values.owers_groups = [
           values.owers_groups[chosenGroupsName.length - index - 1],
         ];
-        setChosenGroupsName([
-          chosenGroupsName[chosenGroupsName.length - index - 1],
-        ]);
         setPayersData(
           values.owers_groups[0],
           true,
           chosenGroupsName[chosenGroupsName.length - index - 1]
         );
       } else {
-        console.log("2");
         values.owers_groups = [
           values.owers[chosenGroupsName.length - index - 1],
         ];
-        setChosenGroupsName([
-          chosenGroupsName[chosenGroupsName.length - index - 1],
-        ]);
         setPayersData(
           values.owers[0],
           false,
@@ -321,6 +312,10 @@ export default function AddingExpense(props) {
     setChosenGroupsName([
       ...chosenGroupsName.slice(0, index),
       ...chosenGroupsName.slice(index + 1, chosenGroupsName.length),
+    ]);
+    setChosenIsGroup([
+      ...chosenIsGroup.slice(0, index),
+      ...chosenIsGroup.slice(index + 1, chosenIsGroup.length),
     ]);
     afterDeletingGroup(index);
   };

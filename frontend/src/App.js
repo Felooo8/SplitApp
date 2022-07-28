@@ -5,12 +5,12 @@ import AllExpenses from "./screens/AllExpenses";
 import AddExpense from "./screens/AddExpense";
 import Summary from "./screens/Summary";
 import FriendsFinder from "./screens/FriendsFinder";
+import Invitations from "./screens/Invitations";
 import Groups from "./screens/Groups";
 import Group from "./screens/MyGroup";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Button from "@mui/material/Button";
 import NavbarTop from "./components/navbar";
-import BottomAppBar from "./components/Appbar";
 import Grid from "@mui/material/Grid";
 
 function App() {
@@ -19,9 +19,6 @@ function App() {
   return (
     <div className="App">
       <NavbarTop />
-      <p>
-        Edit <code>src/App.js</code> and save to reload.
-      </p>
       <Router>
         <Grid
           container
@@ -51,9 +48,14 @@ function App() {
               Summary
             </Button>
           </Grid>
+          <Grid item xs="auto">
+            <Button href="/notifications" variant="outlined" color="success">
+              Notifications
+            </Button>
+          </Grid>
         </Grid>
         <Routes>
-          <Route
+          {/* <Route
             exact
             path="/"
             element={
@@ -62,13 +64,15 @@ function App() {
                 <BottomAppBar value="home" />
               </div>
             }
-          />
+          /> */}
+          <Route path="/" element={<Summary />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/mygroup/:id" element={<Group />} />
           <Route path="/all-expenses" element={<AllExpenses />} />
           <Route path="/add-expense" element={<AddExpense />} />
           <Route path="/summary" element={<Summary />} />
+          <Route path="/notifications" element={<Invitations />} />
           <Route path="/friends/:search" element={<FriendsFinder />} />
         </Routes>
       </Router>

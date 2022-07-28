@@ -6,6 +6,8 @@ import { useParams } from "react-router-dom";
 function FriendsFinder(props) {
   const [users, setUsers] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [sent, setSent] = useState([]);
+  const [pending, setPending] = useState([]);
   // const [currentUser, setCurrentUser] = useState(undefined);
   const params = useParams();
 
@@ -20,28 +22,27 @@ function FriendsFinder(props) {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        setUsers(data[0]);
-        setFriends(data[1]);
+        setUsers(data["users"]);
+        setFriends(data["friends"]);
+        setSent(data["sent"]);
+        setPending(data["pending"]);
       });
   };
 
-  // const seeFriends = () => {
-  //   fetch("http://127.0.0.1:8000/api/seeFriends", {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Token ${localStorage.getItem("token")}`,
-  //     },
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log(data);
-  //       setFriends(data);
-  //     });
-  // };
+  const reRenderToggle = () => {
+    findFriends();
+  };
 
-  const isFriend = (index) => {
-    return friends.includes(index);
+  const isFriend = (id) => {
+    return friends.includes(id);
+  };
+
+  const isPending = (id) => {
+    return pending.includes(id);
+  };
+
+  const isSent = (id) => {
+    return sent.includes(id);
   };
 
   useEffect(() => {
@@ -54,13 +55,16 @@ function FriendsFinder(props) {
   return (
     <div>
       <p>Search results:</p>
-      <Stack spacing={2}>
+      <Stack spacing={2} style={{ marginBottom: "10px" }}>
         {users.map((user, index) => (
           <SearchResult
             key={index}
             user={user}
             index={index}
             isFriend={isFriend(user.id)}
+            isSent={isSent(user.id)}
+            isPending={isPending(user.id)}
+            toggle={reRenderToggle}
           />
         ))}
       </Stack>

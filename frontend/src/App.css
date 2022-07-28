@@ -80,3 +80,7 @@
 /* .css-1p5q5e5-MuiStack-root > :not(style) + :not(style) {
   margin-top: 0 !important;
 } */
+
+.MuiAccordionSummary-content.MuiAccordionSummary-contentGutters.css-o4b71y-MuiAccordionSummary-content {
+  display: block;
+}
