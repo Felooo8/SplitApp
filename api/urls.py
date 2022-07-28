@@ -16,7 +16,11 @@ from .views import (
     Settle,
     GetUsersSummarize,
     FindFriends,
-    RemoveFriend
+    RemoveFriend,
+    AcceptInvitationByUser,
+    DeclineInvitationByUser,
+    CancelInvitationByUser,
+    GetInvitations
 )
 
 urlpatterns = [
@@ -30,11 +34,15 @@ urlpatterns = [
     path("inviteFriend", InviteFriend.as_view()),
     path("removeFriend", RemoveFriend.as_view()),
     path("declineInvitation", DeclineInvitation.as_view()),
+    path("declineInvitation/byUser", DeclineInvitationByUser.as_view()),
+    path("cancelInvitation/byUser", CancelInvitationByUser.as_view()),
     path("acceptInvitation", AcceptInvitation.as_view()),
+    path("acceptInvitation/byUser", AcceptInvitationByUser.as_view()),
     path("addToGroup", AddToGroup.as_view()),
     path("leaveGroup", LeaveGroup.as_view()),
     path("setAsPaid", SetAsPaid.as_view()),
     path("settle", Settle.as_view()),
     path("summarize", GetUsersSummarize.as_view()),
     path('findFriends/<str:username>', FindFriends.as_view(), name="find_friends"),
+    path("getInvitations", GetInvitations.as_view()),
 ]

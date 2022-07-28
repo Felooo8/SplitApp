@@ -6,6 +6,7 @@ from .serializers import (
     ExpenseSerializer,
     GroupSerializer,
     GroupExpenseSerializer,
+    FriendsInvitationSerializer
 )
 from .models import (Expense, Group, types, GroupExpense,Account,FriendsInvitation)
 from rest_framework.views import APIView
@@ -206,6 +207,10 @@ class RemoveFriend(APIView):
             friend = User.objects.get(id=friend_id)
             account = Account.objects.get(user=user)
             account.friends.remove(friend)
+            account_friend = Account.objects.get(user=friend)
+            account_friend.friends.remove(user)
+            account.save()
+            account_friend.save()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except User.DoesNotExist:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
@@ -220,8 +225,31 @@ class AcceptInvitation(APIView):
         invitation_id = body["id"]
         try:
             invitation = FriendsInvitation.objects.get(id=invitation_id, invited=user)
-            invitation.accepted = True
-            invitation.save()
+            account = Account.objects.get(user=user)
+            account.friends.add(invitation.sender)
+            friend_account = Account.objects.get(user=invitation.sender)
+            friend_account.friends.add(user)
+            invitation.delete()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except FriendsInvitation.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AcceptInvitationByUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        user_id = body["id"]
+        try:
+            friend = User.objects.get(id=user_id)
+            invitation = FriendsInvitation.objects.get(invited=user, sender=friend)
+            account = Account.objects.get(user=user)
+            account.friends.add(invitation.sender)
+            friend_account = Account.objects.get(user=invitation.sender)
+            friend_account.friends.add(user)
+            invitation.delete()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except FriendsInvitation.DoesNotExist:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
@@ -237,7 +265,38 @@ class DeclineInvitation(APIView):
         try:
             invitation = FriendsInvitation.objects.get(id=invitation_id, invited=user)
             invitation.delete()
-            invitation.save()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except FriendsInvitation.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeclineInvitationByUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        friend_id = body["id"]
+        try:
+            friend = User.objects.get(id=friend_id)
+            invitation = FriendsInvitation.objects.get(invited=user, sender=friend)
+            invitation.delete()
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except FriendsInvitation.DoesNotExist:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CancelInvitationByUser(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        body = json.loads(request.body)
+        friend_id = body["id"]
+        try:
+            friend = User.objects.get(id=friend_id)
+            invitation = FriendsInvitation.objects.get(sender=user, invited=friend)
+            invitation.delete()
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except FriendsInvitation.DoesNotExist:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
@@ -349,12 +408,24 @@ class FindFriends(APIView):
             users = list(chain(users_starts, users_contains))
             account = Account.objects.get(user=request.user)
             friends = [friend.id for friend in account.friends.all()]
-            # for user in users:
-            #     value = self.is_friend(request, user)
-            #     user.is_friend = value
-            #     print(user.is_friend)
-            # print(users)
+            sent_inv = FriendsInvitation.objects.filter(sender=request.user)
+            sent = [invitation.invited.id for invitation in sent_inv]
+            pending_inv = FriendsInvitation.objects.filter(invited=request.user)
+            pending = [invitation.sender.id for invitation in pending_inv]
             users = UserSerializer(users, many=True).data
-            return Response([users, friends], status=status.HTTP_200_OK)
+            return Response({"users": users, "friends": friends, "sent": sent, "pending": pending}, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetInvitations(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        try:
+            user = request.user
+            inv = FriendsInvitation.objects.filter(invited=user)
+            invitations = FriendsInvitationSerializer(inv, many=True).data
+            return Response(invitations, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)

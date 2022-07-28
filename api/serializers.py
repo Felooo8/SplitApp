@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (Expense,GroupExpense, Group)
+from .models import (Expense,GroupExpense, Group, FriendsInvitation)
 from django.contrib.auth.models import User
 
 
@@ -99,3 +99,14 @@ class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expense
         fields = ('id', 'ower', 'ower_username', 'name', 'category', 'amount', 'splitted', 'date', 'short_date', 'payer', 'payer_username', 'is_paid', 'settled')
+
+
+class FriendsInvitationSerializer(serializers.ModelSerializer):
+    sender_username = serializers.SerializerMethodField()
+
+    def get_sender_username(self, obj):
+        return obj.sender.username
+
+    class Meta:
+        model = FriendsInvitation
+        fields = ('id', 'sender', 'sender_username', 'invited')

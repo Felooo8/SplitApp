@@ -9,13 +9,15 @@ from django.contrib.auth.models import User
 class GroupAdmin(admin.ModelAdmin):
     pass
 
+
 class ExpenseAdmin(admin.ModelAdmin):
     list_display = ['name', 'ower', 'payer', 'amount', 'category'
                     ]
-    list_filter = ['ower', 'payer', 'category']
+    list_filter = ['ower', 'payer', 'category', 'settled', 'is_paid']
     search_fields = [
         'name',
     ]
+
 
 class GroupExpenseAdmin(admin.ModelAdmin):
     pass
@@ -29,7 +31,7 @@ class AccountInline(admin.StackedInline):
     model = Account
     can_delete = False
     verbose_name_plural = 'account'
-    
+
 
 class UserAdmin(BaseUserAdmin):
     inlines = (AccountInline,)
