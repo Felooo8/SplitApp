@@ -429,3 +429,15 @@ class GetInvitations(APIView):
             return Response(invitations, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetNotifications(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        try:
+            user = request.user
+            number_of_notifictaions = FriendsInvitation.objects.filter(invited=user).count()
+            return Response(number_of_notifictaions, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
+import React, { useEffect, useState } from "react";
 import InvitationItem from "../components/InvitationItem";
-import { useParams } from "react-router-dom";
+import BottomAppBar from "../components/Appbar";
 
 function Invitations(props) {
   const [invitations, setInvitations] = useState([]);
@@ -45,6 +45,7 @@ function Invitations(props) {
           />
         ))}
       </Stack>
+      <BottomAppBar value="notifications" />
     </div>
   );
 }

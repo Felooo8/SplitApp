@@ -7,9 +7,6 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { logout } from "../apis/auth";
 import { Button } from "@material-ui/core";
 import Search from "./Search";
-import Badge from "@mui/material/Badge";
-import MailIcon from "@mui/icons-material/Mail";
-import IconButton from "@mui/material/IconButton";
 
 // import IconButton from "@mui/material/IconButton";
 // import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -46,7 +43,7 @@ function NavbarTop(props) {
   }, []);
 
   return (
-    <Navbar bg="dark" expand="lg" style={navbar} variant="dark">
+    <Navbar bg="light" expand="lg" style={navbar} variant="light" sticky="top">
       <Container>
         <Navbar.Brand href="#home">Split App</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -60,19 +57,6 @@ function NavbarTop(props) {
           </Nav>
           <Search />
           <Navbar.Text style={login}>
-            <IconButton href="/notifications">
-              <Badge
-                badgeContent={4}
-                color="success"
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                overlap="circular"
-              >
-                <MailIcon color="primary" fontSize="medium" />
-              </Badge>
-            </IconButton>
             Signed in as:{" "}
             <a href="/login">
               {showUserName()}
@@ -90,6 +74,8 @@ export default NavbarTop;
 
 const navbar = {
   width: "100%",
+  boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+  marginBottom: "20px",
 };
 
 const login = {

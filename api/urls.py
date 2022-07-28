@@ -20,7 +20,8 @@ from .views import (
     AcceptInvitationByUser,
     DeclineInvitationByUser,
     CancelInvitationByUser,
-    GetInvitations
+    GetInvitations,
+    GetNotifications
 )
 
 urlpatterns = [
@@ -45,4 +46,5 @@ urlpatterns = [
     path("summarize", GetUsersSummarize.as_view()),
     path('findFriends/<str:username>', FindFriends.as_view(), name="find_friends"),
     path("getInvitations", GetInvitations.as_view()),
+    path("getNotifications", GetNotifications.as_view()),
 ]

@@ -78,6 +78,7 @@ export default function ExpenseItem(props) {
                     style={{
                       display: "table",
                       width: "min-content",
+                      height: "min-content",
                       marginRight: "4px",
                       color: isBorrowed(props.expense) ? "orange" : "green",
                     }}

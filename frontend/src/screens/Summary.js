@@ -84,7 +84,7 @@ function Summary(props) {
           />
         ))}
       </Stack>
-      <BottomAppBar value="summary" />
+      <BottomAppBar value="home" />
     </div>
   );
 }

@@ -15,7 +15,7 @@ function App() {
   console.log(localStorage.getItem("token"));
 
   return (
-    <div className="App">
+    <div className="App" style={{ display: "table" }}>
       <NavbarTop />
       <Router>
         <Routes>
