@@ -47,8 +47,9 @@ class Expense(models.Model):
             if group_expense:
                 group_expense.delete()
 
-    def delete(self):
-        self.delete_group_expense()
+    def delete(self, parent=False):
+        if not parent:
+            self.delete_group_expense()
         super(Expense, self).delete()
 
 
@@ -60,6 +61,13 @@ class GroupExpense(models.Model):
             return "Group Expense"
         return self.expenses.all()[0].name
 
+    def delete_expenses(self):
+        for expense in self.expenses.all():
+            expense.delete(True)
+
+    def delete(self):
+        self.delete_expenses()
+        super(GroupExpense, self).delete()
 
 
 class Group(models.Model):

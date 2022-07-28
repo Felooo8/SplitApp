@@ -45,7 +45,7 @@ function Groups(props) {
           <div key={index}>
             <IconButton
               component={Link}
-              to={`/mygroup/${group.id}`}
+              to={`/mygroup/${group.id}/${group.group_name}`}
               // variant="contained"
               // color="primary"
               style={{

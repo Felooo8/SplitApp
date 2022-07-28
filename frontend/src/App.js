@@ -22,7 +22,7 @@ function App() {
           <Route path="/" element={<Summary />} />
           <Route path="/login" element={<SignIn />} />
           <Route path="/groups" element={<Groups />} />
-          <Route path="/mygroup/:id" element={<Group />} />
+          <Route path="/mygroup/:id/:groupName" element={<Group />} />
           <Route path="/all-expenses" element={<AllExpenses />} />
           <Route path="/add-expense" element={<AddExpense />} />
           <Route path="/summary" element={<Summary />} />

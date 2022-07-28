@@ -166,6 +166,9 @@ export default function AddingExpense(props) {
         console.log("Good");
         setValues(defaultValues);
         setChosenGroupsName([]);
+        setPayers([]);
+        setChosenIsGroup([]);
+        window.location.reload(false);
       } else {
         console.log("Failed");
       }
@@ -409,6 +412,12 @@ export default function AddingExpense(props) {
                 label="Is paid"
                 checked={values.is_paid}
                 onChange={handleChangeSwitch("is_paid")}
+              />
+              <FormControlLabel
+                control={<Switch />}
+                label="Settled"
+                checked={values.settled}
+                onChange={handleChangeSwitch("settled")}
               />
               <FormControlLabel
                 control={<Switch />}

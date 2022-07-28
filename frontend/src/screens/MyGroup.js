@@ -3,13 +3,16 @@ import Stack from "@mui/material/Stack";
 import ChartPie from "../components/chart";
 import { useParams } from "react-router-dom";
 import ExpenseItemGroup from "../components/ExpenseGroup";
+import BottomAppBar from "../components/Appbar";
+import Chip from "@mui/material/Chip";
 
 function Group(props) {
-  const [currentUser, setCurrentUser] = useState(undefined);
-  const [keys, setKeys] = useState(undefined);
-  const [values, setValues] = useState(undefined);
-  const [expenses, setExpenses] = useState(undefined);
-  const [groupID, setGroupID] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [keys, setKeys] = useState([]);
+  const [values, setValues] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [groupID, setGroupID] = useState(null);
+  const [groupName, setGroupName] = useState("");
   const params = useParams();
 
   const getUser = () => {
@@ -65,8 +68,9 @@ function Group(props) {
 
   useEffect(() => {
     setGroupID(params.id);
+    setGroupName(params.groupName);
     getUser();
-    if (groupID !== undefined) {
+    if (groupID !== null) {
       getGroups();
       getTotalExpenses();
     }
@@ -77,13 +81,21 @@ function Group(props) {
     }, 80000);
     return () => clearInterval(interval);
   }, [groupID]);
-  if (expenses === undefined || keys === undefined || values === undefined) {
+  if (expenses === [] || keys === [] || values === []) {
     return <p>Loading...</p>;
   }
   console.log(expenses);
   return (
     <div>
-      <p>Your group:</p>
+      <Chip
+        variant="outlined"
+        color="error"
+        label={groupName}
+        style={{
+          fontSize: "20px",
+          width: "50%",
+        }}
+      />
       <Stack spacing={2}>
         {expenses.map((expense, index) => (
           <ExpenseItemGroup
@@ -98,6 +110,7 @@ function Group(props) {
       <div style={chart}>
         <ChartPie keys={keys} values={values} />
       </div>
+      <BottomAppBar value="groups" />
     </div>
   );
 }
