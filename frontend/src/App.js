@@ -5,7 +5,7 @@ import AllExpenses from "./screens/AllExpenses";
 import AddExpense from "./screens/AddExpense";
 import Summary from "./screens/Summary";
 import FriendsFinder from "./screens/FriendsFinder";
-import Invitations from "./screens/Invitations";
+import Notifications from "./screens/Notifications";
 import Groups from "./screens/Groups";
 import Group from "./screens/MyGroup";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -26,7 +26,7 @@ function App() {
           <Route path="/all-expenses" element={<AllExpenses />} />
           <Route path="/add-expense" element={<AddExpense />} />
           <Route path="/summary" element={<Summary />} />
-          <Route path="/notifications" element={<Invitations />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route path="/friends/:search" element={<FriendsFinder />} />
         </Routes>
       </Router>

@@ -5,10 +5,11 @@ import PersonAddDisabledIcon from "@mui/icons-material/PersonAddDisabled";
 import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import "../App.css";
 import ListItemButton from "@mui/material/ListItemButton";
+import Constants from "../apis/Constants";
 
 const inviteFriendUrl = "inviteFriend";
 const removeFriendUrl = "removeFriend";
@@ -17,27 +18,27 @@ const declineInvitationUrl = "declineInvitation/byUser";
 const cancelInvitationUrl = "cancelInvitation/byUser";
 
 export default function SearchResult(props) {
-  const [avatarURL, setAvatarURL] = useState("");
+  // const [avatarURL, setAvatarURL] = useState("");
   console.log(props);
 
-  const getAvatar = () => {
-    fetch("http://127.0.0.1:8000/api/getAvatar/" + props.user.id, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-    }).then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          console.log(data);
-          setAvatarURL(data);
-        });
-      } else {
-        console.log("invalid data");
-      }
-    });
-  };
+  // const getAvatar = () => {
+  //   fetch("http://127.0.0.1:8000/api/getAvatar/" + props.user.id, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Token ${localStorage.getItem("token")}`,
+  //     },
+  //   }).then((response) => {
+  //     if (response.ok) {
+  //       response.json().then((data) => {
+  //         console.log(data);
+  //         setAvatarURL(data);
+  //       });
+  //     } else {
+  //       console.log("invalid data");
+  //     }
+  //   });
+  // };
   const manageRequest = (url) => {
     fetch("http://127.0.0.1:8000/api/" + url, {
       method: "POST",
@@ -133,7 +134,7 @@ export default function SearchResult(props) {
         direction="right"
         in={true}
         style={{
-          transitionDelay: `${props.index * 100}ms`,
+          transitionDelay: `${props.index * Constants.ANIMATION_DELAY}ms`,
           display: "inline-flex",
           width: "90%",
           padding: "16px",

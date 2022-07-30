@@ -9,6 +9,7 @@ import React, { useEffect, useReducer, useState } from "react";
 import ExpenseItem from "../components/Expense";
 import BottomAppBar from "../components/Appbar";
 import SkeletonItem from "../components/SkeletonItem";
+import Constants from "../apis/Constants";
 
 function AllExpenses(props) {
   const [userExpenses, setUserExpenses] = useState([]);
@@ -16,7 +17,7 @@ function AllExpenses(props) {
   const [filter, setFilter] = useState("all");
   const [showSettled, setShowSettled] = useState(false);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const getExpenses = () => {
     fetch("http://127.0.0.1:8000/api/userExpenses", {
@@ -155,12 +156,11 @@ function AllExpenses(props) {
 
   useEffect(() => {
     setLoading(true);
-    console.log(loading);
     const timer = setTimeout(() => {
       getUser();
       getExpenses();
       setLoading(false);
-    }, 700);
+    }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);
 
@@ -170,8 +170,7 @@ function AllExpenses(props) {
         <SkeletonItem header={true} />
       ) : (
         <div>
-          {currentUser !== null ? Filteres() : null}
-
+          {Filteres()}
           <Stack spacing={2}>
             {userExpenses.map((expense, index) => (
               <ExpenseItem

@@ -3,12 +3,13 @@ import Stack from "@mui/material/Stack";
 import SummaryItem from "../components/SummaryItem";
 import BottomAppBar from "../components/Appbar";
 import SkeletonItem from "../components/SkeletonItem";
+import Constants from "../apis/Constants";
 
 function Summary(props) {
   const [summaries, setSummaries] = useState({});
   const [total, setTotal] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const getSummarize = () => {
     fetch("http://127.0.0.1:8000/api/summarize", {
@@ -67,12 +68,11 @@ function Summary(props) {
 
   useEffect(() => {
     setLoading(true);
-    console.log(loading);
     const timer = setTimeout(() => {
       getUser();
       getSummarize();
       setLoading(false);
-    }, 700);
+    }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);
 

@@ -7,6 +7,7 @@ import React from "react";
 import styled from "styled-components";
 import "../App.css";
 import ListItemButton from "@mui/material/ListItemButton";
+import Constants from "../apis/Constants";
 
 const acceptInvitationUrl = "acceptInvitation";
 const declineInvitationUrl = "declineInvitation";
@@ -36,7 +37,7 @@ export default function InvitationItem(props) {
         direction="right"
         in={true}
         style={{
-          transitionDelay: `${props.index * 100}ms`,
+          transitionDelay: `${props.index * Constants.ANIMATION_DELAY}ms`,
           display: "inline-flex",
           width: "90%",
           padding: "16px",

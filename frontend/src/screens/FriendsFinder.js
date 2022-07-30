@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import SearchResult from "../components/SearchResult";
 import { useParams } from "react-router-dom";
+import SkeletonItem from "../components/SkeletonItem";
+import Constants from "../apis/Constants";
+import BottomAppBar from "../components/Appbar";
 
 function FriendsFinder(props) {
   const [users, setUsers] = useState([]);
   const [friends, setFriends] = useState([]);
   const [sent, setSent] = useState([]);
   const [pending, setPending] = useState([]);
+  const [loading, setLoading] = useState(true);
   // const [currentUser, setCurrentUser] = useState(undefined);
   const params = useParams();
 
@@ -26,6 +30,7 @@ function FriendsFinder(props) {
         setFriends(data["friends"]);
         setSent(data["sent"]);
         setPending(data["pending"]);
+        setLoading(false);
       });
   };
 
@@ -46,28 +51,36 @@ function FriendsFinder(props) {
   };
 
   useEffect(() => {
-    findFriends();
-    // seeFriends();
+    setLoading(true);
+    const timer = setTimeout(() => {
+      findFriends();
+    }, Constants.LOADING_DATA_DELAY);
+    return () => clearTimeout(timer);
   }, []);
-  if (users === []) {
-    return <p>Loading...</p>;
-  }
+
   return (
     <div>
-      <p>Search results:</p>
-      <Stack spacing={2} style={{ marginBottom: "10px" }}>
-        {users.map((user, index) => (
-          <SearchResult
-            key={index}
-            user={user}
-            index={index}
-            isFriend={isFriend(user.id)}
-            isSent={isSent(user.id)}
-            isPending={isPending(user.id)}
-            toggle={reRenderToggle}
-          />
-        ))}
-      </Stack>
+      {loading ? (
+        <SkeletonItem header={true} />
+      ) : (
+        <div>
+          <h5>Search results:</h5>
+          <Stack spacing={2} style={{ marginBottom: "10px" }}>
+            {users.map((user, index) => (
+              <SearchResult
+                key={index}
+                user={user}
+                index={index}
+                isFriend={isFriend(user.id)}
+                isSent={isSent(user.id)}
+                isPending={isPending(user.id)}
+                toggle={reRenderToggle}
+              />
+            ))}
+          </Stack>
+        </div>
+      )}
+      <BottomAppBar />
     </div>
   );
 }

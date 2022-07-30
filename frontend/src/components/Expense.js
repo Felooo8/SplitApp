@@ -10,6 +10,7 @@ import "../App.css";
 import Slide from "@mui/material/Slide";
 import returnIcon from "../apis/returnIcon";
 import Alert from "@mui/material/Alert";
+import Constants from "../apis/Constants";
 
 export default function ExpenseItem(props) {
   console.log(props);
@@ -53,7 +54,7 @@ export default function ExpenseItem(props) {
           direction="right"
           in={true}
           style={{
-            transitionDelay: `${props.index * 100}ms`,
+            transitionDelay: `${props.index * Constants.ANIMATION_DELAY}ms`,
             borderRadius: "10px",
             backgroundColor: props.expense.settled
               ? "rgb(255, 244, 229)"

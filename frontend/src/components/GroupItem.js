@@ -4,6 +4,7 @@ import "../App.css";
 import Slide from "@mui/material/Slide";
 import Paper from "@mui/material/Paper";
 import Avatar from "@mui/material/Avatar";
+import Constants from "../apis/Constants";
 
 export default function GroupItem(props) {
   console.log(props);
@@ -19,7 +20,7 @@ export default function GroupItem(props) {
         direction="right"
         in={true}
         style={{
-          transitionDelay: `${props.index * 100}ms`,
+          transitionDelay: `${props.index * Constants.ANIMATION_DELAY}ms`,
           display: "inline-flex",
           width: "90%",
           padding: "16px",
