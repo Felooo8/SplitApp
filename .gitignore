@@ -31,3 +31,4 @@ frontend/README.md
 
 .vscode
 frontend/src/components/selectComponent.js
+media/avatars/*
