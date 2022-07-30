@@ -18,6 +18,8 @@ from django.urls import path, include
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework.authtoken import views
 from .auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +29,5 @@ urlpatterns = [
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('api-token-auth/', views.obtain_auth_token),
-    path('api-token-logout/', auth_views.logout)
-]
+    path('api-token-logout/', auth_views.logout) 
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

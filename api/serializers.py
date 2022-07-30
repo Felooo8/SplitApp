@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import (Expense,GroupExpense, Group, FriendsInvitation)
+from .models import (Expense, GroupExpense, Group, FriendsInvitation, Account)
 from django.contrib.auth.models import User
 
 
@@ -7,6 +7,12 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username')
+
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ('id', 'user', 'friends')
 
 
 class GroupSerializer(serializers.ModelSerializer):

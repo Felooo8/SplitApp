@@ -17,10 +17,14 @@ TRUE_FALSE_CHOICES = (
     (False, 'Each')
 )
 
+def upload_to(instance, filename):
+    return 'avatars/{filename}'.format(filename=filename)
+
 
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     friends = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="friends")
+    avatar = models.ImageField(upload_to=upload_to, blank=True, null=True)
 
 
 class Expense(models.Model):

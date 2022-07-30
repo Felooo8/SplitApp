@@ -21,7 +21,9 @@ from .views import (
     DeclineInvitationByUser,
     CancelInvitationByUser,
     GetInvitations,
-    GetNotifications
+    GetNotifications,
+    SetAvatar,
+    GetAvatar
 )
 
 urlpatterns = [
@@ -47,4 +49,6 @@ urlpatterns = [
     path('findFriends/<str:username>', FindFriends.as_view(), name="find_friends"),
     path("getInvitations", GetInvitations.as_view()),
     path("getNotifications", GetNotifications.as_view()),
+    path("setAvatar", SetAvatar.as_view()),
+    path("getAvatar/<int:id>", GetAvatar.as_view()),
 ]

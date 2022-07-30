@@ -6,7 +6,8 @@ from .serializers import (
     ExpenseSerializer,
     GroupSerializer,
     GroupExpenseSerializer,
-    FriendsInvitationSerializer
+    FriendsInvitationSerializer,
+    AccountSerializer
 )
 from .models import (Expense, Group, types, GroupExpense,Account,FriendsInvitation)
 from rest_framework.views import APIView
@@ -20,7 +21,6 @@ from django.utils.crypto import get_random_string
 
 from collections import defaultdict
 from itertools import chain 
-from django.db.models import Value
 
 
 # Create your views here.
@@ -447,5 +447,22 @@ class GetNotifications(APIView):
             user = request.user
             number_of_notifictaions = FriendsInvitation.objects.filter(invited=user).count()
             return Response(number_of_notifictaions, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SetAvatar(APIView):
+    pass
+
+
+class GetAvatar(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id, format=None):
+        try:
+            user = User.objects.get(id=id)
+            account = Account.objects.get(user=user)
+            avatar = account.avatar
+            return Response(avatar.url, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
