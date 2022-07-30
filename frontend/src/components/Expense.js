@@ -55,6 +55,9 @@ export default function ExpenseItem(props) {
           style={{
             transitionDelay: `${props.index * 100}ms`,
             borderRadius: "10px",
+            backgroundColor: props.expense.settled
+              ? "rgb(255, 244, 229)"
+              : null,
           }}
           sx={{ boxShadow: 5 }}
         >

@@ -1,20 +1,22 @@
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormLabel from "@mui/material/FormLabel";
+// import FormLabel from "@mui/material/FormLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import Stack from "@mui/material/Stack";
 import React, { useEffect, useReducer, useState } from "react";
 import ExpenseItem from "../components/Expense";
 import BottomAppBar from "../components/Appbar";
+import SkeletonItem from "../components/SkeletonItem";
 
 function AllExpenses(props) {
-  const [userExpenses, setUserExpenses] = useState(undefined);
-  const [currentUser, setCurrentUser] = useState(undefined);
+  const [userExpenses, setUserExpenses] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
   const [filter, setFilter] = useState("all");
   const [showSettled, setShowSettled] = useState(false);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [loading, setLoading] = useState(false);
 
   const getExpenses = () => {
     fetch("http://127.0.0.1:8000/api/userExpenses", {
@@ -26,21 +28,8 @@ function AllExpenses(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        setUserExpenses(data);
         console.log(data);
-      });
-  };
-
-  const getSummarize = () => {
-    fetch("http://127.0.0.1:8000/api/summarize", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
+        setUserExpenses(data);
         console.log(data);
       });
   };
@@ -86,24 +75,12 @@ function AllExpenses(props) {
     forceUpdate();
   };
 
-  useEffect(() => {
-    getExpenses();
-    getUser();
-    getSummarize();
-    // const interval = setInterval(() => {
-    //   getExpenses();
-    // }, 80000);
-    // return () => clearInterval(interval);
-  }, []);
-  if (userExpenses === undefined || currentUser === undefined) {
-    return <p>Loading...</p>;
-  }
-  return (
-    <div>
-      <p>Your expenses:</p>
+  const Filteres = () => {
+    return (
       <div>
+        <h5>Your expenses:</h5>
         <FormControl>
-          <FormLabel id="filter-row-radio">Filter</FormLabel>
+          {/* <FormLabel id="filter-row-radio">Filter</FormLabel> */}
           <RadioGroup
             row
             aria-labelledby="filter-row-radio-label"
@@ -172,19 +149,43 @@ function AllExpenses(props) {
             />
           </RadioGroup>
         </FormControl>
-        <Stack spacing={2}>
-          {userExpenses.map((expense, index) => (
-            <ExpenseItem
-              key={index}
-              expense={expense}
-              index={index}
-              currentUser={currentUser}
-              show={toShow(expense)}
-              toggle={reRenderToggle}
-            />
-          ))}
-        </Stack>
       </div>
+    );
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    console.log(loading);
+    const timer = setTimeout(() => {
+      getUser();
+      getExpenses();
+      setLoading(false);
+    }, 700);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div>
+      {loading ? (
+        <SkeletonItem header={true} />
+      ) : (
+        <div>
+          {currentUser !== null ? Filteres() : null}
+
+          <Stack spacing={2}>
+            {userExpenses.map((expense, index) => (
+              <ExpenseItem
+                key={index}
+                expense={expense}
+                index={index}
+                currentUser={currentUser}
+                show={toShow(expense)}
+                toggle={reRenderToggle}
+              />
+            ))}
+          </Stack>
+        </div>
+      )}
       <BottomAppBar value="all expenses" />
     </div>
   );

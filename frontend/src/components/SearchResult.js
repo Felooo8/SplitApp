@@ -38,7 +38,6 @@ export default function SearchResult(props) {
       }
     });
   };
-  getAvatar();
   const manageRequest = (url) => {
     fetch("http://127.0.0.1:8000/api/" + url, {
       method: "POST",
@@ -101,16 +100,16 @@ export default function SearchResult(props) {
   };
 
   const displayAvatar = () => {
-    if (avatarURL !== "") {
-      console.log("http://127.0.0.1:8000" + avatarURL);
-      return (
-        <img
-          src={"http://127.0.0.1:8000" + avatarURL}
-          alt="avatar"
-          style={{ width: "56px", height: "56px" }}
-        />
-      );
-    }
+    // if (avatarURL !== "") {
+    //   console.log("http://127.0.0.1:8000" + avatarURL);
+    //   return (
+    //     <img
+    //       src={"http://127.0.0.1:8000" + avatarURL}
+    //       alt="avatar"
+    //       style={{ width: "56px", height: "56px" }}
+    //     />
+    //   );
+    // }
     return (
       <Avatar
         sx={{
@@ -124,9 +123,9 @@ export default function SearchResult(props) {
     );
   };
 
-  useEffect(() => {
-    getAvatar();
-  }, []);
+  // useEffect(() => {
+  //   getAvatar();
+  // }, []);
 
   return (
     <div style={summarizing}>

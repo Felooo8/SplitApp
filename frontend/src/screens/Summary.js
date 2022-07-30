@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
 import SummaryItem from "../components/SummaryItem";
 import BottomAppBar from "../components/Appbar";
+import SkeletonItem from "../components/SkeletonItem";
 
 function Summary(props) {
   const [summaries, setSummaries] = useState({});
   const [total, setTotal] = useState(null);
-  const [currentUser, setCurrentUser] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const getSummarize = () => {
     fetch("http://127.0.0.1:8000/api/summarize", {
@@ -64,26 +66,43 @@ function Summary(props) {
   };
 
   useEffect(() => {
-    getUser();
-    getSummarize();
+    setLoading(true);
+    console.log(loading);
+    const timer = setTimeout(() => {
+      getUser();
+      getSummarize();
+      setLoading(false);
+    }, 700);
+    return () => clearTimeout(timer);
   }, []);
-  if (summaries === undefined || currentUser === undefined) {
-    return <p>Loading...</p>;
-  }
+
+  // if (loading) {
+  //   return (
+  //     <div>
+  //       <SkeletonItem />
+  //     </div>
+  //   );
+  // }
   return (
     <div>
-      {total !== null ? Overrall() : null}
-      <Stack spacing={2} style={{ marginBottom: "10px" }}>
-        {Object.entries(summaries).map(([key, value], index) => (
-          <SummaryItem
-            key={index}
-            username={key}
-            debt={value}
-            index={index}
-            currentUser={currentUser}
-          />
-        ))}
-      </Stack>
+      {loading ? (
+        <SkeletonItem header={true} />
+      ) : (
+        <div>
+          {total !== null ? Overrall() : null}
+          <Stack spacing={2} style={{ marginBottom: "10px" }}>
+            {Object.entries(summaries).map(([key, value], index) => (
+              <SummaryItem
+                key={index}
+                username={key}
+                debt={value}
+                index={index}
+                currentUser={currentUser}
+              />
+            ))}
+          </Stack>
+        </div>
+      )}
       <BottomAppBar value="home" />
     </div>
   );
