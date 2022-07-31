@@ -9,6 +9,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "../App.css";
 import Slide from "@mui/material/Slide";
 import returnIcon from "../apis/returnIcon";
+import Constants from "../apis/Constants";
 
 export default function ExpenseItemGroup(props) {
   console.log(props);
@@ -43,7 +44,7 @@ export default function ExpenseItemGroup(props) {
           direction="right"
           in={true}
           style={{
-            transitionDelay: `${props.index * 100}ms`,
+            transitionDelay: `${props.index * Constants.ANIMATION_DELAY}ms`,
             borderRadius: "10px",
           }}
           sx={{ boxShadow: 5 }}
@@ -112,7 +113,7 @@ const Date = styled.span`
   display: flex;
 `;
 const Expense = styled.span`
-  max-width: 500px;
+  max-width: 440px;
   width: 100%;
   margin-left: auto !important;
   margin-right: auto !important;

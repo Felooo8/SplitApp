@@ -5,6 +5,8 @@ import { useParams } from "react-router-dom";
 import ExpenseItemGroup from "../components/ExpenseGroup";
 import BottomAppBar from "../components/Appbar";
 import Chip from "@mui/material/Chip";
+import Constants from "../apis/Constants";
+import SkeletonItem from "../components/SkeletonItem";
 
 function Group(props) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -13,6 +15,7 @@ function Group(props) {
   const [expenses, setExpenses] = useState([]);
   const [groupID, setGroupID] = useState(null);
   const [groupName, setGroupName] = useState("");
+  const [loading, setLoading] = useState(true);
   const params = useParams();
 
   const getUser = () => {
@@ -42,7 +45,7 @@ function Group(props) {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ id: groupID }),
+      body: JSON.stringify({ id: params.id }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -58,7 +61,7 @@ function Group(props) {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ id: groupID }),
+      body: JSON.stringify({ id: params.id }),
     })
       .then((response) => response.json())
       .then((data) => {
@@ -67,23 +70,18 @@ function Group(props) {
   };
 
   useEffect(() => {
-    setGroupID(params.id);
-    setGroupName(params.groupName);
-    getUser();
-    if (groupID !== null) {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      setGroupID(params.id);
       getGroups();
       getTotalExpenses();
-    }
-    const interval = setInterval(() => {
-      getGroups();
-      getTotalExpenses();
+      setGroupName(params.groupName);
       getUser();
-    }, 80000);
-    return () => clearInterval(interval);
-  }, [groupID]);
-  if (expenses === [] || keys === [] || values === []) {
-    return <p>Loading...</p>;
-  }
+      setLoading(false);
+    }, Constants.LOADING_DATA_DELAY);
+    return () => clearTimeout(timer);
+  }, []);
+
   console.log(expenses);
   return (
     <div>
@@ -93,23 +91,31 @@ function Group(props) {
         label={groupName}
         style={{
           fontSize: "20px",
-          width: "50%",
+          maxWidth: "90%",
+          marginBottom: "20px",
         }}
       />
-      <Stack spacing={2}>
-        {expenses.map((expense, index) => (
-          <ExpenseItemGroup
-            key={index}
-            expense={expense}
-            index={index}
-            currentUser={currentUser}
-            show={!expense.settled}
-          />
-        ))}
-      </Stack>
-      <div style={chart}>
-        <ChartPie keys={keys} values={values} />
-      </div>
+
+      {loading ? (
+        <SkeletonItem header={false} />
+      ) : (
+        <div>
+          <Stack spacing={2}>
+            {expenses.map((expense, index) => (
+              <ExpenseItemGroup
+                key={index}
+                expense={expense}
+                index={index}
+                currentUser={currentUser}
+                show={!expense.settled}
+              />
+            ))}
+          </Stack>
+          <div style={chart}>
+            <ChartPie keys={keys} values={values} />
+          </div>
+        </div>
+      )}
       <BottomAppBar value="groups" />
     </div>
   );

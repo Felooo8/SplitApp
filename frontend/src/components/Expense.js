@@ -13,7 +13,7 @@ import Alert from "@mui/material/Alert";
 import Constants from "../apis/Constants";
 
 export default function ExpenseItem(props) {
-  console.log(props);
+  // console.log(props);
   const displayUser = () => {
     if (isBorrowed(props.expense)) {
       return props.expense.payer_username;
@@ -44,9 +44,6 @@ export default function ExpenseItem(props) {
     return expense.settled === true;
   };
 
-  if (!props.show) {
-    return;
-  }
   return (
     <Expense>
       <div style={center}>
@@ -132,7 +129,7 @@ const Date = styled.span`
   display: flex;
 `;
 const Expense = styled.span`
-  max-width: 500px;
+  max-width: 440px;
   width: 100%;
   margin-left: auto !important;
   margin-right: auto !important;

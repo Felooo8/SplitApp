@@ -13,9 +13,12 @@ import Constants from "../apis/Constants";
 
 function AllExpenses(props) {
   const [userExpenses, setUserExpenses] = useState([]);
+  const [filtredExpenses, setFiltredExpenses] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [filter, setFilter] = useState("all");
   const [showSettled, setShowSettled] = useState(false);
+  const [showBorrowed, setShowBorrowed] = useState(true);
+  const [showLent, setShowLent] = useState(true);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [loading, setLoading] = useState(true);
 
@@ -29,9 +32,12 @@ function AllExpenses(props) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setUserExpenses(data);
-        console.log(data);
+        setFiltredExpenses(
+          data.filter((expense) => expense.settled === showSettled)
+        );
+        console.log(filtredExpenses);
       });
   };
 
@@ -53,13 +59,62 @@ function AllExpenses(props) {
 
   const filterExpenses = (event) => {
     setFilter(event.target.value);
+    if (event.target.value === "all") {
+      setShowLent(true);
+      setShowBorrowed(true);
+      setFiltredExpenses(
+        userExpenses.filter(
+          (expense) => expense.settled === showSettled || showSettled
+        )
+      );
+    } else if (event.target.value === "lent") {
+      setShowLent(true);
+      setShowBorrowed(false);
+      setFiltredExpenses(
+        userExpenses.filter(
+          (expense) =>
+            expense.payer === currentUser.id &&
+            (expense.settled === showSettled || showSettled)
+        )
+      );
+    } else if (event.target.value === "borrowed") {
+      setShowLent(false);
+      setShowBorrowed(true);
+      setFiltredExpenses(
+        userExpenses.filter((expense) => expense.ower === currentUser.id)
+      );
+    }
   };
 
   const displaySettled = () => (event) => {
     setShowSettled(event.target.checked);
+    if (event.target.checked) {
+      if (showBorrowed) {
+        setFiltredExpenses(userExpenses);
+      } else {
+        setFiltredExpenses(
+          userExpenses.filter((expense) => expense.payer === currentUser.id)
+        );
+      }
+    } else {
+      if (showBorrowed) {
+        setFiltredExpenses(
+          userExpenses.filter((expense) => expense.settled === false)
+        );
+      } else {
+        setFiltredExpenses(
+          userExpenses.filter(
+            (expense) =>
+              expense.payer === currentUser.id && expense.settled === false
+          )
+        );
+      }
+    }
   };
 
   const toShow = (expense) => {
+    console.log(userExpenses);
+    console.log(filtredExpenses);
     if ((filter === "lent") & (expense.payer !== currentUser.id)) {
       return false;
     }
@@ -138,6 +193,7 @@ function AllExpenses(props) {
                 <Checkbox
                   checked={showSettled}
                   onChange={displaySettled()}
+                  disabled={showBorrowed && !showLent}
                   sx={{
                     color: "red",
                     "&.Mui-checked": {
@@ -172,13 +228,12 @@ function AllExpenses(props) {
         <div>
           {Filteres()}
           <Stack spacing={2}>
-            {userExpenses.map((expense, index) => (
+            {filtredExpenses.map((expense, index) => (
               <ExpenseItem
                 key={index}
                 expense={expense}
                 index={index}
                 currentUser={currentUser}
-                show={toShow(expense)}
                 toggle={reRenderToggle}
               />
             ))}

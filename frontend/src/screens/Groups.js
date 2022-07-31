@@ -5,6 +5,7 @@ import BottomAppBar from "../components/Appbar";
 import GroupItem from "../components/GroupItem";
 import SkeletonItem from "../components/SkeletonItem";
 import Constants from "../apis/Constants";
+import "../App.css";
 
 // import { getGroups } from "../apis/fetch";
 

@@ -84,3 +84,7 @@
 .MuiAccordionSummary-content.MuiAccordionSummary-contentGutters.css-o4b71y-MuiAccordionSummary-content {
   display: block;
 }
+
+.css-78trlr-MuiButtonBase-root-MuiIconButton-root:hover {
+  background-color: transparent !important;
+}
