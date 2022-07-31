@@ -47,7 +47,7 @@ function Notifications(props) {
       ) : (
         <div>
           {invitations.length === 0 ? (
-            <div style={{ marginTop: "30%" }}>
+            <div style={{ marginTop: "10em" }}>
               <NotificationsNoneIcon style={icon} />
               <h5>No notifications yet</h5>
               <Typography variant="subtitle1" gutterBottom component="div">
