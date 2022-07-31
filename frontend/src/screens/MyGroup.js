@@ -13,7 +13,6 @@ function Group(props) {
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState([]);
   const [expenses, setExpenses] = useState([]);
-  const [groupID, setGroupID] = useState(null);
   const [groupName, setGroupName] = useState("");
   const [loading, setLoading] = useState(true);
   const params = useParams();
@@ -33,10 +32,6 @@ function Group(props) {
       }
     });
   };
-
-  // const setUsername = () => {
-  //   setCurrentUser(localStorage.getItem("UserName"));
-  // }
 
   const getTotalExpenses = () => {
     fetch("http://127.0.0.1:8000/api/chartData", {
@@ -72,7 +67,6 @@ function Group(props) {
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
-      setGroupID(params.id);
       getGroups();
       getTotalExpenses();
       setGroupName(params.groupName);

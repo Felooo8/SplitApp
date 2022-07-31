@@ -112,21 +112,6 @@ function AllExpenses(props) {
     }
   };
 
-  const toShow = (expense) => {
-    console.log(userExpenses);
-    console.log(filtredExpenses);
-    if ((filter === "lent") & (expense.payer !== currentUser.id)) {
-      return false;
-    }
-    if ((filter === "borrowed") & (expense.payer === currentUser.id)) {
-      return false;
-    }
-    if ((expense.settled === true) & (showSettled === false)) {
-      return false;
-    }
-    return true;
-  };
-
   const reRenderToggle = () => {
     forceUpdate();
   };
