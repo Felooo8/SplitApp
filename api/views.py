@@ -32,14 +32,14 @@ class GetUserByID(APIView):
     def get(self, request, format=None):
         id = request.GET.get(self.lookup_url_kwarg)
         if id is not None:
-            users = User.objects.get(id=id)
-            if len(users) > 0:
-                data = UserSerializer(users[0]).data
+            try:
+                user = User.objects.get(id=id)
+                data = UserSerializer(user).data
                 return Response(data, status=status.HTTP_200_OK)
-            return Response(
-                {"User Not Found": "Invalid User ID."}, status=status.HTTP_404_NOT_FOUND
-            )
-
+            except:
+                return Response(
+                    {"User Not Found": "Invalid User ID."}, status=status.HTTP_400_BAD_REQUEST
+                )
         return Response(
             {"Bad Request": "User ID paramater not found in request"},
             status=status.HTTP_400_BAD_REQUEST,
@@ -51,11 +51,12 @@ class GetUsersGroups(APIView):
 
     def get(self, request, format=None):
         user = request.user
-        sorted_groups = Group.objects.filter(users=user)
-        if len(sorted_groups) > 0:
+        try:
+            sorted_groups = Group.objects.get(users=user)
             data = GroupSerializer(sorted_groups, many=True, context={'user': user}).data
             return Response(data, status=status.HTTP_200_OK)
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetGroupExpenses(APIView):
@@ -95,13 +96,14 @@ class GetUsersExpenses(APIView):
 
     def get(self, request, format=None):
         user = request.user
-        expenses = Expense.objects.filter(Q(ower=user) | Q(payer=user)).order_by(
-            "-date"
-        )
-        if len(expenses) > 0:
+        try:
+            expenses = Expense.objects.get(Q(ower=user) | Q(payer=user)).order_by(
+                "-date"
+            )
             data = ExpenseSerializer(expenses, many=True).data
             return Response(data, status=status.HTTP_200_OK)
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class AddExpense(APIView):
@@ -133,10 +135,10 @@ class AddExpense(APIView):
             splitted = body["splitted"]
             is_paid = body["is_paid"]
             settled = body["settled"]
+            if not splitted:
+                amount = amount / self.total_users(owers_ids, groups_ids)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
-        if not splitted:
-            amount = amount / self.total_users(owers_ids, groups_ids)
         try:
             if not owers_ids == []:
                 for ower_id in owers_ids:
@@ -185,10 +187,13 @@ class SeeFriends(APIView):
 
     def get(self, request, format=None):
         user = request.user
-        account = Account.objects.get(user=user)
-        friends = [friend for friend in account.friends.all()]
-        data = UserSerializer(friends, many=True).data
-        return Response(data, status=status.HTTP_200_OK)
+        try:
+            account = Account.objects.get(user=user)
+            friends = [friend for friend in account.friends.all()]
+            data = UserSerializer(friends, many=True).data
+            return Response(data, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InviteFriend(APIView):
@@ -196,14 +201,17 @@ class InviteFriend(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        friend_id = body["id"]
         try:
-            friend = User.objects.get(id=friend_id)
-            invitation = FriendsInvitation(sender=user, invited=friend)
-            invitation.save()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except User.DoesNotExist:
+            body = json.loads(request.body)
+            friend_id = body["id"]
+            try:
+                friend = User.objects.get(id=friend_id)
+                invitation = FriendsInvitation(sender=user, invited=friend)
+                invitation.save()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except User.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -212,18 +220,21 @@ class RemoveFriend(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        friend_id = body["id"]
         try:
-            friend = User.objects.get(id=friend_id)
-            account = Account.objects.get(user=user)
-            account.friends.remove(friend)
-            account_friend = Account.objects.get(user=friend)
-            account_friend.friends.remove(user)
-            account.save()
-            account_friend.save()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except User.DoesNotExist:
+            body = json.loads(request.body)
+            friend_id = body["id"]
+            try:
+                friend = User.objects.get(id=friend_id)
+                account = Account.objects.get(user=user)
+                account.friends.remove(friend)
+                account_friend = Account.objects.get(user=friend)
+                account_friend.friends.remove(user)
+                account.save()
+                account_friend.save()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except User.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -232,17 +243,20 @@ class AcceptInvitation(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        invitation_id = body["id"]
         try:
-            invitation = FriendsInvitation.objects.get(id=invitation_id, invited=user)
-            account = Account.objects.get(user=user)
-            account.friends.add(invitation.sender)
-            friend_account = Account.objects.get(user=invitation.sender)
-            friend_account.friends.add(user)
-            invitation.delete()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except FriendsInvitation.DoesNotExist:
+            body = json.loads(request.body)
+            invitation_id = body["id"]
+            try:
+                invitation = FriendsInvitation.objects.get(id=invitation_id, invited=user)
+                account = Account.objects.get(user=user)
+                account.friends.add(invitation.sender)
+                friend_account = Account.objects.get(user=invitation.sender)
+                friend_account.friends.add(user)
+                invitation.delete()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except FriendsInvitation.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -251,18 +265,21 @@ class AcceptInvitationByUser(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        user_id = body["id"]
         try:
-            friend = User.objects.get(id=user_id)
-            invitation = FriendsInvitation.objects.get(invited=user, sender=friend)
-            account = Account.objects.get(user=user)
-            account.friends.add(invitation.sender)
-            friend_account = Account.objects.get(user=invitation.sender)
-            friend_account.friends.add(user)
-            invitation.delete()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except FriendsInvitation.DoesNotExist:
+            body = json.loads(request.body)
+            user_id = body["id"]
+            try:
+                friend = User.objects.get(id=user_id)
+                invitation = FriendsInvitation.objects.get(invited=user, sender=friend)
+                account = Account.objects.get(user=user)
+                account.friends.add(invitation.sender)
+                friend_account = Account.objects.get(user=invitation.sender)
+                friend_account.friends.add(user)
+                invitation.delete()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except FriendsInvitation.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -271,13 +288,16 @@ class DeclineInvitation(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        invitation_id = body["id"]
         try:
-            invitation = FriendsInvitation.objects.get(id=invitation_id, invited=user)
-            invitation.delete()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except FriendsInvitation.DoesNotExist:
+            body = json.loads(request.body)
+            invitation_id = body["id"]
+            try:
+                invitation = FriendsInvitation.objects.get(id=invitation_id, invited=user)
+                invitation.delete()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except FriendsInvitation.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -286,14 +306,17 @@ class DeclineInvitationByUser(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        friend_id = body["id"]
         try:
-            friend = User.objects.get(id=friend_id)
-            invitation = FriendsInvitation.objects.get(invited=user, sender=friend)
-            invitation.delete()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except FriendsInvitation.DoesNotExist:
+            body = json.loads(request.body)
+            friend_id = body["id"]
+            try:
+                friend = User.objects.get(id=friend_id)
+                invitation = FriendsInvitation.objects.get(invited=user, sender=friend)
+                invitation.delete()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except FriendsInvitation.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -302,14 +325,17 @@ class CancelInvitationByUser(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        friend_id = body["id"]
         try:
-            friend = User.objects.get(id=friend_id)
-            invitation = FriendsInvitation.objects.get(sender=user, invited=friend)
-            invitation.delete()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except FriendsInvitation.DoesNotExist:
+            body = json.loads(request.body)
+            friend_id = body["id"]
+            try:
+                friend = User.objects.get(id=friend_id)
+                invitation = FriendsInvitation.objects.get(sender=user, invited=friend)
+                invitation.delete()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except FriendsInvitation.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -318,15 +344,18 @@ class AddToGroup(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        group_id = body["group_id"]
-        invited_id = body["invited_id"]
         try:
-            group = Group.objects.get(id=group_id, users=user)
-            group.users.add(invited_id)
-            group.save()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except Group.DoesNotExist:
+            body = json.loads(request.body)
+            group_id = body["group_id"]
+            invited_id = body["invited_id"]
+            try:
+                group = Group.objects.get(id=group_id, users=user)
+                group.users.add(invited_id)
+                group.save()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except Group.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -335,15 +364,18 @@ class LeaveGroup(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        group_id = body["group_id"]
-        leaver_id = body["leaver_id"]
         try:
-            group = Group.objects.get(id=group_id, users=[user, leaver_id],)
-            group.users.remove(leaver_id)
-            group.save()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except Group.DoesNotExist:
+            body = json.loads(request.body)
+            group_id = body["group_id"]
+            leaver_id = body["leaver_id"]
+            try:
+                group = Group.objects.get(id=group_id, users=[user, leaver_id],)
+                group.users.remove(leaver_id)
+                group.save()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except Group.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -352,15 +384,18 @@ class SetAsPaid(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        expense_id = body["id"]
-        is_paid = body["paid"]
         try:
-            expense = Expense.objects.get(id=expense_id, ower=user)
-            expense.is_paid = is_paid
-            expense.save()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except Expense.DoesNotExist:
+            body = json.loads(request.body)
+            expense_id = body["id"]
+            is_paid = body["paid"]
+            try:
+                expense = Expense.objects.get(id=expense_id, ower=user)
+                expense.is_paid = is_paid
+                expense.save()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except Expense.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -369,15 +404,18 @@ class Settle(APIView):
 
     def post(self, request, format=None):
         user = request.user
-        body = json.loads(request.body)
-        expense_id = body["id"]
-        settled = body["settled"]
         try:
-            expense = Expense.objects.get(id=expense_id, payer=user)
-            expense.settled = settled
-            expense.save()
-            return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except Expense.DoesNotExist:
+            body = json.loads(request.body)
+            expense_id = body["id"]
+            settled = body["settled"]
+            try:
+                expense = Expense.objects.get(id=expense_id, payer=user)
+                expense.settled = settled
+                expense.save()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except Expense.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -390,17 +428,20 @@ class GetUsersSummarize(APIView):
         def def_value():
             return 0
 
-        all_debts = Expense.objects.filter(ower=user, settled=False).exclude(payer=user)
-        debts = defaultdict(def_value)
+        try:
+            all_debts = Expense.objects.filter(ower=user, settled=False).exclude(payer=user)
+            debts = defaultdict(def_value)
 
-        all_lents = Expense.objects.filter(payer=user, settled=False).exclude(ower=user)
-        if len(all_debts) > 0:
-            for expense in all_debts:
-                debts[expense.payer.username] += expense.amount
-        if len(all_lents) > 0:
-            for expense in all_lents:
-                debts[expense.ower.username] -= expense.amount
-        return Response(debts, status=status.HTTP_200_OK)
+            all_lents = Expense.objects.filter(payer=user, settled=False).exclude(ower=user)
+            if len(all_debts) > 0:
+                for expense in all_debts:
+                    debts[expense.payer.username] += expense.amount
+            if len(all_lents) > 0:
+                for expense in all_lents:
+                    debts[expense.ower.username] -= expense.amount
+            return Response(debts, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class FindFriends(APIView):
