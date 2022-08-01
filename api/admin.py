@@ -20,7 +20,9 @@ class ExpenseAdmin(admin.ModelAdmin):
 
 
 class GroupExpenseAdmin(admin.ModelAdmin):
-    pass
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            super().delete_model(request, obj)
 
 
 class FriendsInvitationAdmin(admin.ModelAdmin):
