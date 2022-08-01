@@ -11,6 +11,7 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import Error from "../components/Error";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 
@@ -38,6 +39,7 @@ export default function SignIn() {
   const [ifValidData, setIfValidData] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
   const navigate = useNavigate();
   // const handleSubmitOld = (event) => {
   //   event.preventDefault();
@@ -65,11 +67,22 @@ export default function SignIn() {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
     })
-      .then((res) => res.json())
-      .then((json) => {
-        localStorage.setItem("UserName", json.username);
+      .then((response) => {
+        if (response.ok) {
+          response
+            .json()
+            .then((data) => {
+              localStorage.setItem("UserName", data.username);
+            })
+            .then(() => navigate("/"));
+        } else {
+          throw new Error("Something went wrong");
+        }
       })
-      .then(() => navigate("/"));
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+      });
   };
 
   const handleSubmit = (e) => {
@@ -90,18 +103,22 @@ export default function SignIn() {
           "X-CSRFToken": csrftoken,
         },
         body: JSON.stringify(login_data),
-      }).then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            // setIfValidData(true);
-            localStorage.setItem("token", data.token);
-            handleLogin();
-          });
-        } else {
+      })
+        .then((response) => {
+          if (response.ok) {
+            response.json().then((data) => {
+              localStorage.setItem("token", data.token);
+              handleLogin();
+              setError(false);
+            });
+          } else {
+            throw new Error("Something went wrong");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
           setIfValidData(false);
-          console.log("invalid data");
-        }
-      });
+        });
     };
     getToken();
   };

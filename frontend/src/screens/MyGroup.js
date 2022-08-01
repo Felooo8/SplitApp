@@ -63,7 +63,7 @@ function Group(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        // setError(true);
       });
   };
 
