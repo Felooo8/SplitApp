@@ -62,32 +62,32 @@ class GetGroupExpenses(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        body = json.loads(request.body)
-        group_id = body["id"]
-        groups = Group.objects.filter(id=group_id)
-        if len(groups) > 0:
-            group = groups[0]
+        try:
+            body = json.loads(request.body)
+            group_id = body["id"]
+            group = Group.objects.get(id=group_id)
             expenses = group.group_expenses
             data = GroupExpenseSerializer(expenses, many=True).data
             return Response(data, status=status.HTTP_200_OK)
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetChartValues(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        body = json.loads(request.body)
-        group_id = body["id"]
-        groups = Group.objects.filter(id=group_id)
-        if len(groups) > 0:
-            group = groups[0]
+        try:
+            body = json.loads(request.body)
+            group_id = body["id"]
+            group = Group.objects.get(id=group_id)
             serializer = GroupSerializer(group).data
             valid_types = [type[0] for type in types]
             values = [serializer["spent_by_category"][type] for type in valid_types]
             data = {"keys": valid_types, "values": values}
             return Response(data, status=status.HTTP_200_OK)
-        return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetUsersExpenses(APIView):
@@ -116,22 +116,25 @@ class AddExpense(APIView):
         return max(len(list(set(total))), 2)
 
     def post(self, request, format=None):
-        body = json.loads(request.body)["values"]
-        payer_id = body["payer"]
-        payer = User.objects.get(id=payer_id)
-        owers_ids = body["owers"]
-        groups_ids = body["owers_groups"]
-        name = body["name"]
-        category = "Other"
-        category_name = body["category"]
-        for type in types:
-            if type[0] == category_name:
-                category = category_name
-                break
-        amount = float(body["amount"])
-        splitted = body["splitted"]
-        is_paid = body["is_paid"]
-        settled = body["settled"]
+        try:
+            body = json.loads(request.body)["values"]
+            payer_id = body["payer"]
+            payer = User.objects.get(id=payer_id)
+            owers_ids = body["owers"]
+            groups_ids = body["owers_groups"]
+            name = body["name"]
+            category = "Other"
+            category_name = body["category"]
+            for type in types:
+                if type[0] == category_name:
+                    category = category_name
+                    break
+            amount = float(body["amount"])
+            splitted = body["splitted"]
+            is_paid = body["is_paid"]
+            settled = body["settled"]
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
         if not splitted:
             amount = amount / self.total_users(owers_ids, groups_ids)
         try:
@@ -174,7 +177,7 @@ class AddExpense(APIView):
                     group.group_expenses.add(new_group_expense)
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except:
-            return Response(None, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SeeFriends(APIView):

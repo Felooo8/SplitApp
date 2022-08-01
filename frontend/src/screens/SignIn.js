@@ -39,7 +39,7 @@ export default function SignIn() {
   const [ifValidData, setIfValidData] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [, setError] = useState(false);
   const navigate = useNavigate();
   // const handleSubmitOld = (event) => {
   //   event.preventDefault();
