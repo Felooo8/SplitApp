@@ -23,8 +23,11 @@ import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import Constants from "../apis/Constants";
 import returnIcon from "../apis/returnIcon";
 import "../App.css";
+import Error from "../components/Error";
+import SkeletonItem from "../components/SkeletonItem";
 import ListOfCategories from "./listOfCategoriesModal";
 import ListOfGroupsModal from "./listOfGroupsModal";
 
@@ -60,6 +63,8 @@ export default function AddingExpense(props) {
   const [friends, setFriends] = useState([]);
   const [chosenGroupsName, setChosenGroupsName] = useState([]);
   const [chosenIsGroup, setChosenIsGroup] = useState([]);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpenGroup = () => setOpenGroup(true);
@@ -94,16 +99,22 @@ export default function AddingExpense(props) {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-    }).then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          setGroups(data);
-          console.log(data);
-        });
-      } else {
-        console.log("Please log in!");
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setGroups(data);
+            console.log(data);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+      });
   };
 
   const getFriends = () => {
@@ -113,15 +124,21 @@ export default function AddingExpense(props) {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-    }).then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          setFriends(data);
-        });
-      } else {
-        console.log("Please log in!");
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setFriends(data);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+      });
   };
 
   const getUser = () => {
@@ -129,28 +146,32 @@ export default function AddingExpense(props) {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-    }).then((res) => {
-      if (res.ok) {
-        res.json().then((data) => {
-          setCurrentUser(data);
-          // setPayers([{ id: data.id, username: "You" }]);
-        });
-      } else {
-        console.log("Not logged in");
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setCurrentUser(data);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+      });
   };
 
   useEffect(() => {
-    getGroups();
-    getFriends();
-    getUser();
-    // const interval = setInterval(() => {
-    //   getGroups();
-    //   getFriends();
-    //   getUser();
-    // }, 50000);
-    // return () => clearInterval(interval);
+    setLoading(true);
+    const timer = setTimeout(() => {
+      getGroups();
+      getFriends();
+      getUser();
+      setLoading(false);
+    }, Constants.LOADING_DATA_DELAY);
+    return () => clearTimeout(timer);
   }, []);
 
   const sendRequest = () => {
@@ -161,22 +182,27 @@ export default function AddingExpense(props) {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({ values: values }),
-    }).then((res) => {
-      if (res.ok) {
-        console.log("Good");
-        setValues(defaultValues);
-        setChosenGroupsName([]);
-        setPayers([]);
-        setChosenIsGroup([]);
-        window.location.reload(false);
-      } else {
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Good");
+          setValues(defaultValues);
+          setChosenGroupsName([]);
+          setPayers([]);
+          setChosenIsGroup([]);
+          setError(false);
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
         console.log("Failed");
-      }
-    });
+        console.log(error);
+        setError(true);
+      });
   };
 
   const setPayersData = (id, isGroup, username) => {
-    console.log("ASD");
     console.log(id, isGroup, username);
     if (isGroup) {
       for (const group of groups) {
@@ -222,8 +248,6 @@ export default function AddingExpense(props) {
   };
 
   const handleChangePayer = () => (event) => {
-    console.log("CHANGING");
-    console.log(event.target.value);
     values.payer = event.target.value;
     setValues({ ...values, payer: event.target.value });
     if (event.target.value === values["owers"][0]) {
@@ -244,8 +268,6 @@ export default function AddingExpense(props) {
   };
 
   const handleChangeSwitch = (prop) => (event) => {
-    console.log(chosenGroupsName);
-    console.log(values);
     setValues({ ...values, [prop]: event.target.checked });
   };
   const toggleClose = (category) => {
@@ -256,7 +278,6 @@ export default function AddingExpense(props) {
     values.is_group = isGroup;
     if (isGroup) {
       values.owers_groups = [...values.owers_groups, group_friend_id];
-      console.log(values);
     } else {
       values.owers = [...values.owers, group_friend_id];
     }
@@ -272,7 +293,6 @@ export default function AddingExpense(props) {
     } else {
       setPayersData(group_friend_id, isGroup, group_friend_name);
     }
-    console.log(payers);
   };
 
   const afterDeletingGroup = (index) => {
@@ -335,160 +355,178 @@ export default function AddingExpense(props) {
     return returnIcon(values["category"]);
   };
 
+  const toggleFetch = () => {
+    getGroups();
+    getFriends();
+    getUser();
+  };
+
+  if (error) {
+    return (
+      <div>
+        <Error toggle={toggleFetch} />
+      </div>
+    );
+  }
+
   return (
     <Expense>
-      <div style={center}>
-        <Fade in={true}>
-          <Paper elevation={3}>
-            <AccordionSummary
-              expandIcon={
-                <ListItemButton
-                  onClick={sendRequest}
-                  disabled={!validateForm()}
-                >
-                  <ListItemIcon style={{ minWidth: "0" }}>
-                    <SendIcon color="primary" />
-                  </ListItemIcon>
-                </ListItemButton>
-              }
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <WholeStack>
-                <StackColumn>
-                  <Button onClick={handleOpen}>{categoryIcon()}</Button>
-                  <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
+      {loading ? (
+        <SkeletonItem header={false} />
+      ) : (
+        <div style={center}>
+          <Fade in={true}>
+            <Paper elevation={3}>
+              <AccordionSummary
+                expandIcon={
+                  <ListItemButton
+                    onClick={sendRequest}
+                    disabled={!validateForm()}
                   >
-                    <Box sx={style}>
-                      <ListOfCategories toggle={toggleClose} />
-                    </Box>
-                  </Modal>
-                  <RowStack style={{ float: "left " }}>
-                    <TextField
-                      id="standard-basic"
-                      label="Name"
-                      value={values.name}
-                      variant="standard"
-                      style={nameInput}
-                      onChange={handleChange("name")}
-                    />
-
-                    <FormControl
-                      fullWidth
-                      sx={{ m: 1 }}
-                      variant="standard"
-                      style={ammountInput}
-                    >
-                      <InputLabel htmlFor="standard-adornment-amount">
-                        Amount
-                      </InputLabel>
-                      <Input
-                        type="number"
-                        id="standard-adornment-amount"
-                        label="Amount"
-                        value={values.amount}
-                        onChange={handleChange("amount")}
-                        startAdornment={
-                          <InputAdornment position="start">$</InputAdornment>
-                        }
-                      />
-                    </FormControl>
-                  </RowStack>
-                </StackColumn>
-              </WholeStack>
-            </AccordionSummary>
-            <FormGroup
-              style={{
-                display: "block",
-                paddingBottom: "0.7rem",
-              }}
-            >
-              <FormControlLabel
-                control={<Switch />}
-                label="Is paid"
-                checked={values.is_paid}
-                onChange={handleChangeSwitch("is_paid")}
-              />
-              <FormControlLabel
-                control={<Switch />}
-                label="Settled"
-                checked={values.settled}
-                onChange={handleChangeSwitch("settled")}
-              />
-              <FormControlLabel
-                control={<Switch />}
-                label="Splitted"
-                color="warning"
-                checked={values.splitted}
-                onChange={handleChangeSwitch("splitted")}
-              />
-              <Button onClick={handleOpenGroup}>
-                <GroupsIcon
-                  sx={{ color: "red" }}
-                  style={{ width: "2em", height: "2em" }}
-                />
-              </Button>
-              <Modal
-                open={openGroup}
-                onClose={handleCloseGroup}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+                    <ListItemIcon style={{ minWidth: "0" }}>
+                      <SendIcon color="primary" />
+                    </ListItemIcon>
+                  </ListItemButton>
+                }
+                aria-controls="panel1a-content"
+                id="panel1a-header"
               >
-                {groups !== [] || friends !== [] ? (
-                  <Box sx={style}>
-                    <ListOfGroupsModal
-                      toggle={toggleCloseGroup}
-                      groups={groups}
-                      friends={friends}
-                    />
-                  </Box>
-                ) : null}
-              </Modal>
-              {chosenGroupsName !== []
-                ? chosenGroupsName.map((group, index) => (
-                    <Chip
-                      color="success"
-                      style={chipstyling}
-                      label={group}
-                      value={group}
-                      key={index}
-                      variant="outlined"
-                      icon={<GroupOutlinedIcon />}
-                      onDelete={() => handleDeleteGroup(index)}
-                    />
-                  ))
-                : null}
+                <WholeStack>
+                  <StackColumn>
+                    <Button onClick={handleOpen}>{categoryIcon()}</Button>
+                    <Modal
+                      open={open}
+                      onClose={handleClose}
+                      aria-labelledby="modal-modal-title"
+                      aria-describedby="modal-modal-description"
+                    >
+                      <Box sx={style}>
+                        <ListOfCategories toggle={toggleClose} />
+                      </Box>
+                    </Modal>
+                    <RowStack style={{ float: "left " }}>
+                      <TextField
+                        id="standard-basic"
+                        label="Name"
+                        value={values.name}
+                        variant="standard"
+                        style={nameInput}
+                        onChange={handleChange("name")}
+                      />
 
-              {isPayerUpdated() ? (
-                <FormControl sx={{ m: 1, minWidth: 80 }}>
-                  <InputLabel id="demo-simple-select-autowidth-label">
-                    Payer
-                  </InputLabel>
-                  <Select
-                    labelId="payer-id"
-                    id="payer-id"
-                    value={values.payer}
-                    onChange={handleChangePayer()}
-                    autoWidth
-                    label="Payer"
-                    style={(chipstyling, noMaxWidth)}
-                  >
-                    {payers.map((payer, index) => (
-                      <MenuItem key={index} value={payer.id}>
-                        {payer.username}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              ) : null}
-            </FormGroup>
-          </Paper>
-        </Fade>
-      </div>
+                      <FormControl
+                        fullWidth
+                        sx={{ m: 1 }}
+                        variant="standard"
+                        style={ammountInput}
+                      >
+                        <InputLabel htmlFor="standard-adornment-amount">
+                          Amount
+                        </InputLabel>
+                        <Input
+                          type="number"
+                          id="standard-adornment-amount"
+                          label="Amount"
+                          value={values.amount}
+                          onChange={handleChange("amount")}
+                          startAdornment={
+                            <InputAdornment position="start">$</InputAdornment>
+                          }
+                        />
+                      </FormControl>
+                    </RowStack>
+                  </StackColumn>
+                </WholeStack>
+              </AccordionSummary>
+              <FormGroup
+                style={{
+                  display: "block",
+                  paddingBottom: "0.7rem",
+                }}
+              >
+                <FormControlLabel
+                  control={<Switch />}
+                  label="Is paid"
+                  checked={values.is_paid}
+                  onChange={handleChangeSwitch("is_paid")}
+                />
+                <FormControlLabel
+                  control={<Switch />}
+                  label="Settled"
+                  checked={values.settled}
+                  onChange={handleChangeSwitch("settled")}
+                />
+                <FormControlLabel
+                  control={<Switch />}
+                  label="Splitted"
+                  color="warning"
+                  checked={values.splitted}
+                  onChange={handleChangeSwitch("splitted")}
+                />
+                <Button onClick={handleOpenGroup}>
+                  <GroupsIcon
+                    sx={{ color: "red" }}
+                    style={{ width: "2em", height: "2em" }}
+                  />
+                </Button>
+                <Modal
+                  open={openGroup}
+                  onClose={handleCloseGroup}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  {groups !== [] || friends !== [] ? (
+                    <Box sx={style}>
+                      <ListOfGroupsModal
+                        toggle={toggleCloseGroup}
+                        groups={groups}
+                        friends={friends}
+                      />
+                    </Box>
+                  ) : null}
+                </Modal>
+                {chosenGroupsName !== []
+                  ? chosenGroupsName.map((group, index) => (
+                      <Chip
+                        color="success"
+                        style={chipstyling}
+                        label={group}
+                        value={group}
+                        key={index}
+                        variant="outlined"
+                        icon={<GroupOutlinedIcon />}
+                        onDelete={() => handleDeleteGroup(index)}
+                      />
+                    ))
+                  : null}
+
+                {isPayerUpdated() ? (
+                  <FormControl sx={{ m: 1, minWidth: 80 }}>
+                    <InputLabel id="demo-simple-select-autowidth-label">
+                      Payer
+                    </InputLabel>
+                    <Select
+                      labelId="payer-id"
+                      id="payer-id"
+                      value={values.payer}
+                      onChange={handleChangePayer()}
+                      autoWidth
+                      label="Payer"
+                      style={(chipstyling, noMaxWidth)}
+                    >
+                      {payers.map((payer, index) => (
+                        <MenuItem key={index} value={payer.id}>
+                          {payer.username}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                ) : null}
+              </FormGroup>
+            </Paper>
+          </Fade>
+        </div>
+      )}
     </Expense>
   );
 }

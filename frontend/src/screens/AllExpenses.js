@@ -10,6 +10,7 @@ import ExpenseItem from "../components/Expense";
 import BottomAppBar from "../components/Appbar";
 import SkeletonItem from "../components/SkeletonItem";
 import Constants from "../apis/Constants";
+import Error from "../components/Error";
 
 function AllExpenses(props) {
   const [userExpenses, setUserExpenses] = useState([]);
@@ -21,6 +22,7 @@ function AllExpenses(props) {
   const [showLent, setShowLent] = useState(true);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const getExpenses = () => {
     fetch("http://127.0.0.1:8000/api/userExpenses", {
@@ -30,14 +32,22 @@ function AllExpenses(props) {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        // console.log(data);
-        setUserExpenses(data);
-        setFiltredExpenses(
-          data.filter((expense) => expense.settled === showSettled)
-        );
-        console.log(filtredExpenses);
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setUserExpenses(data);
+            setFiltredExpenses(
+              data.filter((expense) => expense.settled === showSettled)
+            );
+            // console.log(filtredExpenses);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
       });
   };
 
@@ -46,15 +56,21 @@ function AllExpenses(props) {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-    }).then((res) => {
-      if (res.ok) {
-        res.json().then((data) => {
-          setCurrentUser(data);
-        });
-      } else {
-        console.log("Not logged in");
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setCurrentUser(data);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+      });
   };
 
   const filterExpenses = (event) => {
@@ -195,6 +211,11 @@ function AllExpenses(props) {
     );
   };
 
+  const toggleFetch = () => {
+    getUser();
+    getExpenses();
+  };
+
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
@@ -204,6 +225,15 @@ function AllExpenses(props) {
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);
+
+  if (error) {
+    return (
+      <div>
+        <Error toggle={toggleFetch} />
+        <BottomAppBar value="all expenses" />
+      </div>
+    );
+  }
 
   return (
     <div>

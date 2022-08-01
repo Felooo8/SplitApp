@@ -10,7 +10,6 @@ function AddExpense(props) {
         margin: "0 auto",
       }}
     >
-      <h2>Add expense:</h2>
       <AddingExpense />
       <BottomAppBar value="add expense" />
     </div>

@@ -7,6 +7,7 @@ import BottomAppBar from "../components/Appbar";
 import Chip from "@mui/material/Chip";
 import Constants from "../apis/Constants";
 import SkeletonItem from "../components/SkeletonItem";
+import Error from "../components/Error";
 
 function Group(props) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -15,6 +16,7 @@ function Group(props) {
   const [expenses, setExpenses] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const params = useParams();
 
   const getUser = () => {
@@ -22,15 +24,21 @@ function Group(props) {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-    }).then((res) => {
-      if (res.ok) {
-        res.json().then((data) => {
-          setCurrentUser(data);
-        });
-      } else {
-        console.log("Not logged in");
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setCurrentUser(data);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+      });
   };
 
   const getTotalExpenses = () => {
@@ -42,10 +50,20 @@ function Group(props) {
       },
       body: JSON.stringify({ id: params.id }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setKeys(data["keys"]);
-        setValues(data["values"]);
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setKeys(data["keys"]);
+            setValues(data["values"]);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
       });
   };
 
@@ -58,10 +76,27 @@ function Group(props) {
       },
       body: JSON.stringify({ id: params.id }),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setExpenses(data);
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setExpenses(data);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
       });
+  };
+
+  const toggleFetch = () => {
+    getGroups();
+    getTotalExpenses();
+    setGroupName(params.groupName);
+    getUser();
   };
 
   useEffect(() => {
@@ -75,6 +110,15 @@ function Group(props) {
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);
+
+  if (error) {
+    return (
+      <div>
+        <Error toggle={toggleFetch} />
+        <BottomAppBar value="groups" />
+      </div>
+    );
+  }
 
   console.log(expenses);
   return (

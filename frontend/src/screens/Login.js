@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
+import BottomAppBar from "../components/Appbar";
 
 function LoginScreen(props) {
   const [username, setUsername] = useState("");
@@ -137,6 +138,7 @@ function LoginScreen(props) {
           </FooterTexts>
         </Rect>
       </Background>
+      <BottomAppBar />
     </Root>
   );
 }

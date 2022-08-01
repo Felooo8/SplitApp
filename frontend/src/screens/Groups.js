@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import BottomAppBar from "../components/Appbar";
 import GroupItem from "../components/GroupItem";
 import SkeletonItem from "../components/SkeletonItem";
+import Error from "../components/Error";
 import Constants from "../apis/Constants";
 import "../App.css";
 
@@ -12,6 +13,7 @@ import "../App.css";
 function Groups(props) {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const getGroups = () => {
     fetch("http://127.0.0.1:8000/api/group", {
@@ -20,16 +22,26 @@ function Groups(props) {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-    }).then((response) => {
-      if (response.ok) {
-        response.json().then((data) => {
-          setGroups(data);
-          setLoading(false);
-        });
-      } else {
-        console.log("Please log in!");
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setGroups(data);
+            setLoading(false);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+      });
+  };
+
+  const toggleFetch = () => {
+    getGroups();
   };
 
   useEffect(() => {
@@ -39,6 +51,15 @@ function Groups(props) {
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);
+
+  if (error) {
+    return (
+      <div>
+        <Error toggle={toggleFetch} />
+        <BottomAppBar value="groups" />
+      </div>
+    );
+  }
 
   console.log(groups);
   return (

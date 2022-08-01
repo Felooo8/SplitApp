@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-import SummaryItem from "../components/SummaryItem";
-import BottomAppBar from "../components/Appbar";
-import SkeletonItem from "../components/SkeletonItem";
+import React, { useEffect, useState } from "react";
 import Constants from "../apis/Constants";
+import BottomAppBar from "../components/Appbar";
+import Error from "../components/Error";
+import SkeletonItem from "../components/SkeletonItem";
+import SummaryItem from "../components/SummaryItem";
 
 function Summary(props) {
   const [summaries, setSummaries] = useState({});
   const [total, setTotal] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const getSummarize = () => {
     fetch("http://127.0.0.1:8000/api/summarize", {
@@ -19,11 +21,21 @@ function Summary(props) {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setSummaries(data);
-        inTotal(data);
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            console.log(data);
+            setSummaries(data);
+            inTotal(data);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
       });
   };
 
@@ -32,15 +44,21 @@ function Summary(props) {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-    }).then((res) => {
-      if (res.ok) {
-        res.json().then((data) => {
-          setCurrentUser(data);
-        });
-      } else {
-        console.log("Not logged in");
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setCurrentUser(data);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
+      });
   };
 
   const Overrall = () => {
@@ -56,6 +74,11 @@ function Summary(props) {
         Overall, people owe you ${Math.abs(total).toFixed(2)}
       </h5>
     );
+  };
+
+  const toggleFetch = () => {
+    getUser();
+    getSummarize();
   };
 
   const inTotal = (summaries) => {
@@ -76,13 +99,15 @@ function Summary(props) {
     return () => clearTimeout(timer);
   }, []);
 
-  // if (loading) {
-  //   return (
-  //     <div>
-  //       <SkeletonItem />
-  //     </div>
-  //   );
-  // }
+  if (error) {
+    return (
+      <div>
+        <Error toggle={toggleFetch} />
+        <BottomAppBar value="home" />
+      </div>
+    );
+  }
+
   return (
     <div>
       {loading ? (

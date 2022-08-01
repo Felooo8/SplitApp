@@ -25,11 +25,20 @@ export default function BottomAppBar(props) {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setNotifications(data);
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setNotifications(data);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
+
   useEffect(() => {
     getNotifications();
   }, []);

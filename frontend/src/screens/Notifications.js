@@ -1,16 +1,18 @@
-import Stack from "@mui/material/Stack";
-import React, { useEffect, useState } from "react";
-import InvitationItem from "../components/InvitationItem";
-import BottomAppBar from "../components/Appbar";
-import SkeletonItem from "../components/SkeletonItem";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import React, { useEffect, useState } from "react";
 import Constants from "../apis/Constants";
+import BottomAppBar from "../components/Appbar";
+import InvitationItem from "../components/InvitationItem";
+import SkeletonItem from "../components/SkeletonItem";
+import Error from "../components/Error";
 
 function Notifications(props) {
   const [invitations, setInvitations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const findFriends = () => {
     fetch("http://127.0.0.1:8000/api/getInvitations", {
@@ -20,10 +22,19 @@ function Notifications(props) {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setInvitations(data);
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setInvitations(data);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
       });
   };
 
@@ -39,6 +50,19 @@ function Notifications(props) {
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);
+
+  const toggleFetch = () => {
+    findFriends();
+  };
+
+  if (error) {
+    return (
+      <div>
+        <Error toggle={toggleFetch} />
+        <BottomAppBar value="notifications" />
+      </div>
+    );
+  }
 
   return (
     <div>
