@@ -104,6 +104,7 @@ export default function ExpenseItem(props) {
                 expense={props.expense}
                 marked={marked(props.expense)}
                 toggle={props.toggle}
+                errorToggle={props.errorToggle}
               />
             </AccordionDetails>
           </Accordion>

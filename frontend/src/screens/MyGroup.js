@@ -8,6 +8,17 @@ import Chip from "@mui/material/Chip";
 import Constants from "../apis/Constants";
 import SkeletonItem from "../components/SkeletonItem";
 import Error from "../components/Error";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import Slide from "@mui/material/Slide";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="left" />;
+}
 
 function Group(props) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -16,11 +27,11 @@ function Group(props) {
   const [expenses, setExpenses] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
   const [errors, setErrors] = useState({
     user: false,
     total: false,
     groups: false,
-    settling: false,
   });
   const params = useParams();
 
@@ -116,11 +127,15 @@ function Group(props) {
       });
   };
 
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
+
   const errorToggle = () => {
-    setErrors((errors) => ({
-      ...errors,
-      settling: true,
-    }));
+    setOpenSnackBar(true);
   };
 
   const toggleFetch = () => {
@@ -164,7 +179,24 @@ function Group(props) {
           marginBottom: "20px",
         }}
       />
-
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackBar}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        TransitionComponent={SlideTransition}
+      >
+        <Alert
+          onClose={handleCloseSnackBar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          Something went wrong!
+        </Alert>
+      </Snackbar>
       {loading ? (
         <SkeletonItem header={false} />
       ) : (

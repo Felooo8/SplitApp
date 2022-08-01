@@ -11,6 +11,17 @@ import BottomAppBar from "../components/Appbar";
 import SkeletonItem from "../components/SkeletonItem";
 import Constants from "../apis/Constants";
 import Error from "../components/Error";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import Slide from "@mui/material/Slide";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="left" />;
+}
 
 function AllExpenses(props) {
   const [userExpenses, setUserExpenses] = useState([]);
@@ -22,6 +33,7 @@ function AllExpenses(props) {
   const [showLent, setShowLent] = useState(true);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [loading, setLoading] = useState(true);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
   const [errors, setErrors] = useState({
     user: false,
     expenses: false,
@@ -227,9 +239,20 @@ function AllExpenses(props) {
     );
   };
 
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
+
   const toggleFetch = () => {
     getUser();
     getExpenses();
+  };
+
+  const errorToggle = () => {
+    setOpenSnackBar(true);
   };
 
   useEffect(() => {
@@ -253,6 +276,24 @@ function AllExpenses(props) {
 
   return (
     <div>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackBar}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        TransitionComponent={SlideTransition}
+      >
+        <Alert
+          onClose={handleCloseSnackBar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          Something went wrong!
+        </Alert>
+      </Snackbar>
       {loading ? (
         <SkeletonItem header={true} />
       ) : (
@@ -266,6 +307,7 @@ function AllExpenses(props) {
                 index={index}
                 currentUser={currentUser}
                 toggle={reRenderToggle}
+                errorToggle={errorToggle}
               />
             ))}
           </Stack>
