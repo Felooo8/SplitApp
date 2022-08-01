@@ -1,15 +1,15 @@
-import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
-import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 import CancelIcon from "@mui/icons-material/Cancel";
+import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import PersonAddDisabledIcon from "@mui/icons-material/PersonAddDisabled";
+import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 import Avatar from "@mui/material/Avatar";
+import ListItemButton from "@mui/material/ListItemButton";
 import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
 import React from "react";
 import styled from "styled-components";
-import "../App.css";
-import ListItemButton from "@mui/material/ListItemButton";
 import Constants from "../apis/Constants";
+import "../App.css";
 
 const inviteFriendUrl = "inviteFriend";
 const removeFriendUrl = "removeFriend";
@@ -47,13 +47,20 @@ export default function SearchResult(props) {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({ id: props.user.id }),
-    }).then((res) => {
-      if (res.ok) {
-        props.toggle();
-      } else {
-        console.log("Failed");
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            props.toggle();
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        props.errorToggle();
+      });
   };
 
   const sendInvitation = () => {

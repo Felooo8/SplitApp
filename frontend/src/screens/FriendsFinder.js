@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import SkeletonItem from "../components/SkeletonItem";
 import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
+import Error from "../components/Error";
 
 function FriendsFinder(props) {
   const [users, setUsers] = useState([]);
@@ -12,6 +13,7 @@ function FriendsFinder(props) {
   const [sent, setSent] = useState([]);
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   // const [currentUser, setCurrentUser] = useState(undefined);
   const params = useParams();
 
@@ -23,19 +25,32 @@ function FriendsFinder(props) {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setUsers(data["users"]);
-        setFriends(data["friends"]);
-        setSent(data["sent"]);
-        setPending(data["pending"]);
-        setLoading(false);
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setUsers(data["users"]);
+            setFriends(data["friends"]);
+            setSent(data["sent"]);
+            setPending(data["pending"]);
+            setLoading(false);
+            setError(false);
+          });
+        } else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(true);
       });
   };
 
   const reRenderToggle = () => {
     findFriends();
+  };
+
+  const errorToggle = () => {
+    setError(true);
   };
 
   const isFriend = (id) => {
@@ -58,6 +73,19 @@ function FriendsFinder(props) {
     return () => clearTimeout(timer);
   }, []);
 
+  const toggleFetch = () => {
+    findFriends();
+  };
+
+  if (error) {
+    return (
+      <div>
+        <Error toggle={toggleFetch} />
+        <BottomAppBar />
+      </div>
+    );
+  }
+
   return (
     <div>
       {loading ? (
@@ -75,6 +103,7 @@ function FriendsFinder(props) {
                 isSent={isSent(user.id)}
                 isPending={isPending(user.id)}
                 toggle={reRenderToggle}
+                errorToggle={errorToggle}
               />
             ))}
           </Stack>

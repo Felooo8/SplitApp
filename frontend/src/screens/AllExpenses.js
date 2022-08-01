@@ -22,7 +22,10 @@ function AllExpenses(props) {
   const [showLent, setShowLent] = useState(true);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [errors, setErrors] = useState({
+    user: false,
+    expenses: false,
+  });
 
   const getExpenses = () => {
     fetch("http://127.0.0.1:8000/api/userExpenses", {
@@ -40,6 +43,10 @@ function AllExpenses(props) {
               data.filter((expense) => expense.settled === showSettled)
             );
             // console.log(filtredExpenses);
+            setErrors((errors) => ({
+              ...errors,
+              expenses: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -47,7 +54,10 @@ function AllExpenses(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          expenses: true,
+        }));
       });
   };
 
@@ -61,7 +71,10 @@ function AllExpenses(props) {
         if (response.ok) {
           response.json().then((data) => {
             setCurrentUser(data);
-            setError(false);
+            setErrors((errors) => ({
+              ...errors,
+              user: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -69,7 +82,10 @@ function AllExpenses(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          user: true,
+        }));
       });
   };
 
@@ -226,7 +242,7 @@ function AllExpenses(props) {
     return () => clearTimeout(timer);
   }, []);
 
-  if (error) {
+  if (Object.values(errors).some((error) => error === true)) {
     return (
       <div>
         <Error toggle={toggleFetch} />

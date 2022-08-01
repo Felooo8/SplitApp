@@ -11,7 +11,10 @@ function Summary(props) {
   const [total, setTotal] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [errors, setErrors] = useState({
+    summary: false,
+    user: false,
+  });
 
   const getSummarize = () => {
     fetch("http://127.0.0.1:8000/api/summarize", {
@@ -27,7 +30,10 @@ function Summary(props) {
             console.log(data);
             setSummaries(data);
             inTotal(data);
-            setError(false);
+            setErrors((errors) => ({
+              ...errors,
+              summary: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -35,7 +41,10 @@ function Summary(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          summary: true,
+        }));
       });
   };
 
@@ -49,7 +58,10 @@ function Summary(props) {
         if (response.ok) {
           response.json().then((data) => {
             setCurrentUser(data);
-            setError(false);
+            setErrors((errors) => ({
+              ...errors,
+              user: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -57,7 +69,10 @@ function Summary(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          user: true,
+        }));
       });
   };
 
@@ -99,7 +114,7 @@ function Summary(props) {
     return () => clearTimeout(timer);
   }, []);
 
-  if (error) {
+  if (Object.values(errors).some((error) => error === true)) {
     return (
       <div>
         <Error toggle={toggleFetch} />

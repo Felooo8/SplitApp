@@ -16,7 +16,11 @@ function Group(props) {
   const [expenses, setExpenses] = useState([]);
   const [groupName, setGroupName] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [errors, setErrors] = useState({
+    user: false,
+    total: false,
+    groups: false,
+  });
   const params = useParams();
 
   const getUser = () => {
@@ -29,7 +33,10 @@ function Group(props) {
         if (response.ok) {
           response.json().then((data) => {
             setCurrentUser(data);
-            setError(false);
+            setErrors((errors) => ({
+              ...errors,
+              user: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -37,7 +44,10 @@ function Group(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          user: true,
+        }));
       });
   };
 
@@ -55,7 +65,10 @@ function Group(props) {
           response.json().then((data) => {
             setKeys(data["keys"]);
             setValues(data["values"]);
-            setError(false);
+            setErrors((errors) => ({
+              ...errors,
+              total: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -63,7 +76,11 @@ function Group(props) {
       })
       .catch((error) => {
         console.log(error);
-        // setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          total: true,
+        }));
+        // setErrors(true);
       });
   };
 
@@ -80,7 +97,10 @@ function Group(props) {
         if (response.ok) {
           response.json().then((data) => {
             setExpenses(data);
-            setError(false);
+            setErrors((errors) => ({
+              ...errors,
+              groups: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -88,7 +108,10 @@ function Group(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          groups: true,
+        }));
       });
   };
 
@@ -111,7 +134,7 @@ function Group(props) {
     return () => clearTimeout(timer);
   }, []);
 
-  if (error) {
+  if (Object.values(errors).some((error) => error === true)) {
     return (
       <div>
         <Error toggle={toggleFetch} />

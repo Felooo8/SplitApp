@@ -63,7 +63,12 @@ export default function AddingExpense(props) {
   const [friends, setFriends] = useState([]);
   const [chosenGroupsName, setChosenGroupsName] = useState([]);
   const [chosenIsGroup, setChosenIsGroup] = useState([]);
-  const [error, setError] = useState(false);
+  const [errors, setErrors] = useState({
+    user: false,
+    groups: false,
+    friends: false,
+    request: false,
+  });
   const [loading, setLoading] = useState(true);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -105,7 +110,10 @@ export default function AddingExpense(props) {
           response.json().then((data) => {
             setGroups(data);
             console.log(data);
-            setError(false);
+            setErrors((errors) => ({
+              ...errors,
+              groups: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -113,7 +121,10 @@ export default function AddingExpense(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          groups: true,
+        }));
       });
   };
 
@@ -129,7 +140,10 @@ export default function AddingExpense(props) {
         if (response.ok) {
           response.json().then((data) => {
             setFriends(data);
-            setError(false);
+            setErrors((errors) => ({
+              ...errors,
+              friends: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -137,7 +151,10 @@ export default function AddingExpense(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          friends: true,
+        }));
       });
   };
 
@@ -151,7 +168,10 @@ export default function AddingExpense(props) {
         if (response.ok) {
           response.json().then((data) => {
             setCurrentUser(data);
-            setError(false);
+            setErrors((errors) => ({
+              ...errors,
+              user: false,
+            }));
           });
         } else {
           throw new Error("Something went wrong");
@@ -159,7 +179,10 @@ export default function AddingExpense(props) {
       })
       .catch((error) => {
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          user: true,
+        }));
       });
   };
 
@@ -190,7 +213,10 @@ export default function AddingExpense(props) {
           setChosenGroupsName([]);
           setPayers([]);
           setChosenIsGroup([]);
-          setError(false);
+          setErrors((errors) => ({
+            ...errors,
+            request: false,
+          }));
         } else {
           throw new Error("Something went wrong");
         }
@@ -198,7 +224,10 @@ export default function AddingExpense(props) {
       .catch((error) => {
         console.log("Failed");
         console.log(error);
-        setError(true);
+        setErrors((errors) => ({
+          ...errors,
+          request: true,
+        }));
       });
   };
 
@@ -361,7 +390,7 @@ export default function AddingExpense(props) {
     getUser();
   };
 
-  if (error) {
+  if (Object.values(errors).some((error) => error === true)) {
     return (
       <div>
         <Error toggle={toggleFetch} />
