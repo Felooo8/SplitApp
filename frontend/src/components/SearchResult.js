@@ -50,9 +50,7 @@ export default function SearchResult(props) {
     })
       .then((response) => {
         if (response.ok) {
-          response.json().then((data) => {
-            props.toggle();
-          });
+          props.toggle(url.substring(0, 3));
         } else {
           throw new Error("Something went wrong");
         }

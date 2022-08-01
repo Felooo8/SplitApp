@@ -6,6 +6,17 @@ import SkeletonItem from "../components/SkeletonItem";
 import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+import Slide from "@mui/material/Slide";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="left" />;
+}
 
 function FriendsFinder(props) {
   const [users, setUsers] = useState([]);
@@ -14,6 +25,8 @@ function FriendsFinder(props) {
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [lastAction, setLastAction] = useState("");
+  const [openSnackBar, setOpenSnackBar] = useState(false);
   // const [currentUser, setCurrentUser] = useState(undefined);
   const params = useParams();
 
@@ -45,7 +58,26 @@ function FriendsFinder(props) {
       });
   };
 
-  const reRenderToggle = () => {
+  const alertMessage = () => {
+    switch (lastAction) {
+      case "acc":
+        return "Accepted invitation";
+      case "inv":
+        return "Sent invitation";
+      case "rem":
+        return "Friend removed";
+      case "dec":
+        return "Friends invitation declined";
+      case "can":
+        return "Invitation canceled";
+      default:
+        return "Request sent";
+    }
+  };
+
+  const reRenderToggle = (action) => {
+    setLastAction(action);
+    setOpenSnackBar(true);
     findFriends();
   };
 
@@ -63,6 +95,13 @@ function FriendsFinder(props) {
 
   const isSent = (id) => {
     return sent.includes(id);
+  };
+
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
   };
 
   useEffect(() => {
@@ -88,6 +127,24 @@ function FriendsFinder(props) {
 
   return (
     <div>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackBar}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        TransitionComponent={SlideTransition}
+      >
+        <Alert
+          onClose={handleCloseSnackBar}
+          severity="info"
+          sx={{ width: "100%" }}
+        >
+          {alertMessage()}
+        </Alert>
+      </Snackbar>
       {loading ? (
         <SkeletonItem header={true} />
       ) : (
