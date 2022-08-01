@@ -20,6 +20,7 @@ function Group(props) {
     user: false,
     total: false,
     groups: false,
+    settling: false,
   });
   const params = useParams();
 
@@ -115,6 +116,13 @@ function Group(props) {
       });
   };
 
+  const errorToggle = () => {
+    setErrors((errors) => ({
+      ...errors,
+      settling: true,
+    }));
+  };
+
   const toggleFetch = () => {
     getGroups();
     getTotalExpenses();
@@ -169,6 +177,7 @@ function Group(props) {
                 index={index}
                 currentUser={currentUser}
                 show={!expense.settled}
+                errorToggle={errorToggle}
               />
             ))}
           </Stack>

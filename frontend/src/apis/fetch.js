@@ -25,6 +25,7 @@ export const postSetAsPaid = (id, isPaid) => {
       console.log("Set as paid successfully");
     } else {
       console.log("Not set as paid");
+      throw new Error("Something went wrong");
     }
   });
 };
@@ -42,6 +43,7 @@ export const postSettled = (id, settled) => {
       console.log("Settled successfully");
     } else {
       console.log("Not settled");
+      throw new Error("Something went wrong");
     }
   });
 };

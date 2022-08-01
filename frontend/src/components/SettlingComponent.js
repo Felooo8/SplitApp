@@ -18,13 +18,18 @@ export default function Settling(props) {
   const handleChangeSwitch = () => (event) => {
     setSettled(event.target.checked);
     if (props.isBorrowed) {
-      postSetAsPaid(props.id, event.target.checked);
+      postSetAsPaid(props.id, event.target.checked).catch((error) => {
+        console.log(error);
+        props.errorToggle();
+      });
       props.expense["is_paid"] = event.target.checked;
     } else {
-      postSettled(props.id, event.target.checked);
+      postSettled(props.id, event.target.checked).catch((error) => {
+        console.log(error);
+        props.errorToggle();
+      });
       props.expense["settled"] = event.target.checked;
     }
-    props.toggle();
   };
 
   return (

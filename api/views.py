@@ -52,7 +52,7 @@ class GetUsersGroups(APIView):
     def get(self, request, format=None):
         user = request.user
         try:
-            sorted_groups = Group.objects.get(users=user)
+            sorted_groups = Group.objects.filter(users=user)
             data = GroupSerializer(sorted_groups, many=True, context={'user': user}).data
             return Response(data, status=status.HTTP_200_OK)
         except:
@@ -97,9 +97,7 @@ class GetUsersExpenses(APIView):
     def get(self, request, format=None):
         user = request.user
         try:
-            expenses = Expense.objects.get(Q(ower=user) | Q(payer=user)).order_by(
-                "-date"
-            )
+            expenses = Expense.objects.filter(Q(ower=user) | Q(payer=user)).order_by("-date")
             data = ExpenseSerializer(expenses, many=True).data
             return Response(data, status=status.HTTP_200_OK)
         except:

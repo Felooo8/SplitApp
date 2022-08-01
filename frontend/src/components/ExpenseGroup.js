@@ -88,6 +88,7 @@ export default function ExpenseItemGroup(props) {
                 expense={props.expense}
                 marked={marked(props.expense)}
                 toggle={props.toggle}
+                errorToggle={props.errorToggle}
               />
             </AccordionDetails>
           </Accordion>
