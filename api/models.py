@@ -1,10 +1,10 @@
-from unicodedata import category
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from collections import defaultdict
 from collections import Counter
 from django.db.models import Q
+from django.utils.crypto import get_random_string
 
 # Create your models here.
 
@@ -18,7 +18,8 @@ TRUE_FALSE_CHOICES = (
 )
 
 def upload_to(instance, filename):
-    return 'avatars/{filename}'.format(filename=filename)
+    name = get_random_string(length=16)
+    return f'avatars/{name}.png'.format(filename=filename)
 
 
 class Account(models.Model):

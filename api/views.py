@@ -424,7 +424,7 @@ class GetUsersSummarize(APIView):
         user = request.user
 
         def def_value():
-            return 0
+            return [0, 0]
 
         try:
             all_debts = Expense.objects.filter(ower=user, settled=False).exclude(payer=user)
@@ -433,10 +433,13 @@ class GetUsersSummarize(APIView):
             all_lents = Expense.objects.filter(payer=user, settled=False).exclude(ower=user)
             if len(all_debts) > 0:
                 for expense in all_debts:
-                    debts[expense.payer.username] += expense.amount
+                    debts[expense.payer.username][1] = expense.payer.id
+                    debts[expense.payer.username][0] += expense.amount
             if len(all_lents) > 0:
                 for expense in all_lents:
-                    debts[expense.ower.username] -= expense.amount
+                    debts[expense.ower.username][1] = expense.ower.id
+                    debts[expense.ower.username][0] -= expense.amount
+            print(debts)
             return Response(debts, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)

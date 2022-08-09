@@ -3,8 +3,8 @@ import styled from "styled-components";
 import "../App.css";
 import Slide from "@mui/material/Slide";
 import Paper from "@mui/material/Paper";
-import Avatar from "@mui/material/Avatar";
 import Constants from "../apis/Constants";
+import DisplayAvatar from "../components/DisplayAvatar";
 
 export default function SummaryItem(props) {
   console.log(props);
@@ -39,10 +39,11 @@ export default function SummaryItem(props) {
                 marginRight: "auto",
               }}
             >
-              <Avatar sx={{ width: 56, height: 56, fontSize: "2rem" }}>
+              {/* <Avatar sx={{ width: 56, height: 56, fontSize: "2rem" }}>
                 {props.username[0]}
-              </Avatar>
-              <Text>{props.username}</Text>
+              </Avatar> */}
+              <DisplayAvatar user={props.user} />
+              <Text>{props.user.username}</Text>
             </div>
             <RowStack
               style={{

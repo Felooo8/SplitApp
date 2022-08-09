@@ -1,6 +1,5 @@
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import PersonAddDisabledIcon from "@mui/icons-material/PersonAddDisabled";
-import Avatar from "@mui/material/Avatar";
 import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
 import React from "react";
@@ -8,6 +7,7 @@ import styled from "styled-components";
 import "../App.css";
 import ListItemButton from "@mui/material/ListItemButton";
 import Constants from "../apis/Constants";
+import DisplayAvatar from "../components/DisplayAvatar";
 
 const acceptInvitationUrl = "acceptInvitation";
 const declineInvitationUrl = "declineInvitation";
@@ -59,15 +59,12 @@ export default function InvitationItem(props) {
                 marginRight: "auto",
               }}
             >
-              <Avatar
-                sx={{
-                  width: 56,
-                  height: 56,
-                  fontSize: "2rem",
+              <DisplayAvatar
+                user={{
+                  id: props.invitation.sender,
+                  username: props.invitation.sender_username,
                 }}
-              >
-                {props.invitation.sender_username[0]}
-              </Avatar>
+              />
               <Text>{props.invitation.sender_username}</Text>
             </div>
             <RowStack

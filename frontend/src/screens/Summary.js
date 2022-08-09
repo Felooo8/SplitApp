@@ -99,7 +99,7 @@ function Summary(props) {
   const inTotal = (summaries) => {
     var total = 0;
     for (let key in summaries) {
-      total += summaries[key];
+      total += summaries[key][0];
     }
     setTotal(total);
   };
@@ -134,8 +134,8 @@ function Summary(props) {
             {Object.entries(summaries).map(([key, value], index) => (
               <SummaryItem
                 key={index}
-                username={key}
-                debt={value}
+                user={{ id: value[1], username: key }}
+                debt={value[0]}
                 index={index}
                 currentUser={currentUser}
               />

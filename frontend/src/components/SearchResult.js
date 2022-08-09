@@ -6,7 +6,7 @@ import Avatar from "@mui/material/Avatar";
 import ListItemButton from "@mui/material/ListItemButton";
 import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Constants from "../apis/Constants";
 import "../App.css";
@@ -18,27 +18,27 @@ const declineInvitationUrl = "declineInvitation/byUser";
 const cancelInvitationUrl = "cancelInvitation/byUser";
 
 export default function SearchResult(props) {
-  // const [avatarURL, setAvatarURL] = useState("");
+  const [avatarURL, setAvatarURL] = useState("");
   console.log(props);
 
-  // const getAvatar = () => {
-  //   fetch("http://127.0.0.1:8000/api/getAvatar/" + props.user.id, {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Token ${localStorage.getItem("token")}`,
-  //     },
-  //   }).then((response) => {
-  //     if (response.ok) {
-  //       response.json().then((data) => {
-  //         console.log(data);
-  //         setAvatarURL(data);
-  //       });
-  //     } else {
-  //       console.log("invalid data");
-  //     }
-  //   });
-  // };
+  const getAvatar = () => {
+    fetch("http://127.0.0.1:8000/api/getAvatar/" + props.user.id, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    }).then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          console.log(data);
+          setAvatarURL(data);
+        });
+      } else {
+        console.log("invalid data");
+      }
+    });
+  };
   const manageRequest = (url) => {
     fetch("http://127.0.0.1:8000/api/" + url, {
       method: "POST",
@@ -106,16 +106,16 @@ export default function SearchResult(props) {
   };
 
   const displayAvatar = () => {
-    // if (avatarURL !== "") {
-    //   console.log("http://127.0.0.1:8000" + avatarURL);
-    //   return (
-    //     <img
-    //       src={"http://127.0.0.1:8000" + avatarURL}
-    //       alt="avatar"
-    //       style={{ width: "56px", height: "56px" }}
-    //     />
-    //   );
-    // }
+    if (avatarURL !== "") {
+      console.log("http://127.0.0.1:8000" + avatarURL);
+      return (
+        <img
+          src={"http://127.0.0.1:8000" + avatarURL}
+          alt="avatar"
+          style={{ width: "56px", height: "56px" }}
+        />
+      );
+    }
     return (
       <Avatar
         sx={{
@@ -129,9 +129,9 @@ export default function SearchResult(props) {
     );
   };
 
-  // useEffect(() => {
-  //   getAvatar();
-  // }, []);
+  useEffect(() => {
+    getAvatar();
+  }, []);
 
   return (
     <div style={summarizing}>
