@@ -75,14 +75,14 @@ export default function InvitationItem(props) {
                 // color: isBorrowed(props.debt) ? "orange" : "green",
               }}
             >
-              <div style={{ display: "flex" }}>
+              <div style={{ display: "flex" }} className="manageInvitations">
                 <ListItemButton
                   onClick={() => manageRequest(acceptInvitationUrl)}
                 >
                   <PersonAddAltRoundedIcon
                     sx={{
-                      width: 56,
-                      height: 56,
+                      width: Constants.AVATAR_SIZE,
+                      height: Constants.AVATAR_SIZE,
                       fontSize: "2rem",
                     }}
                   />
@@ -92,8 +92,8 @@ export default function InvitationItem(props) {
                 >
                   <PersonAddDisabledIcon
                     sx={{
-                      width: 56,
-                      height: 56,
+                      width: Constants.AVATAR_SIZE,
+                      height: Constants.AVATAR_SIZE,
                       fontSize: "2rem",
                     }}
                   />

@@ -1,17 +1,17 @@
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Fade from "@mui/material/Fade";
+import LinearProgress from "@mui/material/LinearProgress";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
 import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
+import Error from "../components/Error";
 import InvitationItem from "../components/InvitationItem";
 import SkeletonItem from "../components/SkeletonItem";
-import Error from "../components/Error";
-import CircularProgress from "@mui/material/CircularProgress";
-import Fade from "@mui/material/Fade";
-import Box from "@mui/material/Box";
-import LinearProgress from "@mui/material/LinearProgress";
 
 function Notifications(props) {
   const [invitations, setInvitations] = useState([]);
@@ -20,7 +20,7 @@ function Notifications(props) {
   const [error, setError] = useState(false);
   const timer = React.useRef();
 
-  const findFriends = () => {
+  const getInvitations = () => {
     fetch(Constants.SERVER + "/api/getInvitations", {
       method: "GET",
       headers: {
@@ -32,6 +32,7 @@ function Notifications(props) {
         if (response.ok) {
           response.json().then((data) => {
             setInvitations(data);
+            setLoading(false);
             setError(false);
           });
         } else {
@@ -45,14 +46,13 @@ function Notifications(props) {
   };
 
   const reRenderToggle = () => {
-    findFriends();
+    getInvitations();
   };
 
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
-      findFriends();
-      setLoading(false);
+      getInvitations();
     }, Constants.LOADING_DATA_DELAY);
     return () => {
       clearTimeout(timer);
@@ -60,7 +60,9 @@ function Notifications(props) {
   }, []);
 
   const toggleFetch = () => {
-    findFriends();
+    getInvitations();
+    console.log(invitations);
+    console.log(invitations === []);
   };
 
   const refresh = () => {
@@ -68,7 +70,7 @@ function Notifications(props) {
     timer.current = window.setTimeout(() => {
       setRefreshing(false);
     }, Constants.PROGRESS_ANIMATION_TIME);
-    findFriends();
+    getInvitations();
   };
 
   if (error) {

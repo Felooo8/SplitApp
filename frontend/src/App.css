@@ -93,3 +93,8 @@
   margin-right: 5px !important;
   margin-left: 0 !important;
 }
+
+.manageInvitations > * {
+  padding-right: 0 !important;
+  padding-left: 18px !important;
+}
