@@ -50,11 +50,13 @@ export default App;
 
 const addNewExpenseButton = {
   position: "fixed",
-  bottom: "9%",
+  bottom: "70px",
   right: "8%",
   width: "50%",
   height: "5%",
   maxWidth: "300px",
   minHeight: "40px",
   maxHeight: "60px",
+  borderRadius: "40px",
+  opacity: "95%",
 };
