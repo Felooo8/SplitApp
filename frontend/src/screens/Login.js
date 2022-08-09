@@ -24,7 +24,7 @@ function LoginScreen(props) {
 
   const handleLogin = () => {
     console.log(localStorage.getItem("token"));
-    fetch(Constants.SERVER + "auth/users/me/", {
+    fetch(Constants.SERVER + "/api/auth/users/me/", {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },

@@ -31,7 +31,7 @@ function FriendsFinder(props) {
   const params = useParams();
 
   const findFriends = () => {
-    fetch(Constants.SERVER + "findFriends/" + params.search, {
+    fetch(Constants.SERVER + "/api/findFriends/" + params.search, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

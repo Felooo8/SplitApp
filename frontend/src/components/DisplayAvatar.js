@@ -26,9 +26,9 @@ export default function DisplayAvatar(props) {
 
   useEffect(() => {
     if (props.isGroup) {
-      getAvatar("getGroupAvatar/");
+      getAvatar("/api/getGroupAvatar/");
     } else {
-      getAvatar("getAvatar/");
+      getAvatar("/api/getAvatar/");
     }
   }, []);
 
@@ -36,7 +36,7 @@ export default function DisplayAvatar(props) {
     <div>
       {avatarURL !== "" ? (
         <img
-          src={Constants.SERVER_RAW + avatarURL}
+          src={Constants.SERVER + avatarURL}
           alt="avatar"
           style={{
             width: Constants.AVATAR_SIZE,

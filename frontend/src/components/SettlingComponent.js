@@ -7,11 +7,11 @@ import "../App.css";
 
 export default function Settling(props) {
   const [settled, setSettled] = useState(props.marked);
-
   const getLabel = (isBorrowed) => {
     if (isBorrowed) {
       return "Set as Paid";
     }
+    console.log(props);
     return "Settle";
   };
 

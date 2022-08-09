@@ -21,7 +21,7 @@ export default function BottomAppBar(props) {
   const [notifications, setNotifications] = useState(0);
 
   const getNotifications = () => {
-    fetch(Constants.SERVER + "getNotifications", {
+    fetch(Constants.SERVER + "/api/getNotifications", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

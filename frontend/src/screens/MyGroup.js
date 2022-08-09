@@ -39,7 +39,7 @@ function Group(props) {
   const params = useParams();
 
   const getUser = () => {
-    fetch(Constants.SERVER + "auth/users/me/", {
+    fetch(Constants.SERVER + "/api/auth/users/me/", {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
@@ -67,7 +67,7 @@ function Group(props) {
   };
 
   // const fetchNewGroupName = () => {
-  //   fetch(Constants.SERVER + "setGroupName", {
+  //   fetch(Constants.SERVER + "/api/setGroupName", {
   //     method: "POST",
   //     headers: {
   //       "Content-Type": "application/json",
@@ -93,7 +93,7 @@ function Group(props) {
   // };
 
   const getTotalExpenses = () => {
-    fetch(Constants.SERVER + "chartData", {
+    fetch(Constants.SERVER + "/api/chartData", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -126,7 +126,7 @@ function Group(props) {
   };
 
   const getGroups = () => {
-    fetch(Constants.SERVER + "groupExpenses", {
+    fetch(Constants.SERVER + "/api/groupExpenses", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -245,7 +245,7 @@ function Group(props) {
           <Stack spacing={2}>
             {expenses.map((expense, index) => (
               <ExpenseItemGroup
-                key={index}
+                key={expense.id}
                 expense={expense}
                 index={index}
                 currentUser={currentUser}

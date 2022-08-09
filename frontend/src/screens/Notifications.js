@@ -21,7 +21,7 @@ function Notifications(props) {
   const timer = React.useRef();
 
   const findFriends = () => {
-    fetch(Constants.SERVER + "getInvitations", {
+    fetch(Constants.SERVER + "/api/getInvitations", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -126,7 +126,7 @@ function Notifications(props) {
             <Stack spacing={2} style={{ marginBottom: "10px" }}>
               {invitations.map((invitation, index) => (
                 <InvitationItem
-                  key={index}
+                  key={invitation.id}
                   invitation={invitation}
                   index={index}
                   toggle={reRenderToggle}

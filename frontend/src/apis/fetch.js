@@ -1,7 +1,7 @@
 import Constants from "../apis/Constants";
 
 export const getGroups = () => {
-  fetch(Constants.SERVER + "group", {
+  fetch(Constants.SERVER + "/api/group", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -15,7 +15,7 @@ export const getGroups = () => {
 };
 
 export const postSetAsPaid = (id, isPaid, errorToggle = null) => {
-  return fetch(Constants.SERVER + "setAsPaid", {
+  return fetch(Constants.SERVER + "/api/setAsPaid", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -40,7 +40,7 @@ export const postSetAsPaid = (id, isPaid, errorToggle = null) => {
 };
 
 export const postSettled = (id, settled, errorToggle = null) => {
-  return fetch(Constants.SERVER + "settle", {
+  return fetch(Constants.SERVER + "/api/settle", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -11,11 +11,11 @@ import Constants from "../apis/Constants";
 import "../App.css";
 import DisplayAvatar from "../components/DisplayAvatar";
 
-const inviteFriendUrl = "inviteFriend";
-const removeFriendUrl = "removeFriend";
-const acceptInvitationUrl = "acceptInvitation/byUser";
-const declineInvitationUrl = "declineInvitation/byUser";
-const cancelInvitationUrl = "cancelInvitation/byUser";
+const inviteFriendUrl = "/api/inviteFriend";
+const removeFriendUrl = "/api/removeFriend";
+const acceptInvitationUrl = "/api/acceptInvitation/byUser";
+const declineInvitationUrl = "/api/declineInvitation/byUser";
+const cancelInvitationUrl = "/api/cancelInvitation/byUser";
 
 export default function SearchResult(props) {
   console.log(props);

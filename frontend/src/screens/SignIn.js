@@ -63,7 +63,7 @@ export default function SignIn() {
   }
 
   const handleLogin = () => {
-    fetch(Constants.SERVER + "auth/users/me/", {
+    fetch(Constants.SERVER + "/api/auth/users/me/", {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
@@ -94,7 +94,7 @@ export default function SignIn() {
       username: data.get("email"),
     };
     const getToken = () => {
-      let url = Constants.SERVER_TOKENS + "api-token-auth/";
+      let url = Constants.SERVER + "/api-token-auth/";
       let csrftoken = getCookie("csrftoken");
       fetch(url, {
         method: "POST",

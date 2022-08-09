@@ -41,7 +41,7 @@ function AllExpenses(props) {
   });
 
   const getExpenses = () => {
-    fetch(Constants.SERVER + "userExpenses", {
+    fetch(Constants.SERVER + "/api/userExpenses", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -75,7 +75,7 @@ function AllExpenses(props) {
   };
 
   const getUser = () => {
-    fetch(Constants.SERVER + "auth/users/me/", {
+    fetch(Constants.SERVER + "/api/auth/users/me/", {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
@@ -304,7 +304,7 @@ function AllExpenses(props) {
           <Stack spacing={2}>
             {filtredExpenses.map((expense, index) => (
               <ExpenseItem
-                key={index}
+                key={expense.id}
                 expense={expense}
                 index={index}
                 currentUser={currentUser}

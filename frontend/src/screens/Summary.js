@@ -17,7 +17,7 @@ function Summary(props) {
   });
 
   const getSummarize = () => {
-    fetch(Constants.SERVER + "summarize", {
+    fetch(Constants.SERVER + "/api/summarize", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +49,7 @@ function Summary(props) {
   };
 
   const getUser = () => {
-    fetch(Constants.SERVER + "auth/users/me/", {
+    fetch(Constants.SERVER + "/api/auth/users/me/", {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },

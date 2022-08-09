@@ -9,8 +9,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import Constants from "../apis/Constants";
 import DisplayAvatar from "../components/DisplayAvatar";
 
-const acceptInvitationUrl = "acceptInvitation";
-const declineInvitationUrl = "declineInvitation";
+const acceptInvitationUrl = "/api/acceptInvitation";
+const declineInvitationUrl = "/api/declineInvitation";
 
 export default function InvitationItem(props) {
   console.log(props);
