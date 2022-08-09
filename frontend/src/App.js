@@ -10,9 +10,6 @@ import Groups from "./screens/Groups";
 import Group from "./screens/MyGroup";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import NavbarTop from "./components/navbar";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
-import Link from "@mui/material/Link";
 
 function App() {
   console.log(localStorage.getItem("token"));
@@ -33,30 +30,8 @@ function App() {
           <Route path="/friends/:search" element={<FriendsFinder />} />
         </Routes>
       </Router>
-      <Button
-        style={addNewExpenseButton}
-        variant="contained"
-        startIcon={<AddIcon />}
-        component={Link}
-        href="/add-expense"
-      >
-        Add new expense
-      </Button>
     </div>
   );
 }
 
 export default App;
-
-const addNewExpenseButton = {
-  position: "fixed",
-  bottom: "70px",
-  right: "8%",
-  width: "50%",
-  height: "5%",
-  maxWidth: "300px",
-  minHeight: "40px",
-  maxHeight: "60px",
-  borderRadius: "40px",
-  opacity: "95%",
-};

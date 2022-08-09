@@ -24,7 +24,8 @@ from .views import (
     GetNotifications,
     SetAvatar,
     GetAvatar,
-    GetGroupAvatar
+    GetGroupAvatar,
+    SetGroupName
 )
 
 urlpatterns = [
@@ -51,6 +52,7 @@ urlpatterns = [
     path("getInvitations", GetInvitations.as_view()),
     path("getNotifications", GetNotifications.as_view()),
     path("setAvatar", SetAvatar.as_view()),
+    path("setGroupName", SetGroupName.as_view()),
     path("getAvatar/<int:id>", GetAvatar.as_view()),
     path("getGroupAvatar/<int:id>", GetGroupAvatar.as_view()),
 ]

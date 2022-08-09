@@ -439,7 +439,6 @@ class GetUsersSummarize(APIView):
                 for expense in all_lents:
                     debts[expense.ower.username][1] = expense.ower.id
                     debts[expense.ower.username][0] -= expense.amount
-            print(debts)
             return Response(debts, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
@@ -498,6 +497,24 @@ class GetNotifications(APIView):
 
 class SetAvatar(APIView):
     pass
+
+
+class SetGroupName(APIView):
+    def post(self, request, format=None):
+        user = request.user
+        try:
+            body = json.loads(request.body)
+            group_id = body["id"]
+            new_name = body["name"]
+            try:
+                group = Group.objects.get(id=group_id, users=user)
+                group.group_name = new_name
+                group.save()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except Group.DoesNotExist:
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetAvatar(APIView):

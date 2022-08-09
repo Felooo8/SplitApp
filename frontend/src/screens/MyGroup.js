@@ -11,6 +11,7 @@ import Error from "../components/Error";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
 import Slide from "@mui/material/Slide";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -26,6 +27,8 @@ function Group(props) {
   const [values, setValues] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [groupName, setGroupName] = useState("");
+  // const [newGroupName, setNewGroupName] = useState("");
+  const [inputText, setInputText] = useState(false);
   const [loading, setLoading] = useState(true);
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [errors, setErrors] = useState({
@@ -62,6 +65,32 @@ function Group(props) {
         }));
       });
   };
+
+  // const fetchNewGroupName = () => {
+  //   fetch("http://127.0.0.1:8000/api/setGroupName", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Token ${localStorage.getItem("token")}`,
+  //     },
+  //     body: JSON.stringify({ id: params.id, name: newGroupName }),
+  //   })
+  //     .then((response) => {
+  //       if (response.ok) {
+  //         setNewGroupName("");
+  //         console.log("Changed");
+  //       } else {
+  //         throw new Error("Something went wrong");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       // setErrors((errors) => ({
+  //       //   ...errors,
+  //       //   total: true,
+  //       // }));
+  //     });
+  // };
 
   const getTotalExpenses = () => {
     fetch("http://127.0.0.1:8000/api/chartData", {
@@ -145,6 +174,11 @@ function Group(props) {
     getUser();
   };
 
+  const handleEditName = () => {
+    setInputText(!inputText);
+    console.log("JD");
+  };
+
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
@@ -178,6 +212,13 @@ function Group(props) {
           maxWidth: "90%",
           marginBottom: "20px",
         }}
+        onDelete={handleEditName}
+        deleteIcon={
+          <EditRoundedIcon
+            sx={{ color: "red" }}
+            style={{ width: "1em", height: "1em" }}
+          />
+        }
       />
       <Snackbar
         open={openSnackBar}

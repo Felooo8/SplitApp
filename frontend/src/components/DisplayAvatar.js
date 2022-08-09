@@ -41,6 +41,7 @@ export default function DisplayAvatar(props) {
           style={{
             width: Constants.AVATAR_SIZE,
             height: Constants.AVATAR_SIZE,
+            borderRadius: Constants.AVATAR_SIZE,
           }}
         />
       ) : (

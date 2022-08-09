@@ -11,6 +11,8 @@ import Paper from "@mui/material/Paper";
 import React, { useRef, useState, useEffect } from "react";
 import MailIcon from "@mui/icons-material/Mail";
 import Badge from "@mui/material/Badge";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function BottomAppBar(props) {
   const ref = useRef(null);
@@ -107,6 +109,28 @@ export default function BottomAppBar(props) {
           />
         </BottomNavigation>
       </Paper>
+      <Button
+        style={addNewExpenseButton}
+        variant="contained"
+        startIcon={<AddIcon />}
+        component={Link}
+        href="/add-expense"
+      >
+        Add new expense
+      </Button>
     </Box>
   );
 }
+
+const addNewExpenseButton = {
+  position: "fixed",
+  bottom: "70px",
+  right: "8%",
+  width: "50%",
+  height: "5%",
+  maxWidth: "300px",
+  minHeight: "40px",
+  maxHeight: "60px",
+  borderRadius: "40px",
+  opacity: "95%",
+};
