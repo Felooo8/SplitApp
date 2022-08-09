@@ -7,7 +7,9 @@ from django.contrib.auth.models import User
 
 
 class GroupAdmin(admin.ModelAdmin):
-    pass
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            super().delete_model(request, obj)
 
 
 class ExpenseAdmin(admin.ModelAdmin):
@@ -37,6 +39,10 @@ class AccountInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = (AccountInline,)
+
+    def delete_queryset(self, request, queryset):
+        for obj in queryset:
+            super().delete_model(request, obj)
 
 
 admin.site.unregister(User)

@@ -511,3 +511,15 @@ class GetAvatar(APIView):
             return Response(avatar.url, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetGroupAvatar(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id, format=None):
+        try:
+            group = Group.objects.get(id=id)
+            avatar = group.avatar
+            return Response(avatar.url, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)

@@ -2,9 +2,9 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from collections import defaultdict
-from collections import Counter
 from django.db.models import Q
 from django.utils.crypto import get_random_string
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -17,15 +17,43 @@ TRUE_FALSE_CHOICES = (
     (False, 'Each')
 )
 
+
 def upload_to(instance, filename):
     name = get_random_string(length=16)
     return f'avatars/{name}.png'.format(filename=filename)
 
 
+def validate_image(fieldfile_obj):
+    filesize = fieldfile_obj.file.size
+    megabyte_limit = 0.3
+    if filesize > megabyte_limit*1024*1024:
+        raise ValidationError("Max file size is %sMB" % str(megabyte_limit))
+
+
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     friends = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="friends")
-    avatar = models.ImageField(upload_to=upload_to, blank=True, null=True)
+    avatar = models.ImageField(upload_to=upload_to, blank=True, null=True, validators=[validate_image])
+
+    __previous_avatar_name = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.avatar.name:
+            self.__previous_avatar_name = self.avatar.name
+
+    def delete(self, using=None, keep_parents=False):
+        self.avatar.storage.delete(self.__previous_avatar_name)
+        super().delete()
+
+    def save(self, *args, **kwargs):
+        if self.avatar.name != self.__previous_avatar_name and self.__previous_avatar_name:
+            self.avatar.storage.delete(self.__previous_avatar_name)
+            self.__previous_avatar_name = self.avatar.name
+        super(Account, self).save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return self.user.username
 
 
 class Expense(models.Model):
@@ -80,6 +108,24 @@ class Group(models.Model):
     group_expenses = models.ManyToManyField(GroupExpense, blank=True)
     group_name = models.TextField(default='Group chat', blank=True, max_length=40)
     created_at = models.DateTimeField(auto_now_add=True)
+    avatar = models.ImageField(upload_to=upload_to, blank=True, null=True, validators=[validate_image])
+
+    __previous_avatar_name = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.avatar.name:
+            self.__previous_avatar_name = self.avatar.name
+
+    def delete(self, using=None, keep_parents=False):
+        self.avatar.storage.delete(self.__previous_avatar_name)
+        super().delete()
+
+    def save(self, *args, **kwargs):
+        if self.avatar.name != self.__previous_avatar_name and self.__previous_avatar_name:
+            self.avatar.storage.delete(self.__previous_avatar_name)
+            self.__previous_avatar_name = self.avatar.name
+        super(Group, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
         if self.group_name == '':

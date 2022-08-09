@@ -3,8 +3,8 @@ import styled from "styled-components";
 import "../App.css";
 import Slide from "@mui/material/Slide";
 import Paper from "@mui/material/Paper";
-import Avatar from "@mui/material/Avatar";
 import Constants from "../apis/Constants";
+import DisplayAvatar from "../components/DisplayAvatar";
 
 export default function GroupItem(props) {
   console.log(props);
@@ -31,12 +31,13 @@ export default function GroupItem(props) {
           style={{ minHeight: "100px", borderRadius: "10px" }}
         >
           <WholeStack>
-            <Avatar
-              sx={{ width: 56, height: 56, fontSize: "2rem" }}
-              style={{ margin: "auto" }}
-            >
-              {props.name[0]}
-            </Avatar>
+            <DisplayAvatar
+              user={{
+                id: props.id,
+                username: props.name,
+              }}
+              isGroup={true}
+            />
             <div
               style={{
                 display: "flex",

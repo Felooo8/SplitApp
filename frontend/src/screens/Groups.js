@@ -92,6 +92,7 @@ function Groups(props) {
                     name={group.group_name}
                     index={index}
                     balance={group.balance}
+                    id={group.id}
                   />
                 </IconButton>
               </div>

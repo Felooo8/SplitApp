@@ -4,10 +4,9 @@ import Constants from "../apis/Constants";
 
 export default function DisplayAvatar(props) {
   const [avatarURL, setAvatarURL] = useState("");
-  console.log(props);
 
-  const getAvatar = () => {
-    fetch("http://127.0.0.1:8000/api/getAvatar/" + props.user.id, {
+  const getAvatar = (url) => {
+    fetch("http://127.0.0.1:8000/api/" + url + props.user.id, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +25,11 @@ export default function DisplayAvatar(props) {
   };
 
   useEffect(() => {
-    getAvatar();
+    if (props.isGroup) {
+      getAvatar("getGroupAvatar/");
+    } else {
+      getAvatar("getAvatar/");
+    }
   }, []);
 
   return (
