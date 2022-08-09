@@ -6,7 +6,7 @@ export default function DisplayAvatar(props) {
   const [avatarURL, setAvatarURL] = useState("");
 
   const getAvatar = (url) => {
-    fetch("http://127.0.0.1:8000/api/" + url + props.user.id, {
+    fetch(Constants.SERVER + url + props.user.id, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

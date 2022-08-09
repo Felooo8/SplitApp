@@ -40,7 +40,7 @@ function AllExpenses(props) {
   });
 
   const getExpenses = () => {
-    fetch("http://127.0.0.1:8000/api/userExpenses", {
+    fetch(Constants.SERVER + "userExpenses", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -74,7 +74,7 @@ function AllExpenses(props) {
   };
 
   const getUser = () => {
-    fetch("http://127.0.0.1:8000/api/auth/users/me/", {
+    fetch(Constants.SERVER + "auth/users/me/", {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },

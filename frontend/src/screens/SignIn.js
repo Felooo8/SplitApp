@@ -14,6 +14,7 @@ import Container from "@mui/material/Container";
 import Error from "../components/Error";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import Constants from "../apis/Constants";
 
 function Copyright(props) {
   return (
@@ -62,7 +63,7 @@ export default function SignIn() {
   }
 
   const handleLogin = () => {
-    fetch("http://127.0.0.1:8000/api/auth/users/me/", {
+    fetch(Constants.SERVER + "auth/users/me/", {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
@@ -93,7 +94,7 @@ export default function SignIn() {
       username: data.get("email"),
     };
     const getToken = () => {
-      let url = "http://127.0.0.1:8000/api-token-auth/";
+      let url = Constants.SERVER + "api-token-auth/";
       let csrftoken = getCookie("csrftoken");
       fetch(url, {
         method: "POST",

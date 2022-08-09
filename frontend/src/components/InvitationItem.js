@@ -15,7 +15,7 @@ const declineInvitationUrl = "declineInvitation";
 export default function InvitationItem(props) {
   console.log(props);
   const manageRequest = (url) => {
-    fetch("http://127.0.0.1:8000/api/" + url, {
+    fetch(Constants.SERVER + url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

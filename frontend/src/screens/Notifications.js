@@ -21,7 +21,7 @@ function Notifications(props) {
   const timer = React.useRef();
 
   const findFriends = () => {
-    fetch("http://127.0.0.1:8000/api/getInvitations", {
+    fetch(Constants.SERVER + "getInvitations", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

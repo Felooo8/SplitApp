@@ -39,7 +39,7 @@ function Group(props) {
   const params = useParams();
 
   const getUser = () => {
-    fetch("http://127.0.0.1:8000/api/auth/users/me/", {
+    fetch(Constants.SERVER + "auth/users/me/", {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
@@ -67,7 +67,7 @@ function Group(props) {
   };
 
   // const fetchNewGroupName = () => {
-  //   fetch("http://127.0.0.1:8000/api/setGroupName", {
+  //   fetch(Constants.SERVER + "setGroupName", {
   //     method: "POST",
   //     headers: {
   //       "Content-Type": "application/json",
@@ -93,7 +93,7 @@ function Group(props) {
   // };
 
   const getTotalExpenses = () => {
-    fetch("http://127.0.0.1:8000/api/chartData", {
+    fetch(Constants.SERVER + "chartData", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -126,7 +126,7 @@ function Group(props) {
   };
 
   const getGroups = () => {
-    fetch("http://127.0.0.1:8000/api/groupExpenses", {
+    fetch(Constants.SERVER + "groupExpenses", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -16,7 +16,7 @@ function Groups(props) {
   const [error, setError] = useState(false);
 
   const getGroups = () => {
-    fetch("http://127.0.0.1:8000/api/group", {
+    fetch(Constants.SERVER + "group", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

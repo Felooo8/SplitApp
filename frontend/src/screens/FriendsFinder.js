@@ -31,7 +31,7 @@ function FriendsFinder(props) {
   const params = useParams();
 
   const findFriends = () => {
-    fetch("http://127.0.0.1:8000/api/findFriends/" + params.search, {
+    fetch(Constants.SERVER + "findFriends/" + params.search, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

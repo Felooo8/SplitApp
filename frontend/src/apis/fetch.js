@@ -1,5 +1,7 @@
+import Constants from "../apis/Constants";
+
 export const getGroups = () => {
-  fetch("http://127.0.0.1:8000/api/group", {
+  fetch(Constants.SERVER + "group", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,7 +15,7 @@ export const getGroups = () => {
 };
 
 export const postSetAsPaid = (id, isPaid, errorToggle = null) => {
-  return fetch("http://127.0.0.1:8000/api/setAsPaid", {
+  return fetch(Constants.SERVER + "setAsPaid", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -38,7 +40,7 @@ export const postSetAsPaid = (id, isPaid, errorToggle = null) => {
 };
 
 export const postSettled = (id, settled, errorToggle = null) => {
-  return fetch("http://127.0.0.1:8000/api/settle", {
+  return fetch(Constants.SERVER + "settle", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

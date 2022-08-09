@@ -98,7 +98,7 @@ export default function AddingExpense(props) {
   };
 
   const getGroups = () => {
-    fetch("http://127.0.0.1:8000/api/group", {
+    fetch(Constants.SERVER + "group", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -129,7 +129,7 @@ export default function AddingExpense(props) {
   };
 
   const getFriends = () => {
-    fetch("http://127.0.0.1:8000/api/seeFriends", {
+    fetch(Constants.SERVER + "seeFriends", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -159,7 +159,7 @@ export default function AddingExpense(props) {
   };
 
   const getUser = () => {
-    fetch("http://127.0.0.1:8000/api/auth/users/me/", {
+    fetch(Constants.SERVER + "auth/users/me/", {
       headers: {
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
@@ -198,7 +198,7 @@ export default function AddingExpense(props) {
   }, []);
 
   const sendRequest = () => {
-    fetch("http://127.0.0.1:8000/api/addExpense", {
+    fetch(Constants.SERVER + "addExpense", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

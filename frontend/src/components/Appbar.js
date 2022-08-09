@@ -13,6 +13,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import Badge from "@mui/material/Badge";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import Constants from "../apis/Constants";
 
 export default function BottomAppBar(props) {
   const ref = useRef(null);
@@ -20,7 +21,7 @@ export default function BottomAppBar(props) {
   const [notifications, setNotifications] = useState(0);
 
   const getNotifications = () => {
-    fetch("http://127.0.0.1:8000/api/getNotifications", {
+    fetch(Constants.SERVER + "getNotifications", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -126,7 +127,7 @@ const addNewExpenseButton = {
   position: "fixed",
   bottom: "70px",
   right: "8%",
-  width: "50%",
+  width: "auto",
   height: "5%",
   maxWidth: "300px",
   minHeight: "40px",
