@@ -88,3 +88,8 @@
 .css-78trlr-MuiButtonBase-root-MuiIconButton-root:hover {
   background-color: transparent !important;
 }
+
+.filtresGroup > * {
+  margin-right: 5px !important;
+  margin-left: 0 !important;
+}

@@ -36,7 +36,7 @@ export default function DisplayAvatar(props) {
     <div>
       {avatarURL !== "" ? (
         <img
-          src={"http://127.0.0.1:8000" + avatarURL}
+          src={Constants.SERVER_RAW + avatarURL}
           alt="avatar"
           style={{
             width: Constants.AVATAR_SIZE,

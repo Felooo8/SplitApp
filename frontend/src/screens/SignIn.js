@@ -94,7 +94,7 @@ export default function SignIn() {
       username: data.get("email"),
     };
     const getToken = () => {
-      let url = Constants.SERVER + "api-token-auth/";
+      let url = Constants.SERVER_TOKENS + "api-token-auth/";
       let csrftoken = getCookie("csrftoken");
       fetch(url, {
         method: "POST",

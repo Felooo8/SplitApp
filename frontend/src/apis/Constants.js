@@ -3,6 +3,8 @@ const Constants = {
   LOADING_DATA_DELAY: 0,
   PROGRESS_ANIMATION_TIME: 1500,
   AVATAR_SIZE: 56,
-  SERVER: "http://127.0.0.1:8000/api/",
+  SERVER: "http://192.168.1.108:8000/api/",
+  SERVER_TOKENS: "http://192.168.1.108:8000/",
+  SERVER_RAW: "http://192.168.1.108:8000",
 };
 export default Constants;
