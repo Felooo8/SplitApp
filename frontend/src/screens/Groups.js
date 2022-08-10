@@ -77,16 +77,10 @@ function Groups(props) {
                 <IconButton
                   component={Link}
                   to={`/mygroup/${group.id}/${group.group_name}`}
-                  // variant="contained"
-                  // color="primary"
                   style={{
-                    // backgroundColor: colors[index % colors.length],
-                    // marginTop: "10px",
                     textDecoration: "none",
                     width: "100%",
                   }}
-                  spending={group.spent_by_category}
-                  state={{ id: group.id }}
                 >
                   <GroupItem
                     name={group.group_name}
