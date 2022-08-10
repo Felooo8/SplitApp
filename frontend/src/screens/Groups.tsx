@@ -1,19 +1,28 @@
+import "../App.css";
+
 import { IconButton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
+import Error from "../components/Error";
 import GroupItem from "../components/GroupItem";
 import SkeletonItem from "../components/SkeletonItem";
-import Error from "../components/Error";
-import Constants from "../apis/Constants";
-import "../App.css";
 
 // import { getGroups } from "../apis/fetch";
 
-function Groups(props) {
-  const [groups, setGroups] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+type Group = {
+  id: number;
+  spent_by_category: number;
+  group_name: string;
+  balance: number;
+};
+
+function Groups() {
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   const getGroups = () => {
     fetch(Constants.SERVER + "/api/group", {
@@ -31,7 +40,7 @@ function Groups(props) {
             setError(false);
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -78,15 +87,11 @@ function Groups(props) {
                   component={Link}
                   to={`/mygroup/${group.id}/${group.group_name}`}
                   // variant="contained"
-                  // color="primary"
+                  // color="default"
                   style={{
-                    // backgroundColor: colors[index % colors.length],
-                    // marginTop: "10px",
                     textDecoration: "none",
                     width: "100%",
                   }}
-                  spending={group.spent_by_category}
-                  state={{ id: group.id }}
                 >
                   <GroupItem
                     name={group.group_name}

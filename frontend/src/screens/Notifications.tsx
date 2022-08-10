@@ -36,7 +36,7 @@ function Notifications(props) {
             setError(false);
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {

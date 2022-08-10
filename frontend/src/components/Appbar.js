@@ -34,7 +34,7 @@ export default function BottomAppBar(props) {
             setNotifications(data);
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {

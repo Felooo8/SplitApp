@@ -28,7 +28,7 @@ export const postSetAsPaid = (id, isPaid, errorToggle = null) => {
         console.log("Set as paid successfully");
         return true;
       } else {
-        throw new Error("Something went wrong");
+        throw Error("Something went wrong");
       }
     })
     .catch((error) => {
@@ -53,7 +53,7 @@ export const postSettled = (id, settled, errorToggle = null) => {
         console.log("Settled successfully");
         return true;
       } else {
-        throw new Error("Something went wrong");
+        throw Error("Something went wrong");
       }
     })
     .catch((error) => {

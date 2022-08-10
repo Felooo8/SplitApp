@@ -34,9 +34,6 @@ export default function ExpenseItemGroup(props) {
     return expense.settled === true;
   };
 
-  if (!props.show) {
-    return;
-  }
   return (
     <Expense>
       <div style={center}>

@@ -1,4 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {
+  SetStateAction,
+  SyntheticEvent,
+  useEffect,
+  useState,
+} from "react";
 import Stack from "@mui/material/Stack";
 import ChartPie from "../components/chart";
 import { useParams } from "react-router-dom";
@@ -9,34 +14,54 @@ import Constants from "../apis/Constants";
 import SkeletonItem from "../components/SkeletonItem";
 import Error from "../components/Error";
 import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
-import Slide from "@mui/material/Slide";
+import Alert from "@mui/material/Alert";
+import Slide, { SlideProps } from "@mui/material/Slide";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+type Expense = {
+  id: number;
+  name: string;
+  category: string;
+  amount: number;
+  splitted: boolean;
+  date: string;
+  ower: number;
+  payer: number;
+  is_paid: boolean;
+  settled: boolean;
+};
 
-function SlideTransition(props) {
+type Errors = {
+  user: boolean;
+  total: boolean;
+  groups: boolean;
+};
+
+type Params = {
+  id: string | undefined;
+  groupName: SetStateAction<string>;
+};
+
+function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
 
-function Group(props) {
-  const [currentUser, setCurrentUser] = useState(null);
+function Group() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState([]);
-  const [expenses, setExpenses] = useState([]);
-  const [groupName, setGroupName] = useState("");
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  // const [groupName, setGroupName] = useState<string>("");
   // const [newGroupName, setNewGroupName] = useState("");
-  const [inputText, setInputText] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [openSnackBar, setOpenSnackBar] = useState(false);
-  const [errors, setErrors] = useState({
+  const [inputText, setInputText] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Errors>({
     user: false,
     total: false,
     groups: false,
   });
-  const params = useParams();
+  const { id, groupName } = useParams<"id" | "groupName">();
 
   const getUser = () => {
     fetch(Constants.SERVER + "/api/auth/users/me/", {
@@ -54,7 +79,7 @@ function Group(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -73,14 +98,14 @@ function Group(props) {
   //       "Content-Type": "application/json",
   //       Authorization: `Token ${localStorage.getItem("token")}`,
   //     },
-  //     body: JSON.stringify({ id: params.id, name: newGroupName }),
+  //     body: JSON.stringify({ id: id, name: newGroupName }),
   //   })
   //     .then((response) => {
   //       if (response.ok) {
   //         setNewGroupName("");
   //         console.log("Changed");
   //       } else {
-  //         throw new Error("Something went wrong");
+  //         throw Error("Something went wrong");
   //       }
   //     })
   //     .catch((error) => {
@@ -99,7 +124,7 @@ function Group(props) {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ id: params.id }),
+      body: JSON.stringify({ id: id }),
     })
       .then((response) => {
         if (response.ok) {
@@ -112,7 +137,7 @@ function Group(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -132,7 +157,7 @@ function Group(props) {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ id: params.id }),
+      body: JSON.stringify({ id: id }),
     })
       .then((response) => {
         if (response.ok) {
@@ -144,7 +169,7 @@ function Group(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -156,10 +181,14 @@ function Group(props) {
       });
   };
 
-  const handleCloseSnackBar = (event, reason) => {
+  const handleCloseSnackBar = (event: any, reason: string) => {
     if (reason === "clickaway") {
       return;
     }
+    setOpenSnackBar(false);
+  };
+
+  const handleCloseSnackBarAlert = (event: SyntheticEvent<Element, Event>) => {
     setOpenSnackBar(false);
   };
 
@@ -170,7 +199,6 @@ function Group(props) {
   const toggleFetch = () => {
     getGroups();
     getTotalExpenses();
-    setGroupName(params.groupName);
     getUser();
   };
 
@@ -184,7 +212,6 @@ function Group(props) {
     const timer = setTimeout(() => {
       getGroups();
       getTotalExpenses();
-      setGroupName(params.groupName);
       getUser();
       setLoading(false);
     }, Constants.LOADING_DATA_DELAY);
@@ -231,9 +258,11 @@ function Group(props) {
         TransitionComponent={SlideTransition}
       >
         <Alert
-          onClose={handleCloseSnackBar}
+          onClose={handleCloseSnackBarAlert}
           severity="error"
           sx={{ width: "100%" }}
+          elevation={6}
+          variant="filled"
         >
           Something went wrong!
         </Alert>
@@ -249,7 +278,6 @@ function Group(props) {
                 expense={expense}
                 index={index}
                 currentUser={currentUser}
-                show={!expense.settled}
                 errorToggle={errorToggle}
               />
             ))}

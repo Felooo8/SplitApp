@@ -116,7 +116,7 @@ export default function AddingExpense(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -146,7 +146,7 @@ export default function AddingExpense(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -174,7 +174,7 @@ export default function AddingExpense(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -218,7 +218,7 @@ export default function AddingExpense(props) {
             request: false,
           }));
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {

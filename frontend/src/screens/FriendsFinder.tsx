@@ -1,32 +1,38 @@
-import React, { useEffect, useState } from "react";
+import Alert from "@mui/material/Alert";
+import Slide, { SlideProps } from "@mui/material/Slide";
+import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
-import SearchResult from "../components/SearchResult";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import SkeletonItem from "../components/SkeletonItem";
+
 import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
-import Slide from "@mui/material/Slide";
+import SearchResult from "../components/SearchResult";
+import SkeletonItem from "../components/SkeletonItem";
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+// const Alert = React.forwardRef(function Alert(props, ref) {
+//   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+// });
 
-function SlideTransition(props) {
+type User = {
+  id: number;
+  username: string;
+};
+
+function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
 
-function FriendsFinder(props) {
-  const [users, setUsers] = useState([]);
-  const [friends, setFriends] = useState([]);
-  const [sent, setSent] = useState([]);
-  const [pending, setPending] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [lastAction, setLastAction] = useState("");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
+function FriendsFinder() {
+  const [users, setUsers] = useState<User[]>([]);
+  const [friends, setFriends] = useState<number[]>([]);
+  const [sent, setSent] = useState<number[]>([]);
+  const [pending, setPending] = useState<number[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
+  const [lastAction, setLastAction] = useState<string>("");
+  const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
   // const [currentUser, setCurrentUser] = useState(undefined);
   const params = useParams();
 
@@ -49,7 +55,7 @@ function FriendsFinder(props) {
             setError(false);
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -75,7 +81,7 @@ function FriendsFinder(props) {
     }
   };
 
-  const reRenderToggle = (action) => {
+  const reRenderToggle = (action: React.SetStateAction<string>) => {
     setLastAction(action);
     setOpenSnackBar(true);
     findFriends();
@@ -85,22 +91,29 @@ function FriendsFinder(props) {
     setError(true);
   };
 
-  const isFriend = (id) => {
+  const isFriend = (id: number) => {
     return friends.includes(id);
   };
 
-  const isPending = (id) => {
+  const isPending = (id: number) => {
     return pending.includes(id);
   };
 
-  const isSent = (id) => {
+  const isSent = (id: number) => {
     return sent.includes(id);
   };
 
-  const handleCloseSnackBar = (event, reason) => {
+  const handleCloseSnackBar = (
+    event: Event | SyntheticEvent<Element, Event>,
+    reason: string
+  ) => {
     if (reason === "clickaway") {
       return;
     }
+    setOpenSnackBar(false);
+  };
+
+  const handleCloseSnackBarAlert = (event: SyntheticEvent<Element, Event>) => {
     setOpenSnackBar(false);
   };
 
@@ -138,9 +151,11 @@ function FriendsFinder(props) {
         TransitionComponent={SlideTransition}
       >
         <Alert
-          onClose={handleCloseSnackBar}
+          onClose={handleCloseSnackBarAlert}
           severity="info"
           sx={{ width: "100%" }}
+          elevation={6}
+          variant="filled"
         >
           {alertMessage()}
         </Alert>

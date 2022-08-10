@@ -77,7 +77,7 @@ export default function SignIn() {
             })
             .then(() => navigate("/"));
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -113,7 +113,7 @@ export default function SignIn() {
               setError(false);
             });
           } else {
-            throw new Error("Something went wrong");
+            throw Error("Something went wrong");
           }
         })
         .catch((error) => {

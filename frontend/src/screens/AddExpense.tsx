@@ -1,8 +1,9 @@
 import React from "react";
+
 import AddingExpense from "../components/AddingExpenseComponent";
 import BottomAppBar from "../components/Appbar";
 
-function AddExpense(props) {
+function AddExpense() {
   return (
     <div
       style={{

@@ -33,7 +33,7 @@ export default function SearchResult(props) {
         if (response.ok) {
           props.toggle(url.substring(0, 3));
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {

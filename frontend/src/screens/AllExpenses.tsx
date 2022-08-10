@@ -1,41 +1,62 @@
+import "../App.css";
+
+import Alert from "@mui/material/Alert";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
-// import FormLabel from "@mui/material/FormLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-import Stack from "@mui/material/Stack";
-import React, { useEffect, useReducer, useState } from "react";
-import ExpenseItem from "../components/Expense";
-import BottomAppBar from "../components/Appbar";
-import SkeletonItem from "../components/SkeletonItem";
-import Constants from "../apis/Constants";
-import Error from "../components/Error";
+import Slide, { SlideProps } from "@mui/material/Slide";
 import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
-import Slide from "@mui/material/Slide";
-import "../App.css";
+import Stack from "@mui/material/Stack";
+import React, { SyntheticEvent, useEffect, useReducer, useState } from "react";
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import Constants from "../apis/Constants";
+import BottomAppBar from "../components/Appbar";
+import Error from "../components/Error";
+import ExpenseItem from "../components/Expense";
+import SkeletonItem from "../components/SkeletonItem";
 
-function SlideTransition(props) {
+// import FormLabel from "@mui/material/FormLabel";
+
+type Expense = {
+  id: number;
+  name: string;
+  category: string;
+  amount: number;
+  splitted: boolean;
+  date: string;
+  ower: number;
+  payer: number;
+  is_paid: boolean;
+  settled: boolean;
+};
+
+type Errors = {
+  user: boolean;
+  expenses: boolean;
+};
+
+// const Alert = React.forwardRef<HTMLInputElement>(function Alert(props, ref) {
+//   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+// });
+
+function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
 
-function AllExpenses(props) {
-  const [userExpenses, setUserExpenses] = useState([]);
-  const [filtredExpenses, setFiltredExpenses] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+function AllExpenses() {
+  const [userExpenses, setUserExpenses] = useState<Expense[]>([]);
+  const [filtredExpenses, setFiltredExpenses] = useState<Expense[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [filter, setFilter] = useState("all");
-  const [showSettled, setShowSettled] = useState(false);
-  const [showBorrowed, setShowBorrowed] = useState(true);
-  const [showLent, setShowLent] = useState(true);
+  const [showSettled, setShowSettled] = useState<boolean>(false);
+  const [showBorrowed, setShowBorrowed] = useState<boolean>(true);
+  const [showLent, setShowLent] = useState<boolean>(true);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  const [loading, setLoading] = useState(true);
-  const [openSnackBar, setOpenSnackBar] = useState(false);
-  const [errors, setErrors] = useState({
+  const [loading, setLoading] = useState<boolean>(true);
+  const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Errors>({
     user: false,
     expenses: false,
   });
@@ -53,7 +74,7 @@ function AllExpenses(props) {
           response.json().then((data) => {
             setUserExpenses(data);
             setFiltredExpenses(
-              data.filter((expense) => expense.settled === showSettled)
+              data.filter((expense: Expense) => expense.settled === showSettled)
             );
             // console.log(filtredExpenses);
             setErrors((errors) => ({
@@ -62,7 +83,7 @@ function AllExpenses(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -90,7 +111,7 @@ function AllExpenses(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -102,7 +123,9 @@ function AllExpenses(props) {
       });
   };
 
-  const filterExpenses = (event) => {
+  const filterExpenses = (event: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setFilter(event.target.value);
     if (event.target.value === "all") {
       setShowLent(true);
@@ -131,7 +154,7 @@ function AllExpenses(props) {
     }
   };
 
-  const displaySettled = () => (event) => {
+  const displaySettled = () => (event: React.ChangeEvent<HTMLInputElement>) => {
     setShowSettled(event.target.checked);
     if (event.target.checked) {
       if (showBorrowed) {
@@ -241,10 +264,17 @@ function AllExpenses(props) {
     );
   };
 
-  const handleCloseSnackBar = (event, reason) => {
+  const handleCloseSnackBar = (
+    event: Event | SyntheticEvent<Element, Event>,
+    reason: string
+  ) => {
     if (reason === "clickaway") {
       return;
     }
+    setOpenSnackBar(false);
+  };
+
+  const handleCloseSnackBarAlert = (event: SyntheticEvent<Element, Event>) => {
     setOpenSnackBar(false);
   };
 
@@ -289,9 +319,11 @@ function AllExpenses(props) {
         TransitionComponent={SlideTransition}
       >
         <Alert
-          onClose={handleCloseSnackBar}
+          onClose={handleCloseSnackBarAlert}
           severity="error"
           sx={{ width: "100%" }}
+          elevation={6}
+          variant="filled"
         >
           Something went wrong!
         </Alert>

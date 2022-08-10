@@ -36,7 +36,7 @@ function Summary(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
@@ -64,7 +64,7 @@ function Summary(props) {
             }));
           });
         } else {
-          throw new Error("Something went wrong");
+          throw Error("Something went wrong");
         }
       })
       .catch((error) => {
