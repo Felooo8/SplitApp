@@ -13,12 +13,19 @@ import Error from "../components/Error";
 import InvitationItem from "../components/InvitationItem";
 import SkeletonItem from "../components/SkeletonItem";
 
-function Notifications(props) {
-  const [invitations, setInvitations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState(false);
-  const timer = React.useRef();
+type Invitation = {
+  id: number;
+  invited: number;
+  sender: number;
+  sender_username: string;
+};
+
+function Notifications() {
+  const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const timer = React.useRef<number>();
 
   const getInvitations = () => {
     fetch(Constants.SERVER + "/api/getInvitations", {

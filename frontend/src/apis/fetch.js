@@ -14,7 +14,7 @@ export const getGroups = () => {
     });
 };
 
-export const postSetAsPaid = (id, isPaid, errorToggle = null) => {
+export const postSetAsPaid = async (id, isPaid, errorToggle = null) => {
   return fetch(Constants.SERVER + "/api/setAsPaid", {
     method: "POST",
     headers: {
@@ -39,7 +39,7 @@ export const postSetAsPaid = (id, isPaid, errorToggle = null) => {
     });
 };
 
-export const postSettled = (id, settled, errorToggle = null) => {
+export const postSettled = async (id, settled, errorToggle = null) => {
   return fetch(Constants.SERVER + "/api/settle", {
     method: "POST",
     headers: {

@@ -6,12 +6,18 @@ import Error from "../components/Error";
 import SkeletonItem from "../components/SkeletonItem";
 import SummaryItem from "../components/SummaryItem";
 
-function Summary(props) {
-  const [summaries, setSummaries] = useState({});
-  const [total, setTotal] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [errors, setErrors] = useState({
+type Errors = {
+  user: boolean;
+  summary: boolean;
+};
+
+function Summary() {
+  const [summaries, setSummaries] = useState<{
+    [key: string]: [number, number];
+  }>({});
+  const [total, setTotal] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errors, setErrors] = useState<Errors>({
     summary: false,
     user: false,
   });
@@ -48,33 +54,33 @@ function Summary(props) {
       });
   };
 
-  const getUser = () => {
-    fetch(Constants.SERVER + "/api/auth/users/me/", {
-      headers: {
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            setCurrentUser(data);
-            setErrors((errors) => ({
-              ...errors,
-              user: false,
-            }));
-          });
-        } else {
-          throw Error("Something went wrong");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setErrors((errors) => ({
-          ...errors,
-          user: true,
-        }));
-      });
-  };
+  // const getUser = () => {
+  //   fetch(Constants.SERVER + "/api/auth/users/me/", {
+  //     headers: {
+  //       Authorization: `Token ${localStorage.getItem("token")}`,
+  //     },
+  //   })
+  //     .then((response) => {
+  //       if (response.ok) {
+  //         response.json().then((data) => {
+  //           setCurrentUser(data);
+  //           setErrors((errors) => ({
+  //             ...errors,
+  //             user: false,
+  //           }));
+  //         });
+  //       } else {
+  //         throw Error("Something went wrong");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       setErrors((errors) => ({
+  //         ...errors,
+  //         user: true,
+  //       }));
+  //     });
+  // };
 
   const Overrall = () => {
     if (total > 0) {
@@ -92,11 +98,10 @@ function Summary(props) {
   };
 
   const toggleFetch = () => {
-    getUser();
     getSummarize();
   };
 
-  const inTotal = (summaries) => {
+  const inTotal = (summaries: { [key: string]: [number, number] }) => {
     var total = 0;
     for (let key in summaries) {
       total += summaries[key][0];
@@ -107,7 +112,6 @@ function Summary(props) {
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
-      getUser();
       getSummarize();
       setLoading(false);
     }, Constants.LOADING_DATA_DELAY);
@@ -137,7 +141,6 @@ function Summary(props) {
                 user={{ id: value[1], username: key }}
                 debt={value[0]}
                 index={index}
-                currentUser={currentUser}
               />
             ))}
           </Stack>

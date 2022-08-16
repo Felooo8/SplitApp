@@ -1,55 +1,30 @@
-import React, { useState } from "react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
 import Container from "@mui/material/Container";
-import Error from "../components/Error";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Constants from "../apis/Constants";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import Constants from "../apis/Constants";
+import Error from "../components/Error";
 
 const theme = createTheme();
 
 export default function SignIn() {
-  const [ifValidData, setIfValidData] = useState(true);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [, setError] = useState(false);
+  const [ifValidData, setIfValidData] = useState<boolean>(true);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [, setError] = useState<boolean>(false);
   const navigate = useNavigate();
-  // const handleSubmitOld = (event) => {
-  //   event.preventDefault();
-  //   const data = new FormData(event.currentTarget);
-  //   console.log({
-  //     email: data.get("email"),
-  //     password: data.get("password"),
-  //   });
-  // };
 
   function ValidData() {
     if (!ifValidData) {
@@ -86,7 +61,10 @@ export default function SignIn() {
       });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: {
+    preventDefault: () => void;
+    currentTarget: HTMLFormElement | undefined;
+  }) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     let login_data = {
@@ -124,8 +102,8 @@ export default function SignIn() {
     getToken();
   };
 
-  function getCookie(name) {
-    var cookieValue = null;
+  function getCookie(name: string | any[]) {
+    var cookieValue = "";
     if (document.cookie && document.cookie !== "") {
       var cookies = document.cookie.split(";");
       for (var i = 0; i < cookies.length; i++) {
@@ -213,7 +191,19 @@ export default function SignIn() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          align="center"
+          sx={{ mt: 8, mb: 4 }}
+        >
+          {"Copyright © "}
+          <Link color="inherit" href="https://mui.com/">
+            Your Website
+          </Link>{" "}
+          {new Date().getFullYear()}
+          {"."}
+        </Typography>
       </Container>
     </ThemeProvider>
   );
