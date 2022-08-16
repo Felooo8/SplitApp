@@ -1,6 +1,7 @@
 import "./App.css";
 import React from "react";
 import SignIn from "./screens/SignIn";
+import SignUp from "./screens/SignUp";
 import AllExpenses from "./screens/AllExpenses";
 import AddExpense from "./screens/AddExpense";
 import Summary from "./screens/Summary";
@@ -21,6 +22,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Summary />} />
           <Route path="/login" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
           <Route path="/groups" element={<Groups />} />
           <Route path="/mygroup/:id/:groupName" element={<Group />} />
           <Route path="/all-expenses" element={<AllExpenses />} />
