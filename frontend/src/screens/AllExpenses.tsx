@@ -77,6 +77,7 @@ function AllExpenses() {
               data.filter((expense: Expense) => expense.settled === showSettled)
             );
             // console.log(filtredExpenses);
+            setLoading(false);
             setErrors((errors) => ({
               ...errors,
               expenses: false,
@@ -292,7 +293,6 @@ function AllExpenses() {
     const timer = setTimeout(() => {
       getUser();
       getExpenses();
-      setLoading(false);
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);

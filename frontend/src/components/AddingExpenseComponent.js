@@ -168,6 +168,7 @@ export default function AddingExpense(props) {
         if (response.ok) {
           response.json().then((data) => {
             setCurrentUser(data);
+            setLoading(false);
             setErrors((errors) => ({
               ...errors,
               user: false,
@@ -192,7 +193,6 @@ export default function AddingExpense(props) {
       getGroups();
       getFriends();
       getUser();
-      setLoading(false);
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);

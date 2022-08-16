@@ -36,6 +36,7 @@ function Summary() {
             console.log(data);
             setSummaries(data);
             inTotal(data);
+            setLoading(false);
             setErrors((errors) => ({
               ...errors,
               summary: false,
@@ -113,7 +114,6 @@ function Summary() {
     setLoading(true);
     const timer = setTimeout(() => {
       getSummarize();
-      setLoading(false);
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);

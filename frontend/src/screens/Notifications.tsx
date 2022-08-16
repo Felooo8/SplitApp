@@ -68,8 +68,6 @@ function Notifications() {
 
   const toggleFetch = () => {
     getInvitations();
-    console.log(invitations);
-    console.log(invitations === []);
   };
 
   const refresh = () => {

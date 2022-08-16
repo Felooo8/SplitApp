@@ -73,6 +73,7 @@ function Group() {
         if (response.ok) {
           response.json().then((data) => {
             setCurrentUser(data);
+            setLoading(false);
             setErrors((errors) => ({
               ...errors,
               user: false,
@@ -213,7 +214,6 @@ function Group() {
       getGroups();
       getTotalExpenses();
       getUser();
-      setLoading(false);
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);
