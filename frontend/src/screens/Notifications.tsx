@@ -1,16 +1,15 @@
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import CircularProgress from "@mui/material/CircularProgress";
 import Fade from "@mui/material/Fade";
 import LinearProgress from "@mui/material/LinearProgress";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import React, { useEffect, useState } from "react";
+
 import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
 import InvitationItem from "../components/InvitationItem";
+import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
 
 type Invitation = {
@@ -107,28 +106,13 @@ function Notifications() {
             </Fade>
           </Box>
           {invitations.length === 0 ? (
-            <div style={{ marginTop: "10em" }}>
-              <NotificationsNoneIcon style={icon} />
-              <h5>No notifications yet</h5>
-              <Typography variant="subtitle1" gutterBottom component="div">
-                When you get notifications, they'll show up here
-              </Typography>
-              <Button variant="outlined" onClick={refresh}>
-                Refresh
-              </Button>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  marginTop: "1rem",
-                }}
-              >
-                <Fade in={refreshing} unmountOnExit>
-                  <CircularProgress />
-                </Fade>
-              </Box>
-            </div>
+            <NothingToDisplay
+              statusIcon={NotificationsNoneIcon}
+              mainText={"No notifications yet"}
+              helperText={"When you get notifications, they'll show up here"}
+              toggleRefresh={refresh}
+              refreshing={refreshing}
+            />
           ) : (
             <Stack spacing={2} style={{ marginBottom: "10px" }}>
               {invitations.map((invitation, index) => (

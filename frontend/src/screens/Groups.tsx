@@ -1,6 +1,7 @@
 import "../App.css";
 
-import { IconButton } from "@mui/material";
+import NoAccountsIcon from "@mui/icons-material/NoAccounts";
+import { Box, Fade, IconButton, LinearProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -8,6 +9,7 @@ import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
 import GroupItem from "../components/GroupItem";
+import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
 
 // import { getGroups } from "../apis/fetch";
@@ -23,6 +25,8 @@ function Groups() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const timer = React.useRef<number>();
 
   const getGroups = () => {
     fetch(Constants.SERVER + "/api/group", {
@@ -50,6 +54,10 @@ function Groups() {
   };
 
   const toggleFetch = () => {
+    setRefreshing(true);
+    timer.current = window.setTimeout(() => {
+      setRefreshing(false);
+    }, Constants.PROGRESS_ANIMATION_TIME);
     getGroups();
   };
 
@@ -77,9 +85,27 @@ function Groups() {
         <SkeletonItem header={true} />
       ) : (
         <div>
-          <h5>All your groups:</h5>
+          <Box
+            style={{
+              position: "absolute",
+              left: "0",
+              right: "0",
+              bottom: "56px",
+              zIndex: "10",
+            }}
+          >
+            <Fade in={refreshing} unmountOnExit>
+              <LinearProgress sx={{ height: "8px" }} />
+            </Fade>
+          </Box>
           {groups.length === 0 ? (
-            <h3>Currently you are not in any group</h3>
+            <NothingToDisplay
+              statusIcon={NoAccountsIcon}
+              mainText={"You are currenly not in any group"}
+              helperText={"When you join one, it'll show up here"}
+              toggleRefresh={toggleFetch}
+              refreshing={refreshing}
+            />
           ) : (
             groups.map((group, index) => (
               <div key={index}>

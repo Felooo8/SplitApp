@@ -16,6 +16,10 @@ import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
 import ExpenseItem from "../components/Expense";
 import SkeletonItem from "../components/SkeletonItem";
+import NothingToDisplay from "../components/NothingToDisplay";
+import LayersClearIcon from "@mui/icons-material/LayersClear";
+import { Box, LinearProgress } from "@mui/material";
+import { Fade } from "react-bootstrap";
 
 // import FormLabel from "@mui/material/FormLabel";
 
@@ -53,6 +57,7 @@ function AllExpenses() {
   const [showSettled, setShowSettled] = useState<boolean>(false);
   const [showBorrowed, setShowBorrowed] = useState<boolean>(true);
   const [showLent, setShowLent] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
   const [loading, setLoading] = useState<boolean>(true);
   const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
@@ -60,6 +65,7 @@ function AllExpenses() {
     user: false,
     expenses: false,
   });
+  const timer = React.useRef<number>();
 
   const getExpenses = () => {
     fetch(Constants.SERVER + "/api/userExpenses", {
@@ -280,6 +286,10 @@ function AllExpenses() {
   };
 
   const toggleFetch = () => {
+    setRefreshing(true);
+    timer.current = window.setTimeout(() => {
+      setRefreshing(false);
+    }, Constants.PROGRESS_ANIMATION_TIME);
     getUser();
     getExpenses();
   };
@@ -333,18 +343,41 @@ function AllExpenses() {
       ) : (
         <div>
           {Filteres()}
-          <Stack spacing={2}>
-            {filtredExpenses.map((expense, index) => (
-              <ExpenseItem
-                key={expense.id}
-                expense={expense}
-                index={index}
-                currentUser={currentUser}
-                toggle={reRenderToggle}
-                errorToggle={errorToggle}
-              />
-            ))}
-          </Stack>
+          <Box
+            style={{
+              position: "absolute",
+              left: "0",
+              right: "0",
+              bottom: "56px",
+              zIndex: "10",
+            }}
+          >
+            <Fade in={refreshing} unmountOnExit>
+              <LinearProgress sx={{ height: "8px" }} />
+            </Fade>
+          </Box>
+          {filtredExpenses.length === 0 ? (
+            <NothingToDisplay
+              statusIcon={LayersClearIcon}
+              mainText={"No expenses yet"}
+              helperText={"When you get expenses, they'll show up here"}
+              toggleRefresh={toggleFetch}
+              refreshing={refreshing}
+            />
+          ) : (
+            <Stack spacing={2}>
+              {filtredExpenses.map((expense, index) => (
+                <ExpenseItem
+                  key={expense.id}
+                  expense={expense}
+                  index={index}
+                  currentUser={currentUser}
+                  toggle={reRenderToggle}
+                  errorToggle={errorToggle}
+                />
+              ))}
+            </Stack>
+          )}
         </div>
       )}
       <BottomAppBar value="all expenses" />

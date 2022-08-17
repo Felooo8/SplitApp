@@ -1,8 +1,14 @@
+import MoneyOffIcon from "@mui/icons-material/MoneyOff";
+import Box from "@mui/material/Box";
+import Fade from "@mui/material/Fade";
+import LinearProgress from "@mui/material/LinearProgress";
 import Stack from "@mui/material/Stack";
 import React, { useEffect, useState } from "react";
+
 import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
+import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
 import SummaryItem from "../components/SummaryItem";
 
@@ -17,10 +23,12 @@ function Summary() {
   }>({});
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [errors, setErrors] = useState<Errors>({
     summary: false,
     user: false,
   });
+  const timer = React.useRef<number>();
 
   const getSummarize = () => {
     fetch(Constants.SERVER + "/api/summarize", {
@@ -55,40 +63,16 @@ function Summary() {
       });
   };
 
-  // const getUser = () => {
-  //   fetch(Constants.SERVER + "/api/auth/users/me/", {
-  //     headers: {
-  //       Authorization: `Token ${localStorage.getItem("token")}`,
-  //     },
-  //   })
-  //     .then((response) => {
-  //       if (response.ok) {
-  //         response.json().then((data) => {
-  //           setCurrentUser(data);
-  //           setErrors((errors) => ({
-  //             ...errors,
-  //             user: false,
-  //           }));
-  //         });
-  //       } else {
-  //         throw Error("Something went wrong");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       setErrors((errors) => ({
-  //         ...errors,
-  //         user: true,
-  //       }));
-  //     });
-  // };
-
   const Overrall = () => {
     if (total > 0) {
       return (
         <h5 style={{ color: "orange", padding: "10px" }}>
           Overall, you owe ${Math.abs(total)}
         </h5>
+      );
+    } else if (total === 0) {
+      return (
+        <h5 style={{ color: "black", padding: "10px" }}>You have no debts!</h5>
       );
     }
     return (
@@ -99,6 +83,10 @@ function Summary() {
   };
 
   const toggleFetch = () => {
+    setRefreshing(true);
+    timer.current = window.setTimeout(() => {
+      setRefreshing(false);
+    }, Constants.PROGRESS_ANIMATION_TIME);
     getSummarize();
   };
 
@@ -133,16 +121,39 @@ function Summary() {
         <SkeletonItem header={true} />
       ) : (
         <div>
+          <Box
+            style={{
+              position: "absolute",
+              left: "0",
+              right: "0",
+              bottom: "56px",
+              zIndex: "10",
+            }}
+          >
+            <Fade in={refreshing} unmountOnExit>
+              <LinearProgress sx={{ height: "8px" }} />
+            </Fade>
+          </Box>
           {total !== null ? Overrall() : null}
           <Stack spacing={2} style={{ marginBottom: "10px" }}>
-            {Object.entries(summaries).map(([key, value], index) => (
-              <SummaryItem
-                key={index}
-                user={{ id: value[1], username: key }}
-                debt={value[0]}
-                index={index}
+            {Object.keys(summaries).length === 0 ? (
+              <NothingToDisplay
+                statusIcon={MoneyOffIcon}
+                mainText={"No debts yet"}
+                helperText={"When you get one, it'll show up here"}
+                toggleRefresh={toggleFetch}
+                refreshing={refreshing}
               />
-            ))}
+            ) : (
+              Object.entries(summaries).map(([key, value], index) => (
+                <SummaryItem
+                  key={index}
+                  user={{ id: value[1], username: key }}
+                  debt={value[0]}
+                  index={index}
+                />
+              ))
+            )}
           </Stack>
         </div>
       )}

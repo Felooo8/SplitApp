@@ -5,7 +5,8 @@ from collections import defaultdict
 from django.db.models import Q
 from django.utils.crypto import get_random_string
 from django.core.exceptions import ValidationError
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 # Create your models here.
 
 
@@ -54,6 +55,12 @@ class Account(models.Model):
 
     def __str__(self) -> str:
         return self.user.username
+
+
+@receiver(post_save, sender=User, dispatch_uid="create_account")
+def update_stock(sender, instance, **kwargs):
+    account = Account(user=instance)
+    account.save()
 
 
 class Expense(models.Model):
