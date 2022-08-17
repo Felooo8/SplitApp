@@ -29,5 +29,5 @@ urlpatterns = [
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('api-token-auth/', views.obtain_auth_token),
-    path('api-token-logout/', auth_views.logout) 
+    path('api-token-logout/', auth_views.logout)
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

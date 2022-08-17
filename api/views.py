@@ -15,15 +15,38 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 import json
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Q
 from django.utils.crypto import get_random_string
 
 from collections import defaultdict
-from itertools import chain 
+from itertools import chain
 
 
 # Create your views here.
+
+class CreateNewUser(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request, format=None):
+        try:
+            body = json.loads(request.body)
+            username = body["userName"]
+            first_name = body["firstName"]
+            last_name = body["lastName"]
+            email = body["email"]
+            password = body["password"]
+            if not (username or first_name or last_name or email or password):
+                return Response(None, status=status.HTTP_400_BAD_REQUEST)
+            user = User.objects.create_user(username=username,
+                                            email=email,
+                                            password=password,
+                                            first_name=first_name,
+                                            last_name=last_name)
+            user.save()
+            return Response(None, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class GetUserByID(APIView):

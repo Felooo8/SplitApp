@@ -87,17 +87,15 @@ export default function SignIn() {
     const data = new FormData(e.currentTarget);
     let login_data = {
       password: data.get("password"),
-      username: data.get("email"),
+      username: data.get("username"),
     };
     const getToken = () => {
       let url = Constants.SERVER + "/api-token-auth/";
-      let csrftoken = getCookie("csrftoken");
       fetch(url, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "X-CSRFToken": csrftoken,
         },
         body: JSON.stringify(login_data),
       })
@@ -119,21 +117,6 @@ export default function SignIn() {
     };
     getToken();
   };
-
-  function getCookie(name: string | any[]) {
-    var cookieValue = "";
-    if (document.cookie && document.cookie !== "") {
-      var cookies = document.cookie.split(";");
-      for (var i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === name + "=") {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -163,10 +146,10 @@ export default function SignIn() {
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
               autoFocus
               onChange={(e) => setUsername(e.target.value)}
             />

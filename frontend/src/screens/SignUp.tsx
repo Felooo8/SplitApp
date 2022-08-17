@@ -86,27 +86,23 @@ export default function SignUp() {
       });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    let register_data = {
-      userName: data.get("userName"),
-      firstName: data.get("firstName"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    };
+  const logIn = (
+    username: FormDataEntryValue | null,
+    password: FormDataEntryValue | null
+  ) => {
     const getToken = () => {
-      let url = Constants.SERVER + "/api/sign-up";
-      let csrftoken = getCookie("csrftoken");
+      let url = Constants.SERVER + "/api-token-auth/";
+      let login_data = {
+        password: password,
+        username: username,
+      };
       fetch(url, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "X-CSRFToken": csrftoken,
         },
-        body: JSON.stringify(register_data),
+        body: JSON.stringify(login_data),
       })
         .then((response) => {
           if (response.ok) {
@@ -128,20 +124,41 @@ export default function SignUp() {
     getToken();
   };
 
-  function getCookie(name: string | any[]) {
-    var cookieValue = "";
-    if (document.cookie && document.cookie !== "") {
-      var cookies = document.cookie.split(";");
-      for (var i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === name + "=") {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    let register_data = {
+      userName: data.get("userName"),
+      firstName: data.get("firstName"),
+      lastName: data.get("lastName"),
+      email: data.get("email"),
+      password: data.get("password"),
+    };
+    const getToken = () => {
+      let url = Constants.SERVER + "/api/sign-up";
+      fetch(url, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(register_data),
+      })
+        .then((response) => {
+          if (response.ok) {
+            logIn(register_data.userName, register_data.password);
+            setError(false);
+          } else {
+            throw Error("Something went wrong");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          setIfValidData(false);
+        });
+    };
+    getToken();
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -195,10 +212,10 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
-                  id="username"
-                  label="Username"
-                  name="username"
-                  autoComplete="username"
+                  id="userName"
+                  label="UserName"
+                  name="userName"
+                  autoComplete="userName"
                   onChange={(e) => setUserName(e.target.value)}
                 />
               </Grid>

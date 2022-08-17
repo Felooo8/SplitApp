@@ -25,10 +25,12 @@ from .views import (
     SetAvatar,
     GetAvatar,
     GetGroupAvatar,
-    SetGroupName
+    SetGroupName,
+    CreateNewUser
 )
 
 urlpatterns = [
+    path("sign-up", CreateNewUser.as_view()),
     path("username", GetUserByID.as_view()),
     path("group", GetUsersGroups.as_view()),
     path("groupExpenses", GetGroupExpenses.as_view()),
