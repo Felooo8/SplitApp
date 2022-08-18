@@ -1,16 +1,18 @@
 import "./App.css";
+
 import React from "react";
-import SignIn from "./screens/SignIn";
-import SignUp from "./screens/SignUp";
-import AllExpenses from "./screens/AllExpenses";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+import NavbarTop from "./components/navbar";
 import AddExpense from "./screens/AddExpense";
-import Summary from "./screens/Summary";
+import AllExpenses from "./screens/AllExpenses";
 import FriendsFinder from "./screens/FriendsFinder";
-import Notifications from "./screens/Notifications";
 import Groups from "./screens/Groups";
 import Group from "./screens/MyGroup";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import NavbarTop from "./components/navbar";
+import Notifications from "./screens/Notifications";
+import SignIn from "./screens/SignIn";
+import SignUp from "./screens/SignUp";
+import Summary from "./screens/Summary";
 
 function App() {
   console.log(localStorage.getItem("token"));

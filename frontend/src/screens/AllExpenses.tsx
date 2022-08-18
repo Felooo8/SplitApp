@@ -342,7 +342,6 @@ function AllExpenses() {
         <SkeletonItem header={true} />
       ) : (
         <div>
-          {Filteres()}
           <Box
             style={{
               position: "absolute",
@@ -366,6 +365,7 @@ function AllExpenses() {
             />
           ) : (
             <Stack spacing={2}>
+              {Filteres()}
               {filtredExpenses.map((expense, index) => (
                 <ExpenseItem
                   key={expense.id}

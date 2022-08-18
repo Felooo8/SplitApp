@@ -535,7 +535,7 @@ class SetGroupName(APIView):
                 group.save()
                 return Response(None, status=status.HTTP_204_NO_CONTENT)
             except Group.DoesNotExist:
-                return Response(None, status=status.HTTP_404_NOT_FOUND)
+                return Response(None, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
@@ -561,5 +561,44 @@ class GetGroupAvatar(APIView):
             group = Group.objects.get(id=id)
             avatar = group.avatar
             return Response(avatar.url, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateNewGroup(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        try:
+            body = json.loads(request.body)
+            group_name = body["group_name"]
+            try:
+                group = Group(group_name=group_name, users=user)
+                group.save()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except Group.DoesNotExist:
+                return Response(None, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddUsertoGroup(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        user = request.user
+        try:
+            body = json.loads(request.body)
+            id = body["id"]
+            user = body["user"]
+            try:
+                group = Group.objects.get(id=id)
+                user = User.objects.get(id=user)
+                group.users.add(user)
+                group.save()
+                return Response(None, status=status.HTTP_204_NO_CONTENT)
+            except Group.DoesNotExist:
+                return Response(None, status=status.HTTP_400_BAD_REQUEST)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)

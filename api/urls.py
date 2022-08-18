@@ -26,7 +26,9 @@ from .views import (
     GetAvatar,
     GetGroupAvatar,
     SetGroupName,
-    CreateNewUser
+    CreateNewUser,
+    CreateNewGroup,
+    AddUsertoGroup
 )
 
 urlpatterns = [
@@ -57,4 +59,6 @@ urlpatterns = [
     path("setGroupName", SetGroupName.as_view()),
     path("getAvatar/<int:id>", GetAvatar.as_view()),
     path("getGroupAvatar/<int:id>", GetGroupAvatar.as_view()),
+    path("createGroup", CreateNewGroup.as_view()),
+    path("addUserToGroup", AddUsertoGroup.as_view()),
 ]

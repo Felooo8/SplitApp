@@ -1,3 +1,5 @@
+import "../App.css";
+
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -23,9 +25,9 @@ import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+
 import Constants from "../apis/Constants";
 import returnIcon from "../apis/returnIcon";
-import "../App.css";
 import Error from "../components/Error";
 import SkeletonItem from "../components/SkeletonItem";
 import ListOfCategories from "./listOfCategoriesModal";

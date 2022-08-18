@@ -1,7 +1,14 @@
 import "../App.css";
 
 import NoAccountsIcon from "@mui/icons-material/NoAccounts";
-import { Box, Fade, IconButton, LinearProgress } from "@mui/material";
+import {
+  Box,
+  Button,
+  Fade,
+  IconButton,
+  LinearProgress,
+  Modal,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -11,9 +18,22 @@ import Error from "../components/Error";
 import GroupItem from "../components/GroupItem";
 import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import CreateNewGroup from "../components/CreateNewGroup";
 
 // import { getGroups } from "../apis/fetch";
 
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 type Group = {
   id: number;
   spent_by_category: number;
@@ -25,8 +45,12 @@ function Groups() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
+  const [newGroupName, setNewGroupName] = useState<string>("");
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const timer = React.useRef<number>();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const getGroups = () => {
     fetch(Constants.SERVER + "/api/group", {
@@ -61,6 +85,11 @@ function Groups() {
     getGroups();
   };
 
+  const toggleClose = (name: string) => {
+    setOpen(false);
+    setNewGroupName(name);
+  };
+
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
@@ -85,6 +114,23 @@ function Groups() {
         <SkeletonItem header={true} />
       ) : (
         <div>
+          <Button
+            variant="outlined"
+            startIcon={<GroupAddIcon />}
+            onClick={handleOpen}
+          >
+            Create new group
+          </Button>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <CreateNewGroup toggle={toggleClose} />
+            </Box>
+          </Modal>
           <Box
             style={{
               position: "absolute",
