@@ -1,6 +1,7 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Chip from "@mui/material/Chip";
 import Slide, { SlideProps } from "@mui/material/Slide";
@@ -39,6 +40,7 @@ type Errors = {
   total: boolean;
   groups: boolean;
   leave: boolean;
+  delete: boolean;
 };
 
 type Params = {
@@ -65,6 +67,7 @@ function Group() {
     total: false,
     groups: false,
     leave: false,
+    delete: false,
   });
   const { id, groupName } = useParams<"id" | "groupName">();
 
@@ -124,17 +127,17 @@ function Group() {
   // };
 
   const getTotalExpenses = () => {
-    fetch(Constants.SERVER + "/api/chartData", {
-      method: "POST",
+    fetch(Constants.SERVER + "/api/chartData/" + id, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ id: id }),
     })
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
+            console.log(data);
             setKeys(data["keys"]);
             setValues(data["values"]);
             setErrors((errors) => ({
@@ -172,6 +175,7 @@ function Group() {
             ...errors,
             leave: false,
           }));
+          window.location.replace("/groups");
         } else {
           throw Error("Something went wrong");
         }
@@ -182,18 +186,46 @@ function Group() {
           ...errors,
           leave: true,
         }));
-        // setErrors(true);
       });
   };
 
-  const getGroups = () => {
-    fetch(Constants.SERVER + "/api/groupExpenses", {
-      method: "POST",
+  const deleteGroup = () => {
+    fetch(Constants.SERVER + "/api/deleteGroup", {
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify({ id: id }),
+      body: JSON.stringify({ group_id: id }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Good");
+          setErrors((errors) => ({
+            ...errors,
+            delete: false,
+          }));
+          window.location.replace("/groups");
+        } else {
+          throw Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setErrors((errors) => ({
+          ...errors,
+          delete: true,
+        }));
+      });
+  };
+
+  const getGroups = () => {
+    fetch(Constants.SERVER + "/api/groupExpenses/" + id, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
     })
       .then((response) => {
         if (response.ok) {
@@ -252,6 +284,13 @@ function Group() {
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);
+
+  const displayChart = () => {
+    if (Object.values(values).some((value) => value !== 0)) {
+      return true;
+    }
+    return false;
+  };
 
   if (Object.values(errors).some((error) => error === true)) {
     return (
@@ -317,16 +356,31 @@ function Group() {
               />
             ))}
           </Stack>
-          <div style={chart}>
-            <ChartPie keys={keys} values={values} />
-          </div>
-          <Button
-            onClick={leaveGroup}
-            variant="outlined"
-            startIcon={<ExitToAppIcon />}
-          >
-            Leave group
-          </Button>
+          {displayChart() ? (
+            <div style={chart}>
+              <ChartPie keys={keys} values={values} />
+            </div>
+          ) : null}
+          <Box>
+            <Button
+              onClick={leaveGroup}
+              variant="outlined"
+              color="warning"
+              startIcon={<ExitToAppIcon />}
+              style={button}
+            >
+              Leave group
+            </Button>
+            <Button
+              onClick={deleteGroup}
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteIcon />}
+              style={button}
+            >
+              Delete group
+            </Button>
+          </Box>
         </div>
       )}
       <BottomAppBar value="groups" />
@@ -339,5 +393,11 @@ export default Group;
 const chart = {
   width: "30%",
   minWidth: "300px",
-  margin: "20px auto",
+  margin: "20px auto auto",
+};
+
+const button = {
+  width: "fit-content",
+  display: "flex",
+  margin: "20px auto 0 auto",
 };

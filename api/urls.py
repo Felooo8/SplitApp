@@ -28,15 +28,16 @@ from .views import (
     SetGroupName,
     CreateNewUser,
     CreateNewGroup,
-    AddUsertoGroup
+    AddUsertoGroup,
+    DeleteGroup
 )
 
 urlpatterns = [
     path("sign-up", CreateNewUser.as_view()),
     path("username", GetUserByID.as_view()),
     path("group", GetUsersGroups.as_view()),
-    path("groupExpenses", GetGroupExpenses.as_view()),
-    path("chartData", GetChartValues.as_view()),
+    path("groupExpenses/<int:id>", GetGroupExpenses.as_view()),
+    path("chartData/<int:id>", GetChartValues.as_view()),
     path("userExpenses", GetUsersExpenses.as_view()),
     path("addExpense", AddExpense.as_view()),
     path("seeFriends", SeeFriends.as_view()),
@@ -49,6 +50,7 @@ urlpatterns = [
     path("acceptInvitation/byUser", AcceptInvitationByUser.as_view()),
     path("addToGroup", AddToGroup.as_view()),
     path("leaveGroup", LeaveGroup.as_view()),
+    path("deleteGroup", DeleteGroup.as_view()),
     path("setAsPaid", SetAsPaid.as_view()),
     path("settle", Settle.as_view()),
     path("summarize", GetUsersSummarize.as_view()),

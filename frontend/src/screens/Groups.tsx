@@ -25,6 +25,9 @@ import SkeletonItem from "../components/SkeletonItem";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import CreateNewGroup from "../components/CreateNewGroup";
 
+const alertAutoHidden = 3000; // in ms
+const alertUpdate = 1500;
+
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
@@ -57,7 +60,7 @@ function Groups() {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const timer = React.useRef<number>();
   const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const timerAlert = React.useRef<number>();
   const handleOpen = () => {
     setOpenSnackBar(false);
@@ -77,11 +80,12 @@ function Groups() {
       .then((response) => {
         if (response.ok) {
           console.log("Good");
+          toggleFetch();
           timerAlert.current = window.setTimeout(() => {
             setAlertText("Group " + groupName + " created");
             setAlertType("success");
             setOpenSnackBar(true);
-          }, 1000);
+          }, alertUpdate);
         } else {
           throw Error("Something went wrong");
         }
@@ -95,7 +99,7 @@ function Groups() {
           );
           setAlertType("error");
           setOpenSnackBar(true);
-        }, 1000);
+        }, alertUpdate);
       });
   };
 
@@ -133,7 +137,6 @@ function Groups() {
   };
 
   const toggleSave = (groupName: string) => {
-    console.log(groupName);
     createNewGroup(groupName);
     setOpen(false);
     setAlertText("Group " + groupName + " is being created");
@@ -183,7 +186,7 @@ function Groups() {
     <div>
       <Snackbar
         open={openSnackBar}
-        autoHideDuration={2000}
+        autoHideDuration={alertAutoHidden}
         onClose={handleCloseSnackBar}
         anchorOrigin={{
           vertical: "top",

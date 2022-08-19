@@ -59,7 +59,7 @@ class Account(models.Model):
 
 
 @receiver(post_save, sender=User, dispatch_uid="create_account")
-def update_stock(sender, instance, **kwargs):
+def create_account(sender, instance, **kwargs):
     account = Account(user=instance)
     account.save()
 
@@ -112,7 +112,8 @@ class GroupExpense(models.Model):
 
 
 class Group(models.Model):
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="members")
+    admins = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="admins", blank=True)
     group_expenses = models.ManyToManyField(GroupExpense, blank=True)
     group_name = models.TextField(default='Group chat', blank=True, max_length=40)
     created_at = models.DateTimeField(auto_now_add=True)
