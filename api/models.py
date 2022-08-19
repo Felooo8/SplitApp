@@ -44,7 +44,8 @@ class Account(models.Model):
             self.__previous_avatar_name = self.avatar.name
 
     def delete(self, using=None, keep_parents=False):
-        self.avatar.storage.delete(self.__previous_avatar_name)
+        if self.avatar.name:
+            self.avatar.storage.delete(self.__previous_avatar_name)
         super().delete()
 
     def save(self, *args, **kwargs):
@@ -125,13 +126,20 @@ class Group(models.Model):
             self.__previous_avatar_name = self.avatar.name
 
     def delete(self, using=None, keep_parents=False):
-        self.avatar.storage.delete(self.__previous_avatar_name)
+        if self.avatar.name:
+            self.avatar.storage.delete(self.__previous_avatar_name)
         super().delete()
 
     def save(self, *args, **kwargs):
         if self.avatar.name != self.__previous_avatar_name and self.__previous_avatar_name:
             self.avatar.storage.delete(self.__previous_avatar_name)
             self.__previous_avatar_name = self.avatar.name
+        # if group already exists
+        if self.id is not None:
+            # if group users is empty
+            if not self.users.exists():
+                super().delete()
+                return
         super(Group, self).save(*args, **kwargs)
 
     def __str__(self) -> str:

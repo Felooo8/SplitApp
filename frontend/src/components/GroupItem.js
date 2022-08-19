@@ -1,8 +1,10 @@
+import "../App.css";
+
+import Paper from "@mui/material/Paper";
+import Slide from "@mui/material/Slide";
 import React from "react";
 import styled from "styled-components";
-import "../App.css";
-import Slide from "@mui/material/Slide";
-import Paper from "@mui/material/Paper";
+
 import Constants from "../apis/Constants";
 import DisplayAvatar from "../components/DisplayAvatar";
 

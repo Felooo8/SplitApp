@@ -2,14 +2,18 @@ import "../App.css";
 
 import NoAccountsIcon from "@mui/icons-material/NoAccounts";
 import {
+  Alert,
   Box,
   Button,
   Fade,
   IconButton,
   LinearProgress,
   Modal,
+  Slide,
+  SlideProps,
+  Snackbar,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import Constants from "../apis/Constants";
@@ -21,18 +25,21 @@ import SkeletonItem from "../components/SkeletonItem";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import CreateNewGroup from "../components/CreateNewGroup";
 
-// import { getGroups } from "../apis/fetch";
+function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
+  return <Slide {...props} direction="left" />;
+}
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: "100%",
+  height: "100%",
   bgcolor: "background.paper",
-  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  padding: "0",
 };
 type Group = {
   id: number;
@@ -45,12 +52,52 @@ function Groups() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
-  const [newGroupName, setNewGroupName] = useState<string>("");
+  const [alertText, setAlertText] = useState<string>("");
+  const [alertType, setAlertType] = useState<any>(undefined);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const timer = React.useRef<number>();
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
+  const [open, setOpen] = useState(true);
+  const timerAlert = React.useRef<number>();
+  const handleOpen = () => {
+    setOpenSnackBar(false);
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
+
+  const createNewGroup = (groupName: string) => {
+    fetch(Constants.SERVER + "/api/createGroup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ group_name: groupName }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Good");
+          timerAlert.current = window.setTimeout(() => {
+            setAlertText("Group " + groupName + " created");
+            setAlertType("success");
+            setOpenSnackBar(true);
+          }, 1000);
+        } else {
+          throw Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log("Failed");
+        console.log(error);
+        timerAlert.current = window.setTimeout(() => {
+          setAlertText(
+            "Something went wrong. Group " + groupName + " was not created"
+          );
+          setAlertType("error");
+          setOpenSnackBar(true);
+        }, 1000);
+      });
+  };
 
   const getGroups = () => {
     fetch(Constants.SERVER + "/api/group", {
@@ -85,9 +132,33 @@ function Groups() {
     getGroups();
   };
 
-  const toggleClose = (name: string) => {
+  const toggleSave = (groupName: string) => {
+    console.log(groupName);
+    createNewGroup(groupName);
     setOpen(false);
-    setNewGroupName(name);
+    setAlertText("Group " + groupName + " is being created");
+    setAlertType("info");
+    setOpenSnackBar(true);
+  };
+
+  const toggleClose = () => {
+    setOpen(false);
+    setAlertText("Group not created");
+    setAlertType("warning");
+    setOpenSnackBar(true);
+  };
+  const handleCloseSnackBar = (
+    event: Event | SyntheticEvent<Element, Event>,
+    reason: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
+
+  const handleCloseSnackBarAlert = (event: SyntheticEvent<Element, Event>) => {
+    setOpenSnackBar(false);
   };
 
   useEffect(() => {
@@ -110,27 +181,30 @@ function Groups() {
   console.log(groups);
   return (
     <div>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackBar}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        TransitionComponent={SlideTransition}
+      >
+        <Alert
+          onClose={handleCloseSnackBarAlert}
+          severity={alertType}
+          sx={{ width: "100%" }}
+          elevation={6}
+          variant="filled"
+        >
+          {alertText}
+        </Alert>
+      </Snackbar>
       {loading ? (
         <SkeletonItem header={true} />
       ) : (
         <div>
-          <Button
-            variant="outlined"
-            startIcon={<GroupAddIcon />}
-            onClick={handleOpen}
-          >
-            Create new group
-          </Button>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              <CreateNewGroup toggle={toggleClose} />
-            </Box>
-          </Modal>
           <Box
             style={{
               position: "absolute",
@@ -175,6 +249,27 @@ function Groups() {
               </div>
             ))
           )}
+          <Button
+            variant="outlined"
+            startIcon={<GroupAddIcon />}
+            onClick={handleOpen}
+            style={{ marginTop: "1rem" }}
+          >
+            Create new group
+          </Button>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <CreateNewGroup
+                toggleClose={toggleClose}
+                toggleSave={toggleSave}
+              />
+            </Box>
+          </Modal>
         </div>
       )}
       <BottomAppBar value="groups" />

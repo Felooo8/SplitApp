@@ -383,17 +383,16 @@ class AddToGroup(APIView):
 class LeaveGroup(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, format=None):
+    def delete(self, request, format=None):
         user = request.user
         try:
             body = json.loads(request.body)
             group_id = body["group_id"]
-            leaver_id = body["leaver_id"]
             try:
-                group = Group.objects.get(id=group_id, users=[user, leaver_id],)
-                group.users.remove(leaver_id)
+                group = Group.objects.get(id=group_id, users=user)
+                group.users.remove(user)
                 group.save()
-                return Response(None, status=status.HTTP_204_NO_CONTENT)
+                return Response(None, status=status.HTTP_200_OK)
             except Group.DoesNotExist:
                 return Response(None, status=status.HTTP_404_NOT_FOUND)
         except:
@@ -574,8 +573,9 @@ class CreateNewGroup(APIView):
             body = json.loads(request.body)
             group_name = body["group_name"]
             try:
-                group = Group(group_name=group_name, users=user)
+                group = Group(group_name=group_name)
                 group.save()
+                group.users.add(user)
                 return Response(None, status=status.HTTP_204_NO_CONTENT)
             except Group.DoesNotExist:
                 return Response(None, status=status.HTTP_400_BAD_REQUEST)

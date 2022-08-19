@@ -1,4 +1,6 @@
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import { Button } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Chip from "@mui/material/Chip";
 import Slide, { SlideProps } from "@mui/material/Slide";
@@ -36,6 +38,7 @@ type Errors = {
   user: boolean;
   total: boolean;
   groups: boolean;
+  leave: boolean;
 };
 
 type Params = {
@@ -61,6 +64,7 @@ function Group() {
     user: false,
     total: false,
     groups: false,
+    leave: false,
   });
   const { id, groupName } = useParams<"id" | "groupName">();
 
@@ -147,6 +151,36 @@ function Group() {
         setErrors((errors) => ({
           ...errors,
           total: true,
+        }));
+        // setErrors(true);
+      });
+  };
+
+  const leaveGroup = () => {
+    fetch(Constants.SERVER + "/api/leaveGroup", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ group_id: id }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Good");
+          setErrors((errors) => ({
+            ...errors,
+            leave: false,
+          }));
+        } else {
+          throw Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setErrors((errors) => ({
+          ...errors,
+          leave: true,
         }));
         // setErrors(true);
       });
@@ -286,6 +320,13 @@ function Group() {
           <div style={chart}>
             <ChartPie keys={keys} values={values} />
           </div>
+          <Button
+            onClick={leaveGroup}
+            variant="outlined"
+            startIcon={<ExitToAppIcon />}
+          >
+            Leave group
+          </Button>
         </div>
       )}
       <BottomAppBar value="groups" />
@@ -298,6 +339,5 @@ export default Group;
 const chart = {
   width: "30%",
   minWidth: "300px",
-  marginLeft: "auto",
-  marginRight: "auto",
+  margin: "20px auto",
 };
