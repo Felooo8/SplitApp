@@ -8,7 +8,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 export default function CreateNewGroup(props: any) {
-  const [open] = useState<boolean>(false);
   const [groupName, setGroupName] = useState<string>("");
 
   const handleInputChange = (event: {

@@ -32,7 +32,7 @@ function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
 
-const style = {
+export const style = {
   position: "absolute",
   top: "50%",
   left: "50%",

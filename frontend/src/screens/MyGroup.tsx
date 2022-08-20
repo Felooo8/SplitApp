@@ -1,7 +1,8 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import { Box, Button } from "@mui/material";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import { Box, Button, Modal } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Chip from "@mui/material/Chip";
 import Slide, { SlideProps } from "@mui/material/Slide";
@@ -16,8 +17,10 @@ import React, {
 import { useParams } from "react-router-dom";
 
 import Constants from "../apis/Constants";
+import { style } from "./Groups";
 import BottomAppBar from "../components/Appbar";
 import ChartPie from "../components/chart";
+import AddUserToGroup from "../components/AddUserToGroup";
 import Error from "../components/Error";
 import ExpenseItemGroup from "../components/ExpenseGroup";
 import SkeletonItem from "../components/SkeletonItem";
@@ -61,6 +64,7 @@ function Group() {
   // const [newGroupName, setNewGroupName] = useState("");
   const [inputText, setInputText] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [open, setOpen] = useState(false);
   const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
   const [errors, setErrors] = useState<Errors>({
     user: false,
@@ -70,6 +74,11 @@ function Group() {
     delete: false,
   });
   const { id, groupName } = useParams<"id" | "groupName">();
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
 
   const getUser = () => {
     fetch(Constants.SERVER + "/api/auth/users/me/", {
@@ -270,6 +279,13 @@ function Group() {
     getUser();
   };
 
+  const toggleSave = (groupName: string) => {
+    setOpen(false);
+  };
+
+  const toggleClose = () => {
+    setOpen(false);
+  };
   const handleEditName = () => {
     setInputText(!inputText);
     console.log("JD");
@@ -363,6 +379,15 @@ function Group() {
           ) : null}
           <Box>
             <Button
+              onClick={handleOpen}
+              variant="outlined"
+              color="success"
+              startIcon={<PersonAddIcon />}
+              style={button}
+            >
+              Add user
+            </Button>
+            <Button
               onClick={leaveGroup}
               variant="outlined"
               color="warning"
@@ -381,6 +406,19 @@ function Group() {
               Delete group
             </Button>
           </Box>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <AddUserToGroup
+                toggleClose={toggleClose}
+                toggleSave={toggleSave}
+              />
+            </Box>
+          </Modal>
         </div>
       )}
       <BottomAppBar value="groups" />
@@ -393,11 +431,11 @@ export default Group;
 const chart = {
   width: "30%",
   minWidth: "300px",
-  margin: "20px auto auto",
+  margin: "20px auto 20px auto",
 };
 
 const button = {
   width: "fit-content",
   display: "flex",
-  margin: "20px auto 0 auto",
+  margin: "0 auto 20px auto",
 };
