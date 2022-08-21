@@ -29,7 +29,8 @@ from .views import (
     CreateNewUser,
     CreateNewGroup,
     AddUsertoGroup,
-    DeleteGroup
+    DeleteGroup,
+    SearchUsersToAdd
 )
 
 urlpatterns = [
@@ -55,6 +56,7 @@ urlpatterns = [
     path("settle", Settle.as_view()),
     path("summarize", GetUsersSummarize.as_view()),
     path('findFriends/<str:username>', FindFriends.as_view(), name="find_friends"),
+    path('searchUsersToAdd/<str:username>/<int:id>', SearchUsersToAdd.as_view(), name="search_users"),
     path("getInvitations", GetInvitations.as_view()),
     path("getNotifications", GetNotifications.as_view()),
     path("setAvatar", SetAvatar.as_view()),

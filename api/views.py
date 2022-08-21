@@ -21,9 +21,12 @@ from django.utils.crypto import get_random_string
 
 from collections import defaultdict
 from itertools import chain
-
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 # Create your views here.
+
+email_sample = "foo.bar@baz.qux"
 
 class CreateNewUser(APIView):
     permission_classes = [AllowAny]
@@ -36,16 +39,23 @@ class CreateNewUser(APIView):
             email = body["email"]
             password = body["password"]
             if not (username or first_name or last_name or email or password):
-                return Response(None, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"missing_fields": "Fill all the fields"}, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                validate_email(email)
+            except ValidationError as e:
+                return Response({"bad_email": e}, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            if User.objects.filter(email=email).exists():
+                return Response({"email_exists": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            if User.objects.filter(username=username).exists():
+                return Response({"username_exists": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST)
             user = User.objects.create_user(username=username,
                                             email=email,
                                             password=password,
                                             first_name=first_name,
                                             last_name=last_name)
-            user.save()
             return Response(None, status=status.HTTP_200_OK)
         except:
-            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"data": "Wrong data"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -173,12 +183,13 @@ class AddExpense(APIView):
                         settled=settled,
                     )
                     new_expense.save()
-            if not groups_ids == []:
+            if groups_ids != []:
                 for group_id in groups_ids:
                     unique_id = get_random_string(length=16)
-                    new_group_expense = GroupExpense()
-                    new_group_expense.save()
                     group = Group.objects.get(id=group_id)
+                    total = amount*group.users.all().count()
+                    new_group_expense = GroupExpense(total=total)
+                    new_group_expense.save()
                     for ower in group.users.all():
                         if(ower != payer):
                             new_expense = Expense(
@@ -613,14 +624,37 @@ class AddUsertoGroup(APIView):
         try:
             body = json.loads(request.body)
             id = body["id"]
-            user = body["user"]
+            user_id = body["user_id"]
+            user_name = body["userName"]
             try:
                 group = Group.objects.get(id=id)
-                user = User.objects.get(id=user)
+                user = User.objects.get(id=user_id, username=user_name)
                 group.users.add(user)
                 group.save()
                 return Response(None, status=status.HTTP_204_NO_CONTENT)
             except Group.DoesNotExist:
                 return Response(None, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SearchUsersToAdd(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def is_friend(self, request, user):
+        account = Account.objects.get(user=request.user)
+        return user in account.friends.all()
+
+    def get(self, request, username, id, format=None):
+        try:
+            username = self.kwargs['username']
+            group_id = self.kwargs['id']
+            group = Group.objects.get(id=group_id)
+            members = [member.id for member in group.users.all()]
+            account = Account.objects.get(user=request.user)
+            friends = [friend.id for friend in account.friends.all()]
+            users = User.objects.filter(username__startswith=username).exclude(id=request.user.id).exclude(id__in=friends).exclude(id__in=members)
+            users = UserSerializer(users, many=True).data
+            return Response(users, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)

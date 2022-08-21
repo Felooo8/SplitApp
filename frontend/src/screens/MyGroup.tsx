@@ -17,13 +17,13 @@ import React, {
 import { useParams } from "react-router-dom";
 
 import Constants from "../apis/Constants";
-import { style } from "./Groups";
+import AddUserToGroup from "../components/AddUserToGroup";
 import BottomAppBar from "../components/Appbar";
 import ChartPie from "../components/chart";
-import AddUserToGroup from "../components/AddUserToGroup";
 import Error from "../components/Error";
 import ExpenseItemGroup from "../components/ExpenseGroup";
 import SkeletonItem from "../components/SkeletonItem";
+import { style } from "./Groups";
 
 type Expense = {
   id: number;
@@ -51,6 +51,9 @@ type Params = {
   groupName: SetStateAction<string>;
 };
 
+const alertAutoHidden = 3000; // in ms
+const alertUpdate = 1500;
+
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
@@ -60,12 +63,16 @@ function Group() {
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  // const [groupName, setGroupName] = useState<string>("");
-  // const [newGroupName, setNewGroupName] = useState("");
+  const [alertText, setAlertText] = useState<string>("");
+  const [alertType, setAlertType] = useState<any>(undefined);
+  const [openSnackBarAdding, setOpenSnackBarAdding] = useState<boolean>(false);
   const [inputText, setInputText] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [open, setOpen] = useState(false);
-  const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
+  const timerAlert = React.useRef<number>();
+  const [openSnackBarSettling, setOpenSnackBarSettling] = useState<boolean>(
+    false
+  );
   const [errors, setErrors] = useState<Errors>({
     user: false,
     total: false,
@@ -198,6 +205,49 @@ function Group() {
       });
   };
 
+  const addUserToGroup = (user_id: number, userName: string) => {
+    fetch(Constants.SERVER + "/api/addUserToGroup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ id: id, user_id: user_id, userName: userName }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Good");
+          toggleFetch();
+          timerAlert.current = window.setTimeout(() => {
+            setAlertText("User " + userName + " was added");
+            setAlertType("success");
+            setOpenSnackBarAdding(true);
+          }, alertUpdate);
+          // setErrors((errors) => ({
+          //   ...errors,
+          //   leave: false,
+          // }));
+          // window.location.replace("/groups");
+        } else {
+          throw Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        timerAlert.current = window.setTimeout(() => {
+          setAlertText(
+            "Something went wrong. User " + userName + " was not added"
+          );
+          setAlertType("error");
+          setOpenSnackBarAdding(true);
+        }, alertUpdate);
+        // setErrors((errors) => ({
+        //   ...errors,
+        //   leave: true,
+        // }));
+      });
+  };
+
   const deleteGroup = () => {
     fetch(Constants.SERVER + "/api/deleteGroup", {
       method: "DELETE",
@@ -258,19 +308,34 @@ function Group() {
       });
   };
 
-  const handleCloseSnackBar = (event: any, reason: string) => {
+  const handleCloseSnackBarSettling = (event: any, reason: string) => {
     if (reason === "clickaway") {
       return;
     }
-    setOpenSnackBar(false);
+    setOpenSnackBarSettling(false);
   };
 
-  const handleCloseSnackBarAlert = (event: SyntheticEvent<Element, Event>) => {
-    setOpenSnackBar(false);
+  const handleCloseSnackBarAlertSettling = (
+    event: SyntheticEvent<Element, Event>
+  ) => {
+    setOpenSnackBarSettling(false);
+  };
+
+  const handleCloseSnackBarAdding = (event: any, reason: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBarAdding(false);
+  };
+
+  const handleCloseSnackBarAlertAdding = (
+    event: SyntheticEvent<Element, Event>
+  ) => {
+    setOpenSnackBarAdding(false);
   };
 
   const errorToggle = () => {
-    setOpenSnackBar(true);
+    setOpenSnackBarSettling(true);
   };
 
   const toggleFetch = () => {
@@ -279,16 +344,23 @@ function Group() {
     getUser();
   };
 
-  const toggleSave = (groupName: string) => {
+  const toggleSave = (user_id: number, userName: string) => {
+    addUserToGroup(user_id, userName);
     setOpen(false);
+    setAlertText("User " + userName + " is being added");
+    setAlertType("info");
+    setOpenSnackBarAdding(true);
   };
 
   const toggleClose = () => {
     setOpen(false);
+    setAlertText("User was not added");
+    setAlertType("warning");
+    setOpenSnackBarAdding(true);
   };
+
   const handleEditName = () => {
     setInputText(!inputText);
-    console.log("JD");
   };
 
   useEffect(() => {
@@ -320,6 +392,26 @@ function Group() {
   console.log(expenses);
   return (
     <div>
+      <Snackbar
+        open={openSnackBarAdding}
+        autoHideDuration={alertAutoHidden}
+        onClose={handleCloseSnackBarAdding}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        TransitionComponent={SlideTransition}
+      >
+        <Alert
+          onClose={handleCloseSnackBarAlertAdding}
+          severity={alertType}
+          sx={{ width: "100%" }}
+          elevation={6}
+          variant="filled"
+        >
+          {alertText}
+        </Alert>
+      </Snackbar>
       <Chip
         variant="outlined"
         color="error"
@@ -338,9 +430,9 @@ function Group() {
         }
       />
       <Snackbar
-        open={openSnackBar}
+        open={openSnackBarSettling}
         autoHideDuration={6000}
-        onClose={handleCloseSnackBar}
+        onClose={handleCloseSnackBarSettling}
         anchorOrigin={{
           vertical: "top",
           horizontal: "center",
@@ -348,7 +440,7 @@ function Group() {
         TransitionComponent={SlideTransition}
       >
         <Alert
-          onClose={handleCloseSnackBarAlert}
+          onClose={handleCloseSnackBarAlertSettling}
           severity="error"
           sx={{ width: "100%" }}
           elevation={6}
@@ -414,6 +506,7 @@ function Group() {
           >
             <Box sx={style}>
               <AddUserToGroup
+                id={id}
                 toggleClose={toggleClose}
                 toggleSave={toggleSave}
               />

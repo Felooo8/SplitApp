@@ -1,5 +1,6 @@
 import "../App.css";
 
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import NoAccountsIcon from "@mui/icons-material/NoAccounts";
 import {
   Alert,
@@ -18,12 +19,11 @@ import { Link } from "react-router-dom";
 
 import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
+import CreateNewGroup from "../components/CreateNewGroup";
 import Error from "../components/Error";
 import GroupItem from "../components/GroupItem";
 import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import CreateNewGroup from "../components/CreateNewGroup";
 
 const alertAutoHidden = 3000; // in ms
 const alertUpdate = 1500;
@@ -256,7 +256,7 @@ function Groups() {
             variant="outlined"
             startIcon={<GroupAddIcon />}
             onClick={handleOpen}
-            style={{ marginTop: "1rem" }}
+            style={{ marginTop: "1rem", marginBottom: "1rem" }}
           >
             Create new group
           </Button>

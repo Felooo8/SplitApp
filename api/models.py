@@ -5,7 +5,7 @@ from collections import defaultdict
 from django.db.models import Q
 from django.utils.crypto import get_random_string
 from django.core.exceptions import ValidationError
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save, m2m_changed
 from django.dispatch import receiver
 # Create your models here.
 
@@ -96,6 +96,7 @@ class Expense(models.Model):
 
 class GroupExpense(models.Model):
     expenses = models.ManyToManyField(Expense, blank=True)
+    total = models.DecimalField(default=0, blank=True, max_digits=8, decimal_places=2)
 
     def __str__(self) -> str:
         if len(self.expenses.all()) == 0:
@@ -120,11 +121,13 @@ class Group(models.Model):
     avatar = models.ImageField(upload_to=upload_to, blank=True, null=True, validators=[validate_image])
 
     __previous_avatar_name = None
+    __previous_users_ids = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.avatar.name:
             self.__previous_avatar_name = self.avatar.name
+
 
     def delete(self, using=None, keep_parents=False):
         if self.avatar.name:
@@ -147,6 +150,7 @@ class Group(models.Model):
         if self.group_name == '':
             return 'Group chat'
         return self.group_name
+
 
     def total_spent(self):
         return sum(expense.expenses.all()[0].amount for expense in self.group_expenses.all())
@@ -193,6 +197,52 @@ class Group(models.Model):
         return balance
         # return dict(Counter(debts)+Counter(owes))
         # return {"debts": debts, "owes": owes}
+
+### TO DO:
+# what if add multiple users where one is payer and other is ower
+# same with removing
+# should expenses with a removed payer be deleted?
+
+# @receiver(m2m_changed, sender=Group.users.through, dispatch_uid="update_amounts")
+# def update_amounts(sender, instance, **kwargs):
+#     # if adding (or removing) new member to group -> change prices of all expenses (include him in every expense)
+#     # and add new expenses with him as an ower
+#     # when removing do not remove expenses as a payer, but delete expenses as an ower
+
+#     if kwargs["action"] in ["pre_add", "pre_remove"]:
+#         instance.__previous_users_ids = list(instance.users.all().values_list('id', flat=True))
+#     else:
+#         new_members_number = instance.users.all().count()
+#         for group_expense in instance.group_expenses.all():
+#             new_amount = group_expense.total / new_members_number
+#             # if added users
+#             if kwargs["action"] == "post_add":
+#                 added_users = instance.users.exclude(id__in=instance.__previous_users_ids)
+#                 # if added person is payer do not create new expense nor update price
+#                 if group_expense.expenses.filter(payer__in=added_users).exists():
+#                     continue
+#                 for user in added_users:
+#                     new_expense = group_expense.expenses.all()[0]
+#                     new_expense.id = None
+#                     new_expense.ower = user
+#                     new_expense.settled = False
+#                     new_expense.is_paid = False
+#                     new_expense.amount = new_amount
+#                     new_expense.save()
+#                     group_expense.expenses.add(new_expense)
+#             # if removed users
+#             elif kwargs["action"] == "post_remove":
+#                 left_users_ids = list(instance.users.all().values_list('id', flat=True))
+#                 removed_users_ids = list(id for id in instance.__previous_users_ids if id not in left_users_ids)
+#                 removed_users = User.objects.filter(id__in=removed_users_ids)
+#                 if group_expense.expenses.filter(payer__in=removed_users).exists():
+#                     continue
+#                 if removed_users.exists():
+#                     for user in removed_users:
+#                         expense_to_remove = group_expense.objects.get(ower=user)
+#             for expense in group_expense.expenses.all():
+#                 expense.amount = new_amount
+#                 expense.save()
 
 
 class FriendsInvitation(models.Model):

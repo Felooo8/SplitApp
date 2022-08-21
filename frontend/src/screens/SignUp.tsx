@@ -38,6 +38,9 @@ const theme = createTheme();
 
 export default function SignUp() {
   const [ifValidData, setIfValidData] = useState<boolean>(true);
+  const [emailError, setEmailError] = useState<boolean>(false);
+  const [userNameError, setUserNameError] = useState<boolean>(false);
+  const [errorText, setErrorText] = useState<string>("Invalid data!");
   const [firstName, setFirstName] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -48,7 +51,7 @@ export default function SignUp() {
 
   function ValidData() {
     if (!ifValidData) {
-      return <p style={{ color: "red" }}>Invalid data!</p>;
+      return <p style={{ color: "red" }}>{errorText}</p>;
     }
     return <div></div>;
   }
@@ -150,12 +153,34 @@ export default function SignUp() {
             logIn(register_data.userName, register_data.password);
             setError(false);
           } else {
-            throw Error("Something went wrong");
+            response
+              .json()
+              .then((data) => {
+                if (data.bad_email) {
+                  setErrorText("Bad email format");
+                  setEmailError(true);
+                  setUserNameError(false);
+                } else if (data.email_exists) {
+                  setErrorText("Email already exists");
+                  setEmailError(true);
+                  setUserNameError(false);
+                } else if (data.username_exists) {
+                  setErrorText("Username already exists");
+                  setEmailError(false);
+                  setUserNameError(true);
+                }
+                throw Error("Something went wrong");
+              })
+              .catch((error) => {
+                console.log(error);
+                setIfValidData(false);
+              });
           }
         })
         .catch((error) => {
           console.log(error);
           setIfValidData(false);
+          setErrorText("Check your connection");
         });
     };
     getToken();
@@ -217,7 +242,15 @@ export default function SignUp() {
                   label="UserName"
                   name="userName"
                   autoComplete="userName"
-                  onChange={(e) => setUserName(e.target.value)}
+                  error={userNameError}
+                  onChange={(e) =>
+                    setUserName(
+                      (e.currentTarget.value = e.currentTarget.value.replace(
+                        /\s/g,
+                        ""
+                      ))
+                    )
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -228,7 +261,15 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
-                  onChange={(e) => setEmail(e.target.value)}
+                  error={emailError}
+                  onChange={(e) =>
+                    setEmail(
+                      (e.currentTarget.value = e.currentTarget.value.replace(
+                        /\s/g,
+                        ""
+                      ))
+                    )
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -264,7 +305,7 @@ export default function SignUp() {
             <ValidData></ValidData>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>
