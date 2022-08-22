@@ -116,7 +116,7 @@ function Summary() {
   }
 
   return (
-    <div>
+    <div style={{ marginBottom: "65px" }}>
       {loading ? (
         <SkeletonItem header={true} />
       ) : (

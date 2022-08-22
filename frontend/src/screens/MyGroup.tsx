@@ -20,6 +20,7 @@ import Constants from "../apis/Constants";
 import AddUserToGroup from "../components/AddUserToGroup";
 import BottomAppBar from "../components/Appbar";
 import ChartPie from "../components/chart";
+import CreateNewGroup from "../components/CreateNewGroup";
 import Error from "../components/Error";
 import ExpenseItemGroup from "../components/ExpenseGroup";
 import SkeletonItem from "../components/SkeletonItem";
@@ -43,7 +44,6 @@ type Errors = {
   total: boolean;
   groups: boolean;
   leave: boolean;
-  delete: boolean;
 };
 
 type Params = {
@@ -61,21 +61,19 @@ function Group() {
   const [values, setValues] = useState([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [alertText, setAlertText] = useState<string>("");
+  const [newGroupName, setNewGroupName] = useState<string>("");
   const [alertType, setAlertType] = useState<any>(undefined);
-  const [openSnackBarAdding, setOpenSnackBarAdding] = useState<boolean>(false);
+  const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
   const [inputText, setInputText] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [open, setOpen] = useState(false);
+  const [openChangeName, setOpenChangeName] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const timerAlert = React.useRef<number>();
-  const [openSnackBarSettling, setOpenSnackBarSettling] = useState<boolean>(
-    false
-  );
   const [errors, setErrors] = useState<Errors>({
     user: false,
     total: false,
     groups: false,
     leave: false,
-    delete: false,
   });
   const { id, groupName } = useParams<"id" | "groupName">();
 
@@ -83,6 +81,11 @@ function Group() {
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
+
+  const handleOpenChangeName = () => {
+    setOpenChangeName(true);
+  };
+  const handleCloseChangeName = () => setOpenChangeName(false);
 
   const getUser = () => {
     fetch(Constants.SERVER + "/api/auth/users/me/", {
@@ -113,31 +116,31 @@ function Group() {
       });
   };
 
-  // const fetchNewGroupName = () => {
-  //   fetch(Constants.SERVER + "/api/setGroupName", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Token ${localStorage.getItem("token")}`,
-  //     },
-  //     body: JSON.stringify({ id: id, name: newGroupName }),
-  //   })
-  //     .then((response) => {
-  //       if (response.ok) {
-  //         setNewGroupName("");
-  //         console.log("Changed");
-  //       } else {
-  //         throw Error("Something went wrong");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       // setErrors((errors) => ({
-  //       //   ...errors,
-  //       //   total: true,
-  //       // }));
-  //     });
-  // };
+  const fetchNewGroupName = (newName: string) => {
+    fetch(Constants.SERVER + "/api/setGroupName", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ id: id, name: newName }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          setNewGroupName("");
+          console.log("Changed");
+        } else {
+          throw Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        // setErrors((errors) => ({
+        //   ...errors,
+        //   total: true,
+        // }));
+      });
+  };
 
   const getTotalExpenses = () => {
     fetch(Constants.SERVER + "/api/chartData/" + id, {
@@ -218,7 +221,7 @@ function Group() {
           timerAlert.current = window.setTimeout(() => {
             setAlertText("User " + userName + " was added");
             setAlertType("success");
-            setOpenSnackBarAdding(true);
+            setOpenSnackBar(true);
           }, Constants.ALERTUPDATE);
           // setErrors((errors) => ({
           //   ...errors,
@@ -236,7 +239,7 @@ function Group() {
             "Something went wrong. User " + userName + " was not added"
           );
           setAlertType("error");
-          setOpenSnackBarAdding(true);
+          setOpenSnackBar(true);
         }, Constants.ALERTUPDATE);
         // setErrors((errors) => ({
         //   ...errors,
@@ -257,10 +260,6 @@ function Group() {
       .then((response) => {
         if (response.ok) {
           console.log("Good");
-          setErrors((errors) => ({
-            ...errors,
-            delete: false,
-          }));
           window.location.replace("/groups");
         } else {
           throw Error("Something went wrong");
@@ -268,10 +267,9 @@ function Group() {
       })
       .catch((error) => {
         console.log(error);
-        setErrors((errors) => ({
-          ...errors,
-          delete: true,
-        }));
+        setAlertText("Something went wrong. Group was not deleted");
+        setAlertType("error");
+        setOpenSnackBar(true);
       });
   };
 
@@ -305,37 +303,28 @@ function Group() {
       });
   };
 
-  const handleCloseSnackBarSettling = (event: any, reason: string) => {
+  const handleCloseSnackBar = (_event: any, reason: string) => {
     if (reason === "clickaway") {
       return;
     }
-    setOpenSnackBarSettling(false);
+    setOpenSnackBar(false);
   };
 
-  const handleCloseSnackBarAlertSettling = (
-    event: SyntheticEvent<Element, Event>
-  ) => {
-    setOpenSnackBarSettling(false);
-  };
-
-  const handleCloseSnackBarAdding = (event: any, reason: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpenSnackBarAdding(false);
-  };
-
-  const handleCloseSnackBarAlertAdding = (
-    event: SyntheticEvent<Element, Event>
-  ) => {
-    setOpenSnackBarAdding(false);
+  const handleCloseSnackBarAlert = (_event: SyntheticEvent<Element, Event>) => {
+    setOpenSnackBar(false);
   };
 
   const errorToggle = () => {
-    setOpenSnackBarSettling(true);
+    setAlertText("Something went wrong");
+    setAlertType("error");
+    setOpenSnackBar(true);
   };
 
   const toggleFetch = () => {
+    setErrors((errors) => ({
+      ...errors,
+      delete: false,
+    }));
     getGroups();
     getTotalExpenses();
     getUser();
@@ -346,18 +335,35 @@ function Group() {
     setOpen(false);
     setAlertText("User " + userName + " is being added");
     setAlertType("info");
-    setOpenSnackBarAdding(true);
+    setOpenSnackBar(true);
   };
 
   const toggleClose = () => {
     setOpen(false);
     setAlertText("User was not added");
     setAlertType("warning");
-    setOpenSnackBarAdding(true);
+    setOpenSnackBar(true);
+  };
+
+  const toggleSaveChangeName = (newGroupName: string) => {
+    setOpenChangeName(false);
+    fetchNewGroupName(newGroupName);
+    setNewGroupName(newGroupName);
+    setAlertText("Name was changed to " + newGroupName);
+    setAlertType("info");
+    setOpenSnackBar(true);
+  };
+
+  const toggleCloseChangeName = () => {
+    setOpenChangeName(false);
+    setOpen(false);
+    setAlertText("Group name was not changed");
+    setAlertType("warning");
+    setOpenSnackBar(true);
   };
 
   const handleEditName = () => {
-    setInputText(!inputText);
+    setOpenChangeName(true);
   };
 
   useEffect(() => {
@@ -388,11 +394,11 @@ function Group() {
 
   console.log(expenses);
   return (
-    <div>
+    <div style={{ marginBottom: "65px" }}>
       <Snackbar
-        open={openSnackBarAdding}
+        open={openSnackBar}
         autoHideDuration={Constants.ALERTAUTOHIDDEN}
-        onClose={handleCloseSnackBarAdding}
+        onClose={handleCloseSnackBar}
         anchorOrigin={{
           vertical: "top",
           horizontal: "center",
@@ -400,7 +406,7 @@ function Group() {
         TransitionComponent={SlideTransition}
       >
         <Alert
-          onClose={handleCloseSnackBarAlertAdding}
+          onClose={handleCloseSnackBarAlert}
           severity={alertType}
           sx={{ width: "100%" }}
           elevation={6}
@@ -426,26 +432,6 @@ function Group() {
           />
         }
       />
-      <Snackbar
-        open={openSnackBarSettling}
-        autoHideDuration={Constants.ALERTAUTOHIDDEN}
-        onClose={handleCloseSnackBarSettling}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        TransitionComponent={SlideTransition}
-      >
-        <Alert
-          onClose={handleCloseSnackBarAlertSettling}
-          severity="error"
-          sx={{ width: "100%" }}
-          elevation={6}
-          variant="filled"
-        >
-          Something went wrong!
-        </Alert>
-      </Snackbar>
       {loading ? (
         <SkeletonItem header={false} />
       ) : (
@@ -506,6 +492,19 @@ function Group() {
                 id={id}
                 toggleClose={toggleClose}
                 toggleSave={toggleSave}
+              />
+            </Box>
+          </Modal>
+          <Modal
+            open={openChangeName}
+            onClose={handleCloseChangeName}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <CreateNewGroup
+                toggleClose={toggleCloseChangeName}
+                toggleSave={toggleSaveChangeName}
               />
             </Box>
           </Modal>

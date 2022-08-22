@@ -317,7 +317,7 @@ function AllExpenses() {
   }
 
   return (
-    <div>
+    <div style={{ marginBottom: "65px" }}>
       <Snackbar
         open={openSnackBar}
         autoHideDuration={6000}

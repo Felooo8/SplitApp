@@ -1,20 +1,34 @@
 from django.urls import path
 from .views import (
     GetUserByID,
-    GetGroupExpenses,
     GetUsersGroups,
-    GetChartValues,
     GetUsersExpenses,
     AddExpense,
-    InviteFriend,
-    AcceptInvitation,
-    DeclineInvitation,
-    AddToGroup,
-    LeaveGroup,
-    SeeFriends,
     SetAsPaid,
     Settle,
     GetUsersSummarize,
+    SetAvatar,
+    GetAvatar,
+    CreateNewUser,
+    SearchUsersToAdd
+)
+from .groups.views import (
+    GetGroupExpenses,
+    GetChartValues,
+    AddToGroup,
+    LeaveGroup,
+    GetGroupAvatar,
+    SetGroupName,
+    CreateNewGroup,
+    AddUsertoGroup,
+    DeleteGroup,
+)
+
+from .friends.views import (
+    InviteFriend,
+    AcceptInvitation,
+    DeclineInvitation,
+    SeeFriends,
     FindFriends,
     RemoveFriend,
     AcceptInvitationByUser,
@@ -22,15 +36,6 @@ from .views import (
     CancelInvitationByUser,
     GetInvitations,
     GetNotifications,
-    SetAvatar,
-    GetAvatar,
-    GetGroupAvatar,
-    SetGroupName,
-    CreateNewUser,
-    CreateNewGroup,
-    AddUsertoGroup,
-    DeleteGroup,
-    SearchUsersToAdd
 )
 
 urlpatterns = [

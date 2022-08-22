@@ -26,7 +26,6 @@ from django.core.validators import validate_email
 
 # Create your views here.
 
-email_sample = "foo.bar@baz.qux"
 
 class CreateNewUser(APIView):
     permission_classes = [AllowAny]

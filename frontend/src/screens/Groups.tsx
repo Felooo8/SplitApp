@@ -180,7 +180,7 @@ function Groups() {
 
   console.log(groups);
   return (
-    <div>
+    <div style={{ marginBottom: "65px" }}>
       <Snackbar
         open={openSnackBar}
         autoHideDuration={Constants.ALERTAUTOHIDDEN}
@@ -253,7 +253,7 @@ function Groups() {
             variant="outlined"
             startIcon={<GroupAddIcon />}
             onClick={handleOpen}
-            style={{ marginTop: "1rem", marginBottom: "1rem" }}
+            style={{ marginTop: "1rem", marginBottom: "0rem" }}
           >
             Create new group
           </Button>
