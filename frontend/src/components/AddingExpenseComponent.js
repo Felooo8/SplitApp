@@ -20,11 +20,14 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import Paper from "@mui/material/Paper";
+import Slide from "@mui/material/Slide";
+import Alert from "@mui/material/Alert";
 import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import Snackbar from "@mui/material/Snackbar";
 
 import Constants from "../apis/Constants";
 import returnIcon from "../apis/returnIcon";
@@ -32,6 +35,10 @@ import Error from "../components/Error";
 import SkeletonItem from "../components/SkeletonItem";
 import ListOfCategories from "./listOfCategoriesModal";
 import ListOfGroupsModal from "./listOfGroupsModal";
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="left" />;
+}
 
 const style = {
   position: "absolute",
@@ -63,20 +70,21 @@ export default function AddingExpense(props) {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [payers, setPayers] = useState([]);
   const [friends, setFriends] = useState([]);
+  const [alertText, setAlertText] = useState("");
+  const [alertType, setAlertType] = useState(undefined);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
   const [chosenGroupsName, setChosenGroupsName] = useState([]);
   const [chosenIsGroup, setChosenIsGroup] = useState([]);
   const [errors, setErrors] = useState({
     user: false,
     groups: false,
     friends: false,
-    request: false,
   });
   const [loading, setLoading] = useState(true);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleOpenGroup = () => setOpenGroup(true);
   const handleCloseGroup = () => setOpenGroup(false);
-  // need to make it possible to add a few owers (list) and settled and chosing payer
   const [values, setValues] = useState({
     amount: "",
     name: "",
@@ -215,10 +223,9 @@ export default function AddingExpense(props) {
           setChosenGroupsName([]);
           setPayers([]);
           setChosenIsGroup([]);
-          setErrors((errors) => ({
-            ...errors,
-            request: false,
-          }));
+          setAlertText("Expense was added");
+          setAlertType("success");
+          setOpenSnackBar(true);
         } else {
           throw Error("Something went wrong");
         }
@@ -226,10 +233,9 @@ export default function AddingExpense(props) {
       .catch((error) => {
         console.log("Failed");
         console.log(error);
-        setErrors((errors) => ({
-          ...errors,
-          request: true,
-        }));
+        setAlertText("Something went wrong. Expense was not added");
+        setAlertType("error");
+        setOpenSnackBar(true);
       });
   };
 
@@ -386,6 +392,17 @@ export default function AddingExpense(props) {
     return returnIcon(values["category"]);
   };
 
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
+
+  const handleCloseSnackBarAlert = (event) => {
+    setOpenSnackBar(false);
+  };
+
   const toggleFetch = () => {
     getGroups();
     getFriends();
@@ -402,6 +419,26 @@ export default function AddingExpense(props) {
 
   return (
     <Expense>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={Constants.ALERTAUTOHIDDEN}
+        onClose={handleCloseSnackBar}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        TransitionComponent={SlideTransition}
+      >
+        <Alert
+          onClose={handleCloseSnackBarAlert}
+          severity={alertType}
+          sx={{ width: "100%" }}
+          elevation={6}
+          variant="filled"
+        >
+          {alertText}
+        </Alert>
+      </Snackbar>
       {loading ? (
         <SkeletonItem header={false} />
       ) : (

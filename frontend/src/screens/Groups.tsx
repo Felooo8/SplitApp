@@ -25,9 +25,6 @@ import GroupItem from "../components/GroupItem";
 import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
 
-const alertAutoHidden = 3000; // in ms
-const alertUpdate = 1500;
-
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
@@ -85,7 +82,7 @@ function Groups() {
             setAlertText("Group " + groupName + " created");
             setAlertType("success");
             setOpenSnackBar(true);
-          }, alertUpdate);
+          }, Constants.ALERTUPDATE);
         } else {
           throw Error("Something went wrong");
         }
@@ -99,7 +96,7 @@ function Groups() {
           );
           setAlertType("error");
           setOpenSnackBar(true);
-        }, alertUpdate);
+        }, Constants.ALERTUPDATE);
       });
   };
 
@@ -186,7 +183,7 @@ function Groups() {
     <div>
       <Snackbar
         open={openSnackBar}
-        autoHideDuration={alertAutoHidden}
+        autoHideDuration={Constants.ALERTAUTOHIDDEN}
         onClose={handleCloseSnackBar}
         anchorOrigin={{
           vertical: "top",

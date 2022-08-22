@@ -51,9 +51,6 @@ type Params = {
   groupName: SetStateAction<string>;
 };
 
-const alertAutoHidden = 3000; // in ms
-const alertUpdate = 1500;
-
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
@@ -222,7 +219,7 @@ function Group() {
             setAlertText("User " + userName + " was added");
             setAlertType("success");
             setOpenSnackBarAdding(true);
-          }, alertUpdate);
+          }, Constants.ALERTUPDATE);
           // setErrors((errors) => ({
           //   ...errors,
           //   leave: false,
@@ -240,7 +237,7 @@ function Group() {
           );
           setAlertType("error");
           setOpenSnackBarAdding(true);
-        }, alertUpdate);
+        }, Constants.ALERTUPDATE);
         // setErrors((errors) => ({
         //   ...errors,
         //   leave: true,
@@ -394,7 +391,7 @@ function Group() {
     <div>
       <Snackbar
         open={openSnackBarAdding}
-        autoHideDuration={alertAutoHidden}
+        autoHideDuration={Constants.ALERTAUTOHIDDEN}
         onClose={handleCloseSnackBarAdding}
         anchorOrigin={{
           vertical: "top",
@@ -431,7 +428,7 @@ function Group() {
       />
       <Snackbar
         open={openSnackBarSettling}
-        autoHideDuration={6000}
+        autoHideDuration={Constants.ALERTAUTOHIDDEN}
         onClose={handleCloseSnackBarSettling}
         anchorOrigin={{
           vertical: "top",
