@@ -364,19 +364,21 @@ function AllExpenses() {
               refreshing={refreshing}
             />
           ) : (
-            <Stack spacing={2}>
+            <Box>
               {Filteres()}
-              {filtredExpenses.map((expense, index) => (
-                <ExpenseItem
-                  key={expense.id}
-                  expense={expense}
-                  index={index}
-                  currentUser={currentUser}
-                  toggle={reRenderToggle}
-                  errorToggle={errorToggle}
-                />
-              ))}
-            </Stack>
+              <Stack spacing={2}>
+                {filtredExpenses.map((expense, index) => (
+                  <ExpenseItem
+                    key={expense.id}
+                    expense={expense}
+                    index={index}
+                    currentUser={currentUser}
+                    toggle={reRenderToggle}
+                    errorToggle={errorToggle}
+                  />
+                ))}
+              </Stack>
+            </Box>
           )}
         </div>
       )}

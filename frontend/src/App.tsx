@@ -4,6 +4,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import NavbarTop from "./components/navbar";
+import TopBar from "./components/TopBar";
 import AddExpense from "./screens/AddExpense";
 import AllExpenses from "./screens/AllExpenses";
 import FriendsFinder from "./screens/FriendsFinder";
@@ -19,7 +20,7 @@ function App() {
 
   return (
     <div className="App">
-      <NavbarTop />
+      <TopBar />
       <Router>
         <Routes>
           <Route path="/" element={<Summary />} />
