@@ -1,24 +1,32 @@
+import "../App.css";
+
+import AddIcon from "@mui/icons-material/Add";
 import AddCardIcon from "@mui/icons-material/AddCard";
 import GroupsIcon from "@mui/icons-material/Groups";
 import HomeIcon from "@mui/icons-material/Home";
+import MailIcon from "@mui/icons-material/Mail";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import Badge from "@mui/material/Badge";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
-import React, { useRef, useState, useEffect } from "react";
-import MailIcon from "@mui/icons-material/Mail";
-import Badge from "@mui/material/Badge";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
+import Slide from "@mui/material/Slide";
+import Typography from "@mui/material/Typography";
+import React, { useEffect, useRef, useState } from "react";
+
 import Constants from "../apis/Constants";
 
 export default function BottomAppBar(props) {
   const ref = useRef(null);
   const [value, setValue] = useState(props.value);
   const [notifications, setNotifications] = useState(0);
+  const [scrolling, setScrolling] = useState(false);
+  const [scrollTop, setScrollTop] = useState(0);
+  const containerRef = React.useRef(null);
 
   const getNotifications = () => {
     fetch(Constants.SERVER + "/api/getNotifications", {
@@ -44,7 +52,13 @@ export default function BottomAppBar(props) {
 
   useEffect(() => {
     getNotifications();
-  }, []);
+    const onScroll = (e) => {
+      setScrollTop(e.target.documentElement.scrollTop);
+      setScrolling(e.target.documentElement.scrollTop > scrollTop);
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [scrollTop]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -110,15 +124,29 @@ export default function BottomAppBar(props) {
           />
         </BottomNavigation>
       </Paper>
-      <Button
-        style={addNewExpenseButton}
-        variant="contained"
-        startIcon={<AddIcon />}
-        component={Link}
-        href="/add-expense"
-      >
-        Add new expense
-      </Button>
+      {props.value !== "add expense" ? (
+        <Button
+          style={addNewExpenseButton}
+          className="addExpense"
+          variant="contained"
+          startIcon={<AddIcon />}
+          component={Link}
+          href="/add-expense"
+          ref={containerRef}
+        >
+          <Slide
+            orientation="horizontal"
+            direction="left"
+            in={!scrolling}
+            container={containerRef.current}
+            transitionDuration={2000}
+            style={{ display: scrolling ? "none" : "" }}
+          >
+            <Typography variant="button">Add new expense</Typography>
+          </Slide>
+        </Button>
+      ) : null}
+      <Box sx={{ width: "50%" }}></Box>
     </Box>
   );
 }

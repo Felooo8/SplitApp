@@ -98,3 +98,7 @@
   padding-right: 0 !important;
   padding-left: 18px !important;
 }
+
+.addExpense > * {
+  margin: 0 !important;
+}
