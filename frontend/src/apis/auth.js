@@ -1,5 +1,27 @@
 import Constants from "./Constants";
 
+export const getUser = () => {
+  return fetch(Constants.SERVER + "/api/auth/users/me/", {
+    headers: {
+      Authorization: `Token ${localStorage.getItem("token")}`,
+    },
+  })
+    .then((response) => {
+      if (response.ok) {
+        response.json().then((data) => {
+          console.log(data);
+          return data;
+        });
+      } else {
+        throw Error("Something went wrong");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return {};
+    });
+};
+
 export const logout = () => {
   let url = "http://127.0.0.1:8000/api-token-logout/";
   // let csrftoken = getCookie("csrftoken");

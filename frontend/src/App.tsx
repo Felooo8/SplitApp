@@ -3,8 +3,8 @@ import "./App.css";
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import NavbarTop from "./components/navbar";
 import TopBar from "./components/TopBar";
+import PrivateRoute from "./components/PrivateRoute";
 import AddExpense from "./screens/AddExpense";
 import AllExpenses from "./screens/AllExpenses";
 import FriendsFinder from "./screens/FriendsFinder";
@@ -23,16 +23,32 @@ function App() {
       <TopBar />
       <Router>
         <Routes>
-          <Route path="/" element={<Summary />} />
+          <Route path="/" element={<PrivateRoute />}>
+            <Route path="/" element={<Summary />} />
+          </Route>
+          <Route path="/groups" element={<PrivateRoute />}>
+            <Route path="/groups" element={<Groups />} />
+          </Route>
+          <Route path="/mygroup/:id/:groupName" element={<PrivateRoute />}>
+            <Route path="/mygroup/:id/:groupName" element={<Group />} />
+          </Route>
+          <Route path="/all-expenses" element={<PrivateRoute />}>
+            <Route path="/all-expenses" element={<AllExpenses />} />
+          </Route>
+          <Route path="/add-expense" element={<PrivateRoute />}>
+            <Route path="/add-expense" element={<AddExpense />} />
+          </Route>
+          <Route path="/summary" element={<PrivateRoute />}>
+            <Route path="/summary" element={<Summary />} />
+          </Route>
+          <Route path="/notifications" element={<PrivateRoute />}>
+            <Route path="/notifications" element={<Notifications />} />
+          </Route>
+          <Route path="/friends/:search" element={<PrivateRoute />}>
+            <Route path="/friends/:search" element={<FriendsFinder />} />
+          </Route>
           <Route path="/login" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/groups" element={<Groups />} />
-          <Route path="/mygroup/:id/:groupName" element={<Group />} />
-          <Route path="/all-expenses" element={<AllExpenses />} />
-          <Route path="/add-expense" element={<AddExpense />} />
-          <Route path="/summary" element={<Summary />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/friends/:search" element={<FriendsFinder />} />
         </Routes>
       </Router>
     </div>

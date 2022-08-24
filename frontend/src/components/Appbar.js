@@ -139,7 +139,6 @@ export default function BottomAppBar(props) {
             direction="left"
             in={!scrolling}
             container={containerRef.current}
-            transitionDuration={8000}
             style={{ display: scrolling ? "none" : "" }}
           >
             <Typography variant="button">Add new expense</Typography>

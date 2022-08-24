@@ -1,21 +1,21 @@
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import Container from '@mui/material/Container';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import Container from "@mui/material/Container";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import Constants from '../apis/Constants';
-import Error from '../components/Error';
+import Constants from "../apis/Constants";
+import Error from "../components/Error";
 
 function Copyright(props: any) {
   return (
@@ -55,10 +55,10 @@ export default function SignIn() {
     return username.length > 0 && password.length > 0;
   }
 
-  const handleLogin = () => {
+  const handleLogin = (token: string) => {
     fetch(Constants.SERVER + "/api/auth/users/me/", {
       headers: {
-        Authorization: `Token ${localStorage.getItem("token")}`,
+        Authorization: `Token ${token}`,
       },
     })
       .then((response) => {
@@ -103,7 +103,7 @@ export default function SignIn() {
           if (response.ok) {
             response.json().then((data) => {
               localStorage.setItem("token", data.token);
-              handleLogin();
+              handleLogin(data.token);
               setError(false);
             });
           } else {

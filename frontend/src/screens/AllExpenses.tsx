@@ -1,5 +1,8 @@
 import "../App.css";
 
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import LayersClearIcon from "@mui/icons-material/LayersClear";
+import { Box, Fab, LinearProgress } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
@@ -10,16 +13,15 @@ import Slide, { SlideProps } from "@mui/material/Slide";
 import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import React, { SyntheticEvent, useEffect, useReducer, useState } from "react";
+import { Fade } from "react-bootstrap";
 
 import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
 import ExpenseItem from "../components/Expense";
-import SkeletonItem from "../components/SkeletonItem";
 import NothingToDisplay from "../components/NothingToDisplay";
-import LayersClearIcon from "@mui/icons-material/LayersClear";
-import { Box, LinearProgress } from "@mui/material";
-import { Fade } from "react-bootstrap";
+import ScrollTop from "../components/ScrollTop";
+import SkeletonItem from "../components/SkeletonItem";
 
 // import FormLabel from "@mui/material/FormLabel";
 
@@ -382,6 +384,11 @@ function AllExpenses() {
           )}
         </div>
       )}
+      <ScrollTop>
+        <Fab size="small" aria-label="scroll back to top">
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
       <BottomAppBar value="all expenses" />
     </div>
   );
