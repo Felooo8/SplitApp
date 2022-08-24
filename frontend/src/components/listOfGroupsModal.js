@@ -90,8 +90,11 @@ export default function ListOfGroupsModal(props) {
       <List
         sx={{
           width: "100%",
-          maxWidth: 360,
           bgcolor: "background.paper",
+          position: "relative",
+          overflow: "auto",
+          height: "100vh",
+          "& ul": { padding: 0 },
         }}
         component="nav"
         style={{
@@ -107,14 +110,6 @@ export default function ListOfGroupsModal(props) {
           >
             <AppBar position="static">
               <Toolbar>
-                {/* <Typography
-                  variant="h6"
-                  noWrap
-                  component="div"
-                  sx={{ flexGrow: 1 }}
-                >
-                  Pick Category
-                </Typography> */}
                 <Search>
                   <SearchIconWrapper>
                     <SearchIcon />
