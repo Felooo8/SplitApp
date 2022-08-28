@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
+import { Divider } from "@mui/material";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -72,17 +73,16 @@ export default function ListOfGroupsModal(props) {
     setSearch(event.target.value);
   };
 
+  const filtredFriends = props.friends.filter((friend) =>
+    friend.username.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const filtredGroups = props.groups.filter((group) =>
+    group.group_name.toLowerCase().includes(search.toLowerCase())
+  );
+
   const handleClose = (group_friend_id, isGroup, group_friend_name) => {
     props.toggle(group_friend_id, isGroup, group_friend_name);
-  };
-
-  const isFiltred = (category) => {
-    if (search === "") {
-      return;
-    } else if (category.toLowerCase().includes(search.toLowerCase())) {
-      return;
-    }
-    return "none";
   };
 
   return (
@@ -127,39 +127,50 @@ export default function ListOfGroupsModal(props) {
         }
       >
         <ListItemButton>Your groups:</ListItemButton>
-        {props.groups.map((group, index) => (
-          <ListItemButton
-            key={index}
-            value={group.id}
-            onClick={() => handleClose(group.id, true, group.group_name)}
-            style={{ display: isFiltred(group.group_name) }}
-          >
-            <ListItemIcon>
-              <GroupAddIcon
-                sx={{ color: colors[index % colors.length] }}
-                style={{ width: "2em", height: "2em" }}
-              />
-            </ListItemIcon>
-            {group.group_name}
+        {filtredGroups.length !== 0 ? (
+          filtredGroups.map((group, index) => (
+            <ListItemButton
+              key={index}
+              value={group.id}
+              onClick={() => handleClose(group.id, true, group.group_name)}
+            >
+              <ListItemIcon>
+                <GroupAddIcon
+                  sx={{ color: colors[index % colors.length] }}
+                  style={{ width: "2em", height: "2em" }}
+                />
+              </ListItemIcon>
+              {group.group_name}
+            </ListItemButton>
+          ))
+        ) : (
+          <ListItemButton style={{ fontStyle: "italic" }}>
+            No group matches
           </ListItemButton>
-        ))}
+        )}
+        <Divider />
         <ListItemButton>Your friends:</ListItemButton>
-        {props.friends.map((friend, index) => (
-          <ListItemButton
-            key={index}
-            value={friend.id}
-            onClick={() => handleClose(friend.id, false, friend.username)}
-            style={{ display: isFiltred(friend.username) }}
-          >
-            <ListItemIcon>
-              <PersonAddIcon
-                sx={{ color: colors[index % colors.length] }}
-                style={{ width: "2em", height: "2em" }}
-              />
-            </ListItemIcon>
-            {friend.username}
+        {filtredFriends.length !== 0 ? (
+          filtredFriends.map((friend, index) => (
+            <ListItemButton
+              key={index}
+              value={friend.id}
+              onClick={() => handleClose(friend.id, false, friend.username)}
+            >
+              <ListItemIcon>
+                <PersonAddIcon
+                  sx={{ color: colors[index % colors.length] }}
+                  style={{ width: "2em", height: "2em" }}
+                />
+              </ListItemIcon>
+              {friend.username}
+            </ListItemButton>
+          ))
+        ) : (
+          <ListItemButton style={{ fontStyle: "italic" }}>
+            No friend matches
           </ListItemButton>
-        ))}
+        )}
       </List>
     </div>
   );

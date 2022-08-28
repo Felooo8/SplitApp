@@ -1,8 +1,7 @@
 import "../App.css";
 
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import LayersClearIcon from "@mui/icons-material/LayersClear";
-import { Box, Fab, LinearProgress } from "@mui/material";
+import { Box, LinearProgress } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
@@ -20,7 +19,6 @@ import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
 import ExpenseItem from "../components/Expense";
 import NothingToDisplay from "../components/NothingToDisplay";
-import ScrollTop from "../components/ScrollTop";
 import SkeletonItem from "../components/SkeletonItem";
 
 // import FormLabel from "@mui/material/FormLabel";
@@ -384,11 +382,6 @@ function AllExpenses() {
           )}
         </div>
       )}
-      <ScrollTop>
-        <Fab size="small" aria-label="scroll back to top">
-          <KeyboardArrowUpIcon />
-        </Fab>
-      </ScrollTop>
       <BottomAppBar value="all expenses" />
     </div>
   );

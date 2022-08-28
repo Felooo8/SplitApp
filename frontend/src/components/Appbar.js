@@ -17,8 +17,11 @@ import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
 import Typography from "@mui/material/Typography";
 import React, { useEffect, useRef, useState } from "react";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { Fab } from "@mui/material";
 
 import Constants from "../apis/Constants";
+import ScrollTop from "./ScrollTop";
 
 export default function BottomAppBar(props) {
   const ref = useRef(null);
@@ -145,6 +148,11 @@ export default function BottomAppBar(props) {
           </Slide>
         </Button>
       ) : null}
+      <ScrollTop>
+        <Fab size="small" aria-label="scroll back to top">
+          <KeyboardArrowUpIcon />
+        </Fab>
+      </ScrollTop>
       <Box sx={{ width: "50%" }}></Box>
     </Box>
   );

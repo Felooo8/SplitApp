@@ -70,17 +70,12 @@ export default function ListOfCategories(props) {
     "Tickets",
   ];
 
+  const filtredCategories = categories.filter((category) =>
+    category.toLowerCase().includes(search.toLowerCase())
+  );
+
   const handleClose = (e) => {
     props.toggle(e);
-  };
-
-  const isFiltred = (category) => {
-    if (search === "") {
-      return;
-    } else if (category.toLowerCase().includes(search.toLowerCase())) {
-      return;
-    }
-    return "none";
   };
 
   return (
@@ -125,17 +120,22 @@ export default function ListOfCategories(props) {
           </ListSubheader>
         }
       >
-        {categories.map((category, index) => (
-          <ListItemButton
-            key={index}
-            value={category}
-            onClick={() => handleClose(category)}
-            style={{ display: isFiltred(category) }}
-          >
-            <ListItemIcon>{returnIcon(category)}</ListItemIcon>
-            {category}
+        {filtredCategories.length !== 0 ? (
+          filtredCategories.map((category, index) => (
+            <ListItemButton
+              key={index}
+              value={category}
+              onClick={() => handleClose(category)}
+            >
+              <ListItemIcon>{returnIcon(category)}</ListItemIcon>
+              {category}
+            </ListItemButton>
+          ))
+        ) : (
+          <ListItemButton style={{ fontStyle: "italic" }}>
+            No category matches
           </ListItemButton>
-        ))}
+        )}
       </List>
     </div>
   );

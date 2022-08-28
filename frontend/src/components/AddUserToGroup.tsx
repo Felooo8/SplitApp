@@ -2,7 +2,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import {
-  Button,
   CircularProgress,
   Divider,
   Fade,
@@ -34,13 +33,21 @@ export default function AddUserToGroup(props: any) {
   const [search, setSearch] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [loadingFriends, setLoadingFriends] = useState<boolean>(true);
+  const [loadingFriends, setLoadingFriends] = useState<boolean>(false);
   const [friends, setFriends] = useState([]);
   const timer = React.useRef<number>();
   const [errors, setErrors] = useState({
     friends: false,
     request: false,
   });
+
+  const filtredFriends = friends.filter((friend: User) =>
+    friend.username.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const filtredUsers = users.filter((user: User) =>
+    user.username.toLowerCase().includes(search.toLowerCase())
+  );
 
   const handleInputChange = (event: {
     target: { value: React.SetStateAction<string> };
@@ -105,11 +112,14 @@ export default function AddUserToGroup(props: any) {
         if (response.ok) {
           response.json().then((data) => {
             setFriends(data);
-            setLoadingFriends(false);
+            const timer = setTimeout(() => {
+              setLoadingFriends(false);
+            }, 1000);
             setErrors((errors) => ({
               ...errors,
               friends: false,
             }));
+            return () => clearTimeout(timer);
           });
         } else {
           throw Error("Something went wrong");
@@ -123,26 +133,13 @@ export default function AddUserToGroup(props: any) {
         }));
         const timer = setTimeout(() => {
           setLoadingFriends(false);
-        }, Constants.PROGRESS_ANIMATION_TIME);
+        }, 1000);
         return () => clearTimeout(timer);
       });
   };
   const refresh = () => {
     setLoadingFriends(true);
     getFriends();
-    const timer = setTimeout(() => {
-      setLoadingFriends(false);
-    }, Constants.PROGRESS_ANIMATION_TIME);
-    return () => clearTimeout(timer);
-  };
-
-  const isFiltred = (username: string) => {
-    if (search === "") {
-      return;
-    } else if (username.toLowerCase().includes(search.toLowerCase())) {
-      return;
-    }
-    return "none";
   };
 
   useEffect(() => {
@@ -218,51 +215,45 @@ export default function AddUserToGroup(props: any) {
             sx={{ height: "8px" }}
           />
         </Fade>
-        {friends.length !== 0 ? (
-          friends.map(
-            (
-              friend: {
-                id: number;
-                username: string;
-              },
-              index: number
-            ) => (
-              <ListItemButton
-                key={index}
-                onClick={() => handleSave(friend.id, friend.username)}
-                style={{ display: isFiltred(friend.username) }}
-              >
-                <ListItemIcon>
-                  <PersonAddIcon
-                    sx={{ color: colors[index % colors.length] }}
-                    style={{ width: "2em", height: "2em" }}
-                  />
-                </ListItemIcon>
-                {friend.username}
-              </ListItemButton>
-            )
-          )
+        {filtredFriends.length !== 0 ? (
+          filtredFriends.map((friend: User, index) => (
+            <ListItemButton
+              key={index}
+              onClick={() => handleSave(friend.id, friend.username)}
+            >
+              <ListItemIcon>
+                <PersonAddIcon
+                  sx={{ color: colors[index % colors.length] }}
+                  style={{ width: "2em", height: "2em" }}
+                />
+              </ListItemIcon>
+              {friend.username}
+            </ListItemButton>
+          ))
         ) : (
-          <Button
-            style={{ margin: "10px auto", display: "block" }}
-            variant="outlined"
-            onClick={refresh}
-          >
-            Refresh
-          </Button>
+          <ListItemButton style={{ fontStyle: "italic" }}>
+            No friend matches
+          </ListItemButton>
+          // <Button
+          //   style={{ margin: "10px auto", display: "block" }}
+          //   variant="outlined"
+          //   onClick={refresh}
+          // >
+          //   Refresh
+          // </Button>
         )}
         {search ? (
           <div>
+            <Divider />
             <ListItemButton>Search results:</ListItemButton>
             <Fade in={loading} unmountOnExit>
               <LinearProgress sx={{ height: "8px" }} />
             </Fade>
-            {users.length !== 0 ? (
-              users.map((user, index) => (
+            {filtredUsers.length !== 0 ? (
+              filtredUsers.map((user, index) => (
                 <ListItemButton
                   key={index}
                   onClick={() => handleSave(user.id, user.username)}
-                  style={{ display: isFiltred(user.username) }}
                 >
                   <ListItemIcon>
                     <PersonAddIcon
