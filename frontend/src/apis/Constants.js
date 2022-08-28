@@ -6,5 +6,14 @@ const Constants = {
   SERVER: "http://192.168.1.106:8000",
   ALERTAUTOHIDDEN: 3000,
   ALERTUPDATE: 1500,
+  CATEGORIES: [
+    "Other",
+    "Restaurant",
+    "Transport",
+    "Rent",
+    "Alcohol",
+    "Groceries",
+    "Tickets",
+  ],
 };
 export default Constants;

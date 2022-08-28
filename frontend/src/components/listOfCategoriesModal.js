@@ -1,4 +1,6 @@
+import CloseIcon from "@mui/icons-material/Close";
 import SearchIcon from "@mui/icons-material/Search";
+import { IconButton } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import InputBase from "@mui/material/InputBase";
 import List from "@mui/material/List";
@@ -8,6 +10,8 @@ import ListSubheader from "@mui/material/ListSubheader";
 import { alpha, styled } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import React, { useState } from "react";
+import Constants from "../apis/Constants";
+
 import returnIcon from "../apis/returnIcon";
 
 const Search = styled("div")(({ theme }) => ({
@@ -60,22 +64,16 @@ export default function ListOfCategories(props) {
     setSearch(event.target.value);
   };
 
-  const categories = [
-    "Other",
-    "Restaurant",
-    "Transport",
-    "Rent",
-    "Alcohol",
-    "Groceries",
-    "Tickets",
-  ];
-
-  const filtredCategories = categories.filter((category) =>
+  const filtredCategories = Constants.CATEGORIES.filter((category) =>
     category.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleClose = (e) => {
-    props.toggle(e);
+  const handleClose = () => {
+    props.toggleClose();
+  };
+
+  const handleSave = (e) => {
+    props.toggleSave(e);
   };
 
   return (
@@ -96,14 +94,15 @@ export default function ListOfCategories(props) {
           >
             <AppBar position="static">
               <Toolbar>
-                {/* <Typography
-                  variant="h6"
-                  noWrap
-                  component="div"
-                  sx={{ flexGrow: 1 }}
+                <IconButton
+                  style={{
+                    fontSize: "25px",
+                    margin: "auto 10px auto 10px",
+                  }}
+                  onClick={handleClose}
                 >
-                  Pick Category
-                </Typography> */}
+                  <CloseIcon />
+                </IconButton>
                 <Search>
                   <SearchIconWrapper>
                     <SearchIcon />
@@ -125,7 +124,7 @@ export default function ListOfCategories(props) {
             <ListItemButton
               key={index}
               value={category}
-              onClick={() => handleClose(category)}
+              onClick={() => handleSave(category)}
             >
               <ListItemIcon>{returnIcon(category)}</ListItemIcon>
               {category}

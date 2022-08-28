@@ -240,7 +240,6 @@ export default function AddingExpense(props) {
   };
 
   const setPayersData = (id, isGroup, username) => {
-    console.log(id, isGroup, username);
     if (isGroup) {
       for (const group of groups) {
         if (group["id"] === id) {
@@ -307,11 +306,11 @@ export default function AddingExpense(props) {
   const handleChangeSwitch = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.checked });
   };
-  const toggleClose = (category) => {
+  const toggleSave = (category) => {
     setOpen(false);
     setValues({ ...values, category: category });
   };
-  const toggleCloseGroup = (group_friend_id, isGroup, group_friend_name) => {
+  const toggleSaveGroup = (group_friend_id, isGroup, group_friend_name) => {
     values.is_group = isGroup;
     if (isGroup) {
       values.owers_groups = [...values.owers_groups, group_friend_id];
@@ -469,7 +468,10 @@ export default function AddingExpense(props) {
                       aria-describedby="modal-modal-description"
                     >
                       <Box sx={style}>
-                        <ListOfCategories toggle={toggleClose} />
+                        <ListOfCategories
+                          toggleClose={handleClose}
+                          toggleSave={toggleSave}
+                        />
                       </Box>
                     </Modal>
                     <RowStack style={{ float: "left " }}>
@@ -546,7 +548,8 @@ export default function AddingExpense(props) {
                   {groups !== [] || friends !== [] ? (
                     <Box sx={style}>
                       <ListOfGroupsModal
-                        toggle={toggleCloseGroup}
+                        toggleClose={handleCloseGroup}
+                        toggleSave={toggleSaveGroup}
                         groups={groups}
                         friends={friends}
                       />

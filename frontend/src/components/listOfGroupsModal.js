@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { styled, alpha } from "@mui/material/styles";
-import { Divider } from "@mui/material";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListSubheader from "@mui/material/ListSubheader";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import InputBase from "@mui/material/InputBase";
-import SearchIcon from "@mui/icons-material/Search";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import CloseIcon from '@mui/icons-material/Close';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import SearchIcon from '@mui/icons-material/Search';
+import { Divider, IconButton } from '@mui/material';
+import AppBar from '@mui/material/AppBar';
+import InputBase from '@mui/material/InputBase';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListSubheader from '@mui/material/ListSubheader';
+import { alpha, styled } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import React, { useState } from 'react';
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -81,8 +82,12 @@ export default function ListOfGroupsModal(props) {
     group.group_name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleClose = (group_friend_id, isGroup, group_friend_name) => {
-    props.toggle(group_friend_id, isGroup, group_friend_name);
+  const handleClose = () => {
+    props.toggleClose();
+  };
+
+  const handleSave = (group_friend_id, isGroup, group_friend_name) => {
+    props.toggleSave(group_friend_id, isGroup, group_friend_name);
   };
 
   return (
@@ -110,6 +115,15 @@ export default function ListOfGroupsModal(props) {
           >
             <AppBar position="static">
               <Toolbar>
+                <IconButton
+                  style={{
+                    fontSize: "25px",
+                    margin: "auto 10px auto 10px",
+                  }}
+                  onClick={handleClose}
+                >
+                  <CloseIcon />
+                </IconButton>
                 <Search>
                   <SearchIconWrapper>
                     <SearchIcon />
@@ -132,7 +146,7 @@ export default function ListOfGroupsModal(props) {
             <ListItemButton
               key={index}
               value={group.id}
-              onClick={() => handleClose(group.id, true, group.group_name)}
+              onClick={() => handleSave(group.id, true, group.group_name)}
             >
               <ListItemIcon>
                 <GroupAddIcon
@@ -155,7 +169,7 @@ export default function ListOfGroupsModal(props) {
             <ListItemButton
               key={index}
               value={friend.id}
-              onClick={() => handleClose(friend.id, false, friend.username)}
+              onClick={() => handleSave(friend.id, false, friend.username)}
             >
               <ListItemIcon>
                 <PersonAddIcon

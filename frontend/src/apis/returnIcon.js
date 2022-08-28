@@ -19,20 +19,21 @@ import React from "react";
 const categoryIconSize = "60px";
 
 export default function returnIcon(category) {
-  if (category === "Restaurant") {
-    return <RestaurantMenuRoundedIcon style={icon} sx={{ color: "gray" }} />;
-  } else if (category === "Transport") {
-    return <LocalTaxiIcon style={icon} sx={{ color: "#ffc107" }} />;
-  } else if (category === "Rent") {
-    return <HomeIcon style={icon} sx={{ color: "black" }} />;
-  } else if (category === "Alcohol") {
-    return <LiquorIcon style={icon} sx={{ color: "#28a745" }} />;
-  } else if (category === "Groceries") {
-    return <KitchenRoundedIcon style={icon} sx={{ color: "#17a2b8" }} />;
-  } else if (category === "Tickets") {
-    return (
-      <ConfirmationNumberRoundedIcon style={icon} sx={{ color: "#007bff" }} />
-    );
+  switch (category) {
+    case "Restaurant":
+      return <RestaurantMenuRoundedIcon style={icon} sx={{ color: "gray" }} />;
+    case "Transport":
+      return <LocalTaxiIcon style={icon} sx={{ color: "#ffc107" }} />;
+    case "Rent":
+      return <HomeIcon style={icon} sx={{ color: "black" }} />;
+    case "Alcohol":
+      return <LiquorIcon style={icon} sx={{ color: "#28a745" }} />;
+    case "Groceries":
+      return <KitchenRoundedIcon style={icon} sx={{ color: "#17a2b8" }} />;
+    case "Tickets":
+      return (
+        <ConfirmationNumberRoundedIcon style={icon} sx={{ color: "#007bff" }} />
+      );
   }
   return <PaidOutlinedIcon style={icon} sx={{ color: "green" }} />;
 }
