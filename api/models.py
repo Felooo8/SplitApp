@@ -234,7 +234,7 @@ class Group(models.Model):
 #             elif kwargs["action"] == "post_remove":
 #                 left_users_ids = list(instance.users.all().values_list('id', flat=True))
 #                 removed_users_ids = list(id for id in instance.__previous_users_ids if id not in left_users_ids)
-#                 removed_users = User.objects.filter(id__in=removed_users_ids)
+#                 removed_users = User.objec%}ts.filter(id__in=removed_users_ids)
 #                 if group_expense.expenses.filter(payer__in=removed_users).exists():
 #                     continue
 #                 if removed_users.exists():

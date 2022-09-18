@@ -3,13 +3,6 @@ from collections import defaultdict
 from itertools import chain
 
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from django.db.models import Q
-from django.forms import BooleanField
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.utils.crypto import get_random_string
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
