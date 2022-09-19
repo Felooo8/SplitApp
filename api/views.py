@@ -638,6 +638,7 @@ class AddUsertoGroup(APIView):
 
 
 class SearchUsersToAdd(APIView):
+    "When adding to group"
     permission_classes = [IsAuthenticated]
 
     def is_friend(self, request, user):

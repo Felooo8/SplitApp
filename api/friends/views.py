@@ -100,7 +100,7 @@ class AcceptInvitationByUser(APIView):
                 return Response(None, status=status.HTTP_204_NO_CONTENT)
             except FriendsInvitation.DoesNotExist:
                 return Response(None, status=status.HTTP_404_NOT_FOUND)
-        except:
+        except Exception as e:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -182,9 +182,8 @@ class FindFriends(APIView):
         return user in account.friends.all()
 
     def get(self, request, username, format=None):
-
         try:
-            username = self.kwargs['username']
+            # username = self.kwargs['username']
             users_starts = User.objects.filter(username__startswith=username).exclude(id=request.user.id)
             users_contains = User.objects.filter(username__icontains=username).exclude(username__startswith=username).exclude(id=request.user.id)
             users = list(chain(users_starts, users_contains))
