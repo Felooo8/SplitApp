@@ -4,7 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
-
+.vscode
+Dockerfile
 # testing
 /coverage
 
@@ -34,4 +35,5 @@ frontend/src/components/selectComponent.js
 media/avatars/*
 frontend/build
 pytest.ini
-api/friends/tests/test_friends.py
+api/requirements.txt
+api/friends/tests.py

@@ -10,7 +10,8 @@ from .views import (
     SetAvatar,
     GetAvatar,
     CreateNewUser,
-    SearchUsersToAdd
+    SearchUsersToAdd,
+    Profile,
 )
 from .groups.views import (
     GetGroupExpenses,
@@ -71,4 +72,5 @@ urlpatterns = [
     path("getGroupAvatar/<int:id>", GetGroupAvatar.as_view(), name="getGroupAvatar"),
     path("createGroup", CreateNewGroup.as_view(), name="createGroup"),
     path("addUserToGroup", AddUsertoGroup.as_view(), name="addUserToGroup"),
+    path("profile", Profile.as_view(), name="profile"),
 ]

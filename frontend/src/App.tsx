@@ -14,6 +14,7 @@ import Notifications from "./screens/Notifications";
 import SignIn from "./screens/SignIn";
 import SignUp from "./screens/SignUp";
 import Summary from "./screens/Summary";
+import Profile from "./screens/Profile";
 
 function App() {
   console.log(localStorage.getItem("token"));
@@ -46,6 +47,9 @@ function App() {
           </Route>
           <Route path="/friends/:search" element={<PrivateRoute />}>
             <Route path="/friends/:search" element={<FriendsFinder />} />
+          </Route>
+          <Route path="/profile" element={<PrivateRoute />}>
+            <Route path="/profile" element={<Profile />} />
           </Route>
           <Route path="/login" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />

@@ -658,3 +658,15 @@ class SearchUsersToAdd(APIView):
             return Response(users, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Profile(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            user = request.user
+            data = UserSerializer(user).data
+            return Response(data, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
