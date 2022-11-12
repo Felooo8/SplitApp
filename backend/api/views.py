@@ -549,10 +549,23 @@ class GetNotifications(APIView):
 
 
 class SetAvatar(APIView):
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        try:
+            image = request.FILES.get("avatar")
+            user = request.user
+            account = Account.objects.get(user=user)
+            account.avatar = image
+            account.save()
+            return Response({"Success": "Avatar saved"}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SetGroupName(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, format=None):
         user = request.user
         try:
