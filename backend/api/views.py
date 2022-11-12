@@ -549,10 +549,23 @@ class GetNotifications(APIView):
 
 
 class SetAvatar(APIView):
-    pass
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        try:
+            image = request.FILES.get("avatar")
+            user = request.user
+            account = Account.objects.get(user=user)
+            account.avatar = image
+            account.save()
+            return Response({"Success": "Avatar saved"}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SetGroupName(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, format=None):
         user = request.user
         try:
@@ -656,5 +669,17 @@ class SearchUsersToAdd(APIView):
             users = User.objects.filter(username__startswith=username).exclude(id=request.user.id).exclude(id__in=friends).exclude(id__in=members)
             users = UserSerializer(users, many=True).data
             return Response(users, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Profile(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            user = request.user
+            data = UserSerializer(user).data
+            return Response(data, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)

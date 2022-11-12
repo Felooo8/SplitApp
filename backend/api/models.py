@@ -58,10 +58,10 @@ class Account(models.Model):
         return self.user.username
 
 
-@receiver(post_save, sender=User, dispatch_uid="create_account")
-def create_account(sender, instance, **kwargs):
-    account = Account(user=instance)
-    account.save()
+# @receiver(post_save, sender=User, dispatch_uid="create_account")
+# def create_account(sender, instance, **kwargs):
+#     account = Account(user=instance)
+#     account.save()
 
 
 class Expense(models.Model):

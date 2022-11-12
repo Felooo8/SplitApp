@@ -130,7 +130,7 @@ export default function SearchAppBar() {
                     {showUserName()}
                   </MenuItem>
                   <Divider />
-                  <MenuItem onClick={handleClose}>
+                  <MenuItem onClick={() => handleAction("/profile")}>
                     <Avatar />
                     Profile
                   </MenuItem>

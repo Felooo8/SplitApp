@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
-
+.vscode
 # testing
 /coverage
 
@@ -29,9 +29,10 @@ frontend/node_modules/*
 frontend/npm
 frontend/README.md
 
-.vscode
 frontend/src/components/selectComponent.js
-media/avatars/*
+backend/media/avatars/*
 frontend/build
 pytest.ini
-api/friends/tests/test_friends.py
+backend/api/requirements.txt
+backend/api/friends/tests.py
+.vscode/settings.json
