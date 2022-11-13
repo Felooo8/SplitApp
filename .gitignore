@@ -33,6 +33,5 @@ frontend/src/components/selectComponent.js
 backend/media/avatars/*
 frontend/build
 pytest.ini
-backend/api/requirements.txt
 backend/api/friends/tests.py
 .vscode/settings.json

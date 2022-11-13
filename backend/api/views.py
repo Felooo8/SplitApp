@@ -591,7 +591,11 @@ class GetAvatar(APIView):
             user = User.objects.get(id=id)
             account = Account.objects.get(user=user)
             avatar = account.avatar
-            return Response(avatar.url, status=status.HTTP_200_OK)
+            try:
+                url = avatar.url
+                return Response(url, status=status.HTTP_200_OK)
+            except BaseException as e:
+                return Response({"Avatar not found": "This user has no avatar"}, status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 

@@ -14,10 +14,14 @@ export default function DisplayAvatar(props) {
       },
     }).then((response) => {
       if (response.ok) {
-        response.json().then((data) => {
-          console.log(data);
-          setAvatarURL(data);
-        });
+        if (response.status === 200) {
+          response.json().then((data) => {
+            console.log(data);
+            setAvatarURL(data);
+          });
+        } else if (response.status === 204) {
+          console.log("User " + props.user.username + " has no avatar");
+        }
       } else {
         console.log("invalid data");
       }
