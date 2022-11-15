@@ -40,9 +40,15 @@ class AccountInline(admin.StackedInline):
 class UserAdmin(BaseUserAdmin):
     inlines = (AccountInline,)
 
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'avatar')
+    # list_filter = ['ower', 'payer', 'category', 'settled', 'is_paid']
+
     def delete_queryset(self, request, queryset):
         for obj in queryset:
             super().delete_model(request, obj)
+
+    def avatar(self, obj):
+        return Account.objects.get(user=obj).avatar.name != ""
 
 
 admin.site.unregister(User)

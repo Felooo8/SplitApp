@@ -594,7 +594,7 @@ class GetAvatar(APIView):
             try:
                 url = avatar.url
                 return Response(url, status=status.HTTP_200_OK)
-            except BaseException as e:
+            except BaseException:
                 return Response({"Avatar not found": "This user has no avatar"}, status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
@@ -684,6 +684,11 @@ class Profile(APIView):
         try:
             user = request.user
             data = UserSerializer(user).data
+            try:
+                avatar_url = Account.objects.get(user=user).avatar.url
+                data["avatar"] = avatar_url
+            except BaseException:
+                pass
             return Response(data, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)

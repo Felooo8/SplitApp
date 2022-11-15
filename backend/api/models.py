@@ -33,7 +33,7 @@ def validate_image(fieldfile_obj):
 
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    friends = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="friends")
+    friends = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="friends", blank=True)
     avatar = models.ImageField(upload_to=upload_to, blank=True, null=True, validators=[validate_image])
 
     __previous_avatar_name = None
@@ -49,7 +49,7 @@ class Account(models.Model):
         super().delete()
 
     def save(self, *args, **kwargs):
-        if self.avatar.name != self.__previous_avatar_name and self.__previous_avatar_name:
+        if self.avatar.name != self.__previous_avatar_name:
             self.avatar.storage.delete(self.__previous_avatar_name)
             self.__previous_avatar_name = self.avatar.name
         super(Account, self).save(*args, **kwargs)
@@ -58,10 +58,12 @@ class Account(models.Model):
         return self.user.username
 
 
-# @receiver(post_save, sender=User, dispatch_uid="create_account")
-# def create_account(sender, instance, **kwargs):
-#     account = Account(user=instance)
-#     account.save()
+@receiver(post_save, sender=User, dispatch_uid="create_account")
+def create_account(sender, instance, **kwargs):
+    #  Creates Account if new user
+    if not Account.objects.filter(user=instance):
+        account = Account(user=instance)
+        account.save()
 
 
 class Expense(models.Model):
