@@ -4,6 +4,10 @@ import Constants from "../apis/Constants";
 
 export default function DisplayAvatar(props) {
   const [avatarURL, setAvatarURL] = useState("");
+  let size =
+    props.size !== "large"
+      ? Constants.AVATAR_SIZE
+      : Constants.AVATAR_SIZE_LARGE;
 
   const getAvatar = (url) => {
     fetch(Constants.SERVER + url + props.user.id, {
@@ -37,28 +41,28 @@ export default function DisplayAvatar(props) {
   }, []);
 
   return (
-    <div>
+    <React.Fragment>
       {avatarURL !== "" ? (
         <img
           src={Constants.SERVER + avatarURL}
           alt="avatar"
           style={{
-            width: Constants.AVATAR_SIZE,
-            height: Constants.AVATAR_SIZE,
-            borderRadius: Constants.AVATAR_SIZE,
+            width: size,
+            height: size,
+            borderRadius: size,
           }}
         />
       ) : (
         <Avatar
           sx={{
-            width: Constants.AVATAR_SIZE,
-            height: Constants.AVATAR_SIZE,
+            width: size,
+            height: size,
             fontSize: "2rem",
           }}
         >
           {props.user.username[0]}
         </Avatar>
       )}
-    </div>
+    </React.Fragment>
   );
 }

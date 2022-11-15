@@ -4,8 +4,15 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import BottomAppBar from "../components/Appbar";
+
 import Constants from "../apis/Constants";
+import BottomAppBar from "../components/Appbar";
+import DisplayAvatar from "../components/DisplayAvatar";
+import SkeletonItem from "../components/SkeletonItem";
+import ChangeAvatar from "../components/ChangeAvatar";
+import Error from "../components/Error";
+import Fade from "@mui/material/Fade";
+import LinearProgress from "@mui/material/LinearProgress";
 
 type Profile = {
   id: number;
@@ -22,10 +29,14 @@ type Errors = {
 
 export default function Profile() {
   const [userName, setUserName] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [profile, setProfile] = useState<any>(null);
   const [errors, setErrors] = useState<Errors>({
     data: false,
   });
+
+  const timer = React.useRef<number>();
 
   const getProfileData = () => {
     fetch(Constants.SERVER + "/api/profile", {
@@ -38,6 +49,7 @@ export default function Profile() {
           response.json().then((data) => {
             console.log(data);
             setProfile(data);
+            setLoading(false);
             setErrors((errors) => ({
               ...errors,
               user: false,
@@ -56,6 +68,14 @@ export default function Profile() {
       });
   };
 
+  const toggleFetch = () => {
+    setRefreshing(true);
+    timer.current = window.setTimeout(() => {
+      setRefreshing(false);
+    }, Constants.PROGRESS_ANIMATION_TIME);
+    getProfileData();
+  };
+
   const handleInputChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
@@ -63,16 +83,25 @@ export default function Profile() {
   };
 
   useEffect(() => {
+    setLoading(true);
     getProfileData();
   }, []);
 
   // const handleSave = (userName: string) => {
   //   props.toggleSave(userName);
   // };
+
+  if (Object.values(errors).some((error) => error === true)) {
+    return (
+      <div>
+        <Error toggle={toggleFetch} />
+        <BottomAppBar />
+      </div>
+    );
+  }
+
   return (
     <div>
-      <BottomAppBar value="" />
-
       {/* <Row
         style={{
           padding: "10px 0 10px 0",
@@ -89,20 +118,27 @@ export default function Profile() {
           Save
         </Button> */}
       {/* </Row> */}
-      <Divider style={{ marginBottom: "20px" }} />
-      <Row style={{ padding: "0 32px" }}>
-        <Button variant="outlined">
-          <AddAPhotoIcon />
-        </Button>
-        <TextField
-          label="User name"
-          id="user-name-input"
-          variant="standard"
-          value={userName}
-          style={text}
-          onChange={handleInputChange}
-        />
-      </Row>
+      {loading ? (
+        <SkeletonItem header={true} />
+      ) : (
+        <div>
+          <Fade in={refreshing} unmountOnExit>
+            <LinearProgress sx={{ height: "8px" }} />
+          </Fade>
+          <Row style={{ padding: "0 32px" }}>
+            <ChangeAvatar id={profile.id} username={profile.username} />
+            <TextField
+              label="User name"
+              id="user-name-input"
+              variant="standard"
+              value={userName}
+              style={text}
+              onChange={handleInputChange}
+            />
+          </Row>
+        </div>
+      )}
+      <BottomAppBar value="" />
     </div>
   );
 }
