@@ -1,5 +1,5 @@
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import { Divider } from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
@@ -28,7 +28,6 @@ type Errors = {
 };
 
 export default function Profile() {
-  const [userName, setUserName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [profile, setProfile] = useState<any>(null);
@@ -76,10 +75,21 @@ export default function Profile() {
     getProfileData();
   };
 
-  const handleInputChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setUserName(event.target.value);
+  const handleInputChange = (
+    keyName: string,
+    event: {
+      target: { value: React.SetStateAction<string> };
+    },
+    blockSpaces: boolean = false
+  ) => {
+    if (blockSpaces) {
+    }
+    event.target.value = (event.target as HTMLInputElement).value.replace(
+      /\s/g,
+      ""
+    );
+    profile[keyName] = event.target.value;
+    setProfile({ ...profile });
   };
 
   useEffect(() => {
@@ -127,15 +137,44 @@ export default function Profile() {
           </Fade>
           <Row style={{ padding: "0 32px" }}>
             <ChangeAvatar id={profile.id} username={profile.username} />
-            <TextField
-              label="User name"
-              id="user-name-input"
-              variant="standard"
-              value={userName}
-              style={text}
-              onChange={handleInputChange}
-            />
+            <Column>
+              <TextField
+                label="Username"
+                id="user-name-input"
+                variant="standard"
+                value={profile.username}
+                style={text}
+                onChange={(e) => handleInputChange("username", e, true)}
+              />
+              <TextField
+                label="Frist name"
+                id="first-name-input"
+                variant="standard"
+                value={profile.firstName}
+                style={text}
+                onChange={(e) => handleInputChange("first_name", e)}
+              />
+              <TextField
+                label="Last name"
+                id="last-name-input"
+                variant="standard"
+                value={profile.lastName}
+                style={text}
+                onChange={(e) => handleInputChange("last_name", e)}
+              />
+            </Column>
           </Row>
+          <TextField
+            disabled
+            fullWidth
+            margin="normal"
+            label="Email"
+            id="last-name-input"
+            variant="standard"
+            value={profile.email}
+            style={text}
+            onChange={(e) => handleInputChange("last_name", e)}
+          />
         </div>
       )}
       <BottomAppBar value="" />
@@ -156,6 +195,13 @@ const right = {
 
 const Row = styled.div`
   flex-direction: row;
+  display: flex;
+  flex: 1 1 0%;
+}
+`;
+
+const Column = styled.div`
+  flex-direction: column;
   display: flex;
   flex: 1 1 0%;
 }
