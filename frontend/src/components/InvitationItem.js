@@ -108,7 +108,7 @@ export default function InvitationItem(props) {
 }
 
 const summarizing = {
-  maxWidth: "440px",
+  maxWidth: Constants.ITEM_MAX_WIDTH,
   width: "100%",
   marginLeft: "auto",
   marginRight: "auto",

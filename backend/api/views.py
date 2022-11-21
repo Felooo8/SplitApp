@@ -692,3 +692,18 @@ class Profile(APIView):
             return Response(data, status=status.HTTP_200_OK)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request):
+        try:
+            user = request.user
+            body = json.loads(request.body)
+            first_name = body["firstName"]
+            last_name = body["lastName"]
+            user_name = body["userName"]
+            user.username = user_name
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+            return Response({"Success": "User data changed successfully."}, status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response({"Error": "Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)

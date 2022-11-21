@@ -16,5 +16,6 @@ const Constants = {
     "Groceries",
     "Tickets",
   ],
+  ITEM_MAX_WIDTH: 400,
 };
 export default Constants;

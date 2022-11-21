@@ -1,18 +1,18 @@
-import React from "react";
-import Settling from "./SettlingComponent";
-import styled from "styled-components";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import React from "react";
+import styled from "styled-components";
+import Settling from "./SettlingComponent";
 // import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import "../App.css";
 import Slide from "@mui/material/Slide";
-import returnIcon from "../apis/returnIcon";
 import Constants from "../apis/Constants";
+import returnIcon from "../apis/returnIcon";
+import "../App.css";
 
 export default function ExpenseItemGroup(props) {
-  console.log(props);
+  // console.log(props);
   const displayUser = () => {
     if (isBorrowed(props.expense)) {
       return props.expense.payer_username;
@@ -35,7 +35,11 @@ export default function ExpenseItemGroup(props) {
   };
 
   return (
-    <Expense>
+    <Expense
+      style={{
+        maxWidth: Constants.ITEM_MAX_WIDTH,
+      }}
+    >
       <div style={center}>
         <Slide
           direction="right"
@@ -111,7 +115,6 @@ const Date = styled.span`
   display: flex;
 `;
 const Expense = styled.span`
-  max-width: 440px;
   width: 100%;
   margin-left: auto !important;
   margin-right: auto !important;

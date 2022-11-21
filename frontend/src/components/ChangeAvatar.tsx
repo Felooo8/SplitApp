@@ -26,8 +26,8 @@ export default function ChangeAvatar(props: props) {
       <IconButton
         style={{
           position: "absolute",
-          bottom: "-15px",
-          right: "-15px",
+          bottom: "-10px",
+          right: "-10px",
           background: "#e2e2e2",
           margin: "auto",
         }}

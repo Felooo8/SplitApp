@@ -111,23 +111,7 @@ export default function Profile() {
   }
 
   return (
-    <div>
-      {/* <Row
-        style={{
-          padding: "10px 0 10px 0",
-          boxShadow:
-            "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-        }}
-      > */}
-      {/* <Button
-          style={right}
-          variant="text"
-          color="success"
-          onClick={() => handleSave(userName)}
-        >
-          Save
-        </Button> */}
-      {/* </Row> */}
+    <div style={main}>
       {loading ? (
         <SkeletonItem header={true} />
       ) : (
@@ -182,15 +166,19 @@ export default function Profile() {
   );
 }
 
+const main = {
+  maxWidth: "1000px",
+  width: "100%",
+  marginLeft: "auto",
+  marginRight: "auto",
+  textAlign: "center" as "center",
+  marginBottom: "65px",
+};
+
 const text = {
   marginRight: "0",
   marginLeft: "20px",
   width: "100%",
-};
-
-const right = {
-  marginRight: "0",
-  marginLeft: "auto",
 };
 
 const Row = styled.div`

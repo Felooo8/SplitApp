@@ -26,6 +26,7 @@ export default function GroupItem(props) {
           display: "inline-flex",
           width: "90%",
           padding: "16px",
+          maxWidth: Constants.ITEM_MAX_WIDTH,
         }}
       >
         <Paper
@@ -73,7 +74,6 @@ export default function GroupItem(props) {
 }
 
 const summarizing = {
-  maxWidth: "440px",
   width: "100%",
   marginLeft: "auto",
   marginRight: "auto",

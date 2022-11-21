@@ -45,7 +45,11 @@ export default function ExpenseItem(props) {
   };
 
   return (
-    <Expense>
+    <Expense
+      style={{
+        maxWidth: Constants.ITEM_MAX_WIDTH,
+      }}
+    >
       <div style={center}>
         <Slide
           direction="right"
@@ -130,7 +134,6 @@ const Date = styled.span`
   display: flex;
 `;
 const Expense = styled.span`
-  max-width: 440px;
   width: 100%;
   margin-left: auto !important;
   margin-right: auto !important;
