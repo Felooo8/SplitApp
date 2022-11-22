@@ -1,8 +1,16 @@
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import { Divider, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Divider,
+  Slide,
+  SlideProps,
+  Snackbar,
+  Typography,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import React, { useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 
 import Constants from "../apis/Constants";
@@ -14,12 +22,16 @@ import Error from "../components/Error";
 import Fade from "@mui/material/Fade";
 import LinearProgress from "@mui/material/LinearProgress";
 
+function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
+  return <Slide {...props} direction="left" />;
+}
+
 type Profile = {
   id: number;
   username: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   avatarURL: string;
 };
 
@@ -31,11 +43,23 @@ export default function Profile() {
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [profile, setProfile] = useState<any>(null);
+  const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
+  const timerAlert = React.useRef<number>();
+  const [alertText, setAlertText] = useState<string>("");
+  const [alertType, setAlertType] = useState<any>(undefined);
   const [errors, setErrors] = useState<Errors>({
     data: false,
   });
 
   const timer = React.useRef<number>();
+
+  function validateForm() {
+    return (
+      profile.username.length > 0 &&
+      profile.first_name.length > 0 &&
+      profile.last_name.length > 0
+    );
+  }
 
   const getProfileData = () => {
     fetch(Constants.SERVER + "/api/profile", {
@@ -64,6 +88,49 @@ export default function Profile() {
           ...errors,
           user: true,
         }));
+      });
+  };
+
+  const setProfileData = (e: {
+    preventDefault: () => void;
+    currentTarget: HTMLFormElement | undefined;
+  }) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    let set_data = {
+      userName: data.get("user_name"),
+      firstName: data.get("first_name"),
+      lastName: data.get("last_name"),
+    };
+    fetch(Constants.SERVER + "/api/profile", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(set_data),
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          toggleFetch();
+          timerAlert.current = window.setTimeout(() => {
+            setAlertText("Changes saved.");
+            setAlertType("success");
+            setOpenSnackBar(true);
+          }, Constants.ALERTUPDATE);
+        } else {
+          throw Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        timerAlert.current = window.setTimeout(() => {
+          setAlertText("Something went wrong. Changes not saved.");
+          setAlertType("error");
+          setOpenSnackBar(true);
+        }, Constants.ALERTUPDATE);
       });
   };
 
@@ -97,9 +164,19 @@ export default function Profile() {
     getProfileData();
   }, []);
 
-  // const handleSave = (userName: string) => {
-  //   props.toggleSave(userName);
-  // };
+  const handleCloseSnackBar = (
+    event: Event | SyntheticEvent<Element, Event>,
+    reason: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
+
+  const handleCloseSnackBarAlert = (event: SyntheticEvent<Element, Event>) => {
+    setOpenSnackBar(false);
+  };
 
   if (Object.values(errors).some((error) => error === true)) {
     return (
@@ -112,42 +189,93 @@ export default function Profile() {
 
   return (
     <div style={main}>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={Constants.ALERTAUTOHIDDEN}
+        onClose={handleCloseSnackBar}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        TransitionComponent={SlideTransition}
+      >
+        <Alert
+          onClose={handleCloseSnackBarAlert}
+          severity={alertType}
+          sx={{ width: "100%" }}
+          elevation={6}
+          variant="filled"
+        >
+          {alertText}
+        </Alert>
+      </Snackbar>
       {loading ? (
         <SkeletonItem header={true} />
       ) : (
         <div>
-          <Fade in={refreshing} unmountOnExit>
-            <LinearProgress sx={{ height: "8px" }} />
-          </Fade>
-          <Row style={{ padding: "0 32px" }}>
-            <ChangeAvatar id={profile.id} username={profile.username} />
-            <Column>
-              <TextField
-                label="Username"
-                id="user-name-input"
-                variant="standard"
-                value={profile.username}
-                style={text}
-                onChange={(e) => handleInputChange("username", e, true)}
-              />
-              <TextField
-                label="Frist name"
-                id="first-name-input"
-                variant="standard"
-                value={profile.firstName}
-                style={text}
-                onChange={(e) => handleInputChange("first_name", e)}
-              />
-              <TextField
-                label="Last name"
-                id="last-name-input"
-                variant="standard"
-                value={profile.lastName}
-                style={text}
-                onChange={(e) => handleInputChange("last_name", e)}
-              />
-            </Column>
-          </Row>
+          <Box
+            style={{
+              position: "fixed",
+              left: "0",
+              right: "0",
+              bottom: "56px",
+              zIndex: "10",
+            }}
+          >
+            <Fade in={refreshing} unmountOnExit>
+              <LinearProgress sx={{ height: "8px" }} />
+            </Fade>
+          </Box>
+          <Box
+            component="form"
+            onSubmit={setProfileData}
+            noValidate
+            sx={{ mt: 1 }}
+            style={{ maxWidth: "90%", margin: "auto" }}
+          >
+            <Row style={{ padding: "0 32px" }}>
+              <ChangeAvatar id={profile.id} username={profile.username} />
+
+              <Column>
+                <TextField
+                  id="user_name"
+                  label="Username"
+                  name="user_name"
+                  variant="standard"
+                  value={profile.username}
+                  style={text}
+                  onChange={(e) => handleInputChange("username", e, true)}
+                />
+                <TextField
+                  id="first_name"
+                  label="First name"
+                  name="first_name"
+                  variant="standard"
+                  value={profile.first_name}
+                  style={text}
+                  onChange={(e) => handleInputChange("first_name", e)}
+                />
+                <TextField
+                  id="last_name"
+                  label="Last name"
+                  name="last_name"
+                  variant="standard"
+                  value={profile.last_name}
+                  style={text}
+                  onChange={(e) => handleInputChange("last_name", e)}
+                />
+              </Column>
+            </Row>
+            <Button
+              style={{ marginTop: "2rem" }}
+              fullWidth
+              variant="contained"
+              type="submit"
+              disabled={!validateForm()}
+            >
+              Save
+            </Button>
+          </Box>
           <TextField
             disabled
             fullWidth
@@ -156,7 +284,7 @@ export default function Profile() {
             id="last-name-input"
             variant="standard"
             value={profile.email}
-            style={text}
+            style={{ width: "90%" }}
             onChange={(e) => handleInputChange("last_name", e)}
           />
         </div>

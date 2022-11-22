@@ -704,6 +704,6 @@ class Profile(APIView):
             user.first_name = first_name
             user.last_name = last_name
             user.save()
-            return Response({"Success": "User data changed successfully."}, status=status.HTTP_204_NO_CONTENT)
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
         except:
             return Response({"Error": "Something went wrong."}, status=status.HTTP_400_BAD_REQUEST)

@@ -48,7 +48,7 @@ export default function Error(props) {
       </Box>
       <Box
         style={{
-          position: "absolute",
+          position: "fixed",
           left: "0",
           right: "0",
           bottom: "56px",

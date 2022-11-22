@@ -76,7 +76,6 @@ function Groups() {
     })
       .then((response) => {
         if (response.ok) {
-          console.log("Good");
           toggleFetch();
           timerAlert.current = window.setTimeout(() => {
             setAlertText("Group " + groupName + " created");
@@ -88,7 +87,6 @@ function Groups() {
         }
       })
       .catch((error) => {
-        console.log("Failed");
         console.log(error);
         timerAlert.current = window.setTimeout(() => {
           setAlertText(
@@ -207,7 +205,7 @@ function Groups() {
         <div>
           <Box
             style={{
-              position: "absolute",
+              position: "fixed",
               left: "0",
               right: "0",
               bottom: "56px",
