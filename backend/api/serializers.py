@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ('id', 'user', 'friends')
+        fields = ('id', 'user', 'friends', 'avatar')
 
 
 class GroupSerializer(serializers.ModelSerializer):

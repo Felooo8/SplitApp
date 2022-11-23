@@ -1,19 +1,10 @@
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import { Divider } from "@mui/material";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-import IconButton from "@mui/material/IconButton";
 import { grey } from "@mui/material/colors";
-
+import IconButton from "@mui/material/IconButton";
+import React, { useState, ChangeEvent } from "react";
 import Constants from "../apis/Constants";
-import BottomAppBar from "../components/Appbar";
+
 import DisplayAvatar from "../components/DisplayAvatar";
-import SkeletonItem from "../components/SkeletonItem";
-import Error from "../components/Error";
-import Fade from "@mui/material/Fade";
-import LinearProgress from "@mui/material/LinearProgress";
 
 type props = {
   id: number;
@@ -21,6 +12,45 @@ type props = {
 };
 
 export default function ChangeAvatar(props: props) {
+  const [avatar, setAvatar] = useState<File>();
+  console.log(avatar);
+
+  const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    const fileList = event.target.files;
+
+    if (!fileList) return;
+
+    setAvatar(fileList[0]);
+    handleUploadAvatar();
+  };
+
+  const handleUploadAvatar = () => {
+    if (!avatar) return;
+    const formData = new FormData();
+    formData.append("files", avatar);
+
+    fetch(Constants.SERVER + "/api/setAvatar", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "multipart/form-data",
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+      body: formData,
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("CHANGED");
+        } else {
+          throw Error("Something went wrong");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div style={{ minWidth: "auto", padding: "0", position: "relative" }}>
       <IconButton
@@ -35,7 +65,7 @@ export default function ChangeAvatar(props: props) {
         aria-label="upload picture"
         component="label"
       >
-        <input hidden accept="image/*" type="file" />
+        <input hidden accept="image/*" type="file" onChange={changeHandler} />
         <AddAPhotoIcon fontSize="large" style={{ color: grey[900] }} />
       </IconButton>
       <DisplayAvatar

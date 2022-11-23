@@ -23,6 +23,8 @@ from collections import defaultdict
 from itertools import chain
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from rest_framework.decorators import parser_classes
+from rest_framework.parsers import MultiPartParser,FileUploadParser
 
 # Create your views here.
 
@@ -550,15 +552,17 @@ class GetNotifications(APIView):
 
 class SetAvatar(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = (FileUploadParser,)
 
     def post(self, request, format=None):
         try:
-            image = request.FILES.get("avatar")
+            image = request.body
             user = request.user
             account = Account.objects.get(user=user)
             account.avatar = image
             account.save()
-            return Response({"Success": "Avatar saved"}, status=status.HTTP_204_NO_CONTENT)
+
+            return Response(None, status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 

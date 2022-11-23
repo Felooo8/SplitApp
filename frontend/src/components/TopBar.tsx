@@ -134,10 +134,10 @@ export default function SearchAppBar() {
                     <Avatar />
                     Profile
                   </MenuItem>
-                  <MenuItem onClick={handleClose}>
+                  {/* <MenuItem onClick={handleClose}>
                     <Avatar />
                     My account
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                       <Logout fontSize="small" />
