@@ -71,9 +71,10 @@ function Summary() {
         </h5>
       );
     } else if (total === 0) {
-      return (
-        <h5 style={{ color: "black", padding: "10px" }}>You have no debts!</h5>
-      );
+      return;
+      // (
+      //   <h5 style={{ color: "black", padding: "10px" }}>You have no debts!</h5>
+      // );
     }
     return (
       <h5 style={{ color: "green", padding: "10px" }}>

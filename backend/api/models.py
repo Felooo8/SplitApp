@@ -50,7 +50,8 @@ class Account(models.Model):
 
     def save(self, *args, **kwargs):
         if self.avatar.name != self.__previous_avatar_name:
-            self.avatar.storage.delete(self.__previous_avatar_name)
+            if self.__previous_avatar_name != None:
+                self.avatar.storage.delete(self.__previous_avatar_name)
             self.__previous_avatar_name = self.avatar.name
         super(Account, self).save(*args, **kwargs)
 

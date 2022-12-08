@@ -18,7 +18,7 @@ const declineInvitationUrl = "/api/declineInvitation/byUser";
 const cancelInvitationUrl = "/api/cancelInvitation/byUser";
 
 export default function SearchResult(props) {
-  console.log(props);
+  // console.log(props);
 
   const manageRequest = (url) => {
     fetch(Constants.SERVER + url, {
@@ -31,7 +31,7 @@ export default function SearchResult(props) {
     })
       .then((response) => {
         if (response.ok) {
-          props.toggle(url.substring(0, 3));
+          props.toggle(url.substring(5, 8));
         } else {
           throw Error("Something went wrong");
         }
