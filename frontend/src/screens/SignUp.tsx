@@ -26,7 +26,7 @@ function Copyright(props: any) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        SplitApp
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -239,7 +239,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   id="userName"
-                  label="UserName"
+                  label="Username"
                   name="userName"
                   autoComplete="userName"
                   error={userNameError}

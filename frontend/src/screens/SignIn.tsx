@@ -27,7 +27,7 @@ function Copyright(props: any) {
     >
       {"Copyright © "}
       <Link color="inherit" href="https://mui.com/">
-        Your Website
+        SplitApp
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
