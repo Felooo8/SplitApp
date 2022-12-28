@@ -112,6 +112,7 @@ export default function SearchResult(props) {
                 alignItems: "center",
                 flexWrap: "wrap",
                 marginRight: "auto",
+                width: "-webkit-fill-available",
               }}
             >
               <DisplayAvatar user={props.user} />
@@ -122,7 +123,6 @@ export default function SearchResult(props) {
                 display: "block",
                 width: "min-content",
                 // marginRight: "4px",
-                // color: isBorrowed(props.debt) ? "orange" : "green",
               }}
             >
               {props.isPending ? (

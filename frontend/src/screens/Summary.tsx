@@ -11,6 +11,7 @@ import Error from "../components/Error";
 import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
 import SummaryItem from "../components/SummaryItem";
+import GroupItem from "../components/GroupItem";
 
 type Errors = {
   user: boolean;
@@ -67,14 +68,13 @@ function Summary() {
     if (total > 0) {
       return (
         <h5 style={{ color: "orange", padding: "10px" }}>
-          Overall, you owe ${Math.abs(total)}
+          Overall, you owe ${Math.abs(total).toFixed(2)}
         </h5>
       );
     } else if (total === 0) {
-      return;
-      // (
-      //   <h5 style={{ color: "black", padding: "10px" }}>You have no debts!</h5>
-      // );
+      return (
+        <h5 style={{ color: "black", padding: "10px" }}>You have no debts!</h5>
+      );
     }
     return (
       <h5 style={{ color: "green", padding: "10px" }}>
@@ -147,11 +147,13 @@ function Summary() {
               />
             ) : (
               Object.entries(summaries).map(([key, value], index) => (
-                <SummaryItem
+                <GroupItem
                   key={index}
-                  user={{ id: value[1], username: key }}
-                  debt={value[0]}
+                  id={value[1]}
+                  balance={value[0]}
+                  name={key}
                   index={index}
+                  isGroup={false}
                 />
               ))
             )}

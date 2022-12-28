@@ -97,6 +97,8 @@
 .manageInvitations > * {
   padding-right: 0 !important;
   padding-left: 18px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .addExpense > * {

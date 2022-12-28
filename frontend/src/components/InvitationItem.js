@@ -32,7 +32,7 @@ export default function InvitationItem(props) {
   };
 
   return (
-    <div style={summarizing}>
+    <div style={body}>
       <Slide
         direction="right"
         in={true}
@@ -41,6 +41,7 @@ export default function InvitationItem(props) {
           display: "inline-flex",
           width: "90%",
           padding: "16px",
+          maxWidth: Constants.ITEM_MAX_WIDTH,
         }}
       >
         <Paper
@@ -67,39 +68,30 @@ export default function InvitationItem(props) {
               />
               <Text>{props.invitation.sender_username}</Text>
             </div>
-            <RowStack
-              style={{
-                display: "block",
-                width: "min-content",
-                // marginRight: "4px",
-                // color: isBorrowed(props.debt) ? "orange" : "green",
-              }}
-            >
-              <div style={{ display: "flex" }} className="manageInvitations">
-                <ListItemButton
-                  onClick={() => manageRequest(acceptInvitationUrl)}
-                >
-                  <PersonAddAltRoundedIcon
-                    sx={{
-                      width: Constants.AVATAR_SIZE,
-                      height: Constants.AVATAR_SIZE,
-                      fontSize: "2rem",
-                    }}
-                  />
-                </ListItemButton>
-                <ListItemButton
-                  onClick={() => manageRequest(declineInvitationUrl)}
-                >
-                  <PersonAddDisabledIcon
-                    sx={{
-                      width: Constants.AVATAR_SIZE,
-                      height: Constants.AVATAR_SIZE,
-                      fontSize: "2rem",
-                    }}
-                  />
-                </ListItemButton>
-              </div>
-            </RowStack>
+            <div style={{ display: "flex" }} className="manageInvitations">
+              <ListItemButton
+                onClick={() => manageRequest(acceptInvitationUrl)}
+              >
+                <PersonAddAltRoundedIcon
+                  sx={{
+                    width: Constants.AVATAR_SIZE,
+                    height: Constants.AVATAR_SIZE,
+                    fontSize: "2rem",
+                  }}
+                />
+              </ListItemButton>
+              <ListItemButton
+                onClick={() => manageRequest(declineInvitationUrl)}
+              >
+                <PersonAddDisabledIcon
+                  sx={{
+                    width: Constants.AVATAR_SIZE,
+                    height: Constants.AVATAR_SIZE,
+                    fontSize: "2rem",
+                  }}
+                />
+              </ListItemButton>
+            </div>
           </WholeStack>
         </Paper>
       </Slide>
@@ -107,7 +99,7 @@ export default function InvitationItem(props) {
   );
 }
 
-const summarizing = {
+const body = {
   maxWidth: Constants.ITEM_MAX_WIDTH,
   width: "100%",
   marginLeft: "auto",
@@ -123,11 +115,6 @@ const Text = styled.span`
   display: flex;
   text-align: left;
   margin-left: 5px;
-`;
-
-const RowStack = styled.div`
-  width: -webkit-fill-available;
-  display: table-row-group;
 `;
 
 const WholeStack = styled.div`

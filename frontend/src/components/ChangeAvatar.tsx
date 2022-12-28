@@ -27,13 +27,12 @@ export default function ChangeAvatar(props: props) {
   const handleUploadAvatar = () => {
     if (!avatar) return;
     const formData = new FormData();
-    formData.append("image", avatar, avatar.name);
+    formData.append("image", avatar);
 
     fetch(Constants.SERVER + "/api/setAvatar", {
       method: "POST",
       headers: {
         Accept: "application/json",
-        "content-type": "multipart/form-data",
         Authorization: `Token ${localStorage.getItem("token")}`,
       },
       body: formData,

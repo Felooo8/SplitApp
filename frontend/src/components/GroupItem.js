@@ -16,8 +16,7 @@ export default function GroupItem(props) {
   };
 
   return (
-    <div style={summarizing}>
-      {/* <div style={{ padding: "5px" }}> */}
+    <div style={body}>
       <Slide
         direction="right"
         in={true}
@@ -39,7 +38,7 @@ export default function GroupItem(props) {
                 id: props.id,
                 username: props.name,
               }}
-              isGroup={true}
+              isGroup={props.isGroup}
             />
             <div
               style={{
@@ -73,7 +72,7 @@ export default function GroupItem(props) {
   );
 }
 
-const summarizing = {
+const body = {
   width: "100%",
   marginLeft: "auto",
   marginRight: "auto",

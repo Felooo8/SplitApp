@@ -228,25 +228,25 @@ function Groups() {
             <React.Fragment>
               <h5>Your groups:</h5>
               {groups.map((group, index) => (
-                <div key={index}>
-                  <IconButton
-                    component={Link}
-                    to={`/mygroup/${group.id}/${group.group_name}`}
-                    // variant="contained"
-                    // color="default"
-                    style={{
-                      textDecoration: "none",
-                      width: "100%",
-                    }}
-                  >
-                    <GroupItem
-                      name={group.group_name}
-                      index={index}
-                      balance={group.balance}
-                      id={group.id}
-                    />
-                  </IconButton>
-                </div>
+                <IconButton
+                  component={Link}
+                  to={`/mygroup/${group.id}/${group.group_name}`}
+                  // variant="contained"
+                  // color="default"
+                  style={{
+                    textDecoration: "none",
+                    width: "100%",
+                  }}
+                  key={index}
+                >
+                  <GroupItem
+                    name={group.group_name}
+                    index={index}
+                    balance={group.balance}
+                    id={group.id}
+                    isGroup={true}
+                  />
+                </IconButton>
               ))}
             </React.Fragment>
           )}
