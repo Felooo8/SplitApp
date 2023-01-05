@@ -55,7 +55,7 @@ export default function SignIn() {
     return username.length > 0 && password.length > 0;
   }
 
-  const handleLogin = (token: string) => {
+  const autoLogIn = (token: string) => {
     fetch(Constants.SERVER + "/api/auth/users/me/", {
       headers: {
         Authorization: `Token ${token}`,
@@ -68,7 +68,7 @@ export default function SignIn() {
             .then((data) => {
               localStorage.setItem("UserName", data.username);
             })
-            .then(() => navigate("/"));
+            .then(() => window.location.replace("/"));
         } else {
           throw Error("Something went wrong");
         }
@@ -103,7 +103,7 @@ export default function SignIn() {
           if (response.ok) {
             response.json().then((data) => {
               localStorage.setItem("token", data.token);
-              handleLogin(data.token);
+              autoLogIn(data.token);
               setError(false);
             });
           } else {

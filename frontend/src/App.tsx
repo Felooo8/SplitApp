@@ -1,6 +1,6 @@
 import "./App.css";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import TopBar from "./components/TopBar";
@@ -17,11 +17,32 @@ import Summary from "./screens/Summary";
 import Profile from "./screens/Profile";
 
 function App() {
+  const [isAuth, setIsAuth] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<string>("Guest");
   console.log(localStorage.getItem("token"));
+
+  const setAuth = () => {
+    let token = localStorage.getItem("token");
+    if (token !== undefined || token !== null) {
+      setIsAuth(Boolean(token));
+    }
+  };
+
+  const setUsername = () => {
+    const loggedInUser = localStorage.getItem("UserName");
+    if (loggedInUser) {
+      setCurrentUser(String(loggedInUser));
+    }
+  };
+
+  useEffect(() => {
+    setUsername();
+    setAuth();
+  }, []);
 
   return (
     <div className="App">
-      <TopBar />
+      <TopBar username={currentUser} isAuth={isAuth} />
       <Router>
         <Routes>
           <Route path="/" element={<PrivateRoute />}>

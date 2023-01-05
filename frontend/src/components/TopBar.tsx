@@ -13,10 +13,13 @@ import * as React from "react";
 import { logout } from "../apis/auth";
 import SearchBar from "./SearchBar";
 
-export default function SearchAppBar() {
+type Props = {
+  username: string;
+  isAuth: boolean;
+};
+
+export default function SearchAppBar(props: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [currentUser, setCurrentUser] = React.useState<any>(undefined);
-  const [isAuth, setIsAuth] = React.useState<boolean>();
 
   const handleLogout = () => {
     logout();
@@ -28,25 +31,6 @@ export default function SearchAppBar() {
     window.location.replace(url);
   };
 
-  const showUserName = () => {
-    if (currentUser !== undefined || currentUser !== null) {
-      return currentUser;
-    }
-    return "Guest";
-  };
-
-  const getUsername = () => {
-    let username = localStorage.getItem("UserName");
-    if (username !== undefined || username !== null) {
-      setCurrentUser(localStorage.getItem("UserName"));
-    }
-  };
-  const setAuth = () => {
-    let token = localStorage.getItem("token");
-    if (token !== undefined || token !== null) {
-      setIsAuth(Boolean(token));
-    }
-  };
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -54,16 +38,6 @@ export default function SearchAppBar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  React.useEffect(() => {
-    getUsername();
-    setAuth();
-    const interval = setInterval(() => {
-      getUsername();
-      setAuth();
-    }, 500);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <Box sx={{ flexGrow: 1 }} style={{ marginBottom: "75px", zIndex: 100 }}>
@@ -74,7 +48,7 @@ export default function SearchAppBar() {
         <Toolbar
           style={{ maxWidth: "500px", margin: "auto", width: "inherit" }}
         >
-          {isAuth ? <SearchBar /> : null}
+          {props.isAuth ? <SearchBar /> : null}
           <Box sx={{ flexGrow: 0 }} style={{ marginLeft: "auto" }}>
             <Tooltip title="Open settings">
               <IconButton
@@ -85,7 +59,7 @@ export default function SearchAppBar() {
                 onClick={handleMenu}
                 color="inherit"
               >
-                <Typography>{showUserName()}</Typography>
+                <Typography>{props.username}</Typography>
                 <AccountCircle />
               </IconButton>
             </Tooltip>
@@ -124,10 +98,10 @@ export default function SearchAppBar() {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              {isAuth ? (
+              {props.isAuth ? (
                 <Box>
                   <MenuItem style={{ minHeight: "20px" }}>
-                    {showUserName()}
+                    {props.username}
                   </MenuItem>
                   <Divider />
                   <MenuItem onClick={() => handleAction("/profile")}>
