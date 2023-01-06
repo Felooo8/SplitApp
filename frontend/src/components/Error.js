@@ -25,10 +25,10 @@ export default function Error(props) {
     <div style={{ marginTop: "10em" }}>
       <ReportIcon style={icon} />
       <h5>Aaaah! Something went wrong</h5>
-      <Typography variant="subtitle1" gutterBottom component="div">
+      <Typography variant="subtitle1" gutterBottom>
         Brace yourself till we get the error fixed.
       </Typography>
-      <Typography variant="subtitle1" gutterBottom component="div">
+      <Typography variant="subtitle1" gutterBottom>
         You may also refresh the page or try again later
       </Typography>
       <Button variant="outlined" onClick={refresh}>

@@ -14,7 +14,6 @@ import SummaryItem from "../components/SummaryItem";
 import GroupItem from "../components/GroupItem";
 
 type Errors = {
-  user: boolean;
   summary: boolean;
 };
 
@@ -27,7 +26,6 @@ function Summary() {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [errors, setErrors] = useState<Errors>({
     summary: false,
-    user: false,
   });
   const timer = React.useRef<number>();
 
@@ -65,7 +63,7 @@ function Summary() {
   };
 
   const Overrall = () => {
-    if (total > 0) {
+    if (total < 0) {
       return (
         <h5 style={{ color: "orange", padding: "10px" }}>
           Overall, you owe ${Math.abs(total).toFixed(2)}

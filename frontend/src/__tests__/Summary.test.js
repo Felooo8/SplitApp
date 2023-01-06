@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import Summary from "../screens/Summary";
 import userEvent from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
@@ -8,10 +8,10 @@ import Constants from "../apis/Constants";
 
 const firstUsername = "Andrew";
 const firstUserID = 1;
-const firstUserDebt = 200;
+const firstUserDebt = -200;
 const secondUsername = "Tristan";
 const secondUserID = 2;
-const secondUserDebt = -300;
+const secondUserOwning = 300;
 
 const server = setupServer(
   rest.get(Constants.SERVER + "/api/summarize", (req, res, ctx) => {
@@ -20,7 +20,7 @@ const server = setupServer(
     return res(
       ctx.json({
         [firstUsername]: [firstUserDebt, firstUserID],
-        [secondUsername]: [secondUserDebt, secondUserID],
+        [secondUsername]: [secondUserOwning, secondUserID],
       })
     );
   }),
@@ -34,7 +34,7 @@ const server = setupServer(
   })
 );
 
-describe("SignIn component", () => {
+describe("Summary component", () => {
   beforeAll(() => server.listen());
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
@@ -64,25 +64,85 @@ describe("SignIn component", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Refresh/ })).toBeInTheDocument();
   });
+
   it("Fetch", async () => {
     const { container } = render(<Summary />);
-    let total = Math.abs(firstUserDebt + secondUserDebt).toFixed(2);
+    let total = Math.abs(firstUserDebt + secondUserOwning).toFixed(2);
+    // expect(
+    //   await screen.findByText("Overall, people owe you $" + total)
+    // ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByRole(
+          "heading",
+          { level: 5 },
+          { description: "Overall, people owe you $" + total }
+        )
+      ).toHaveStyle(`color: green`)
+    );
+
+    expect((await screen.findByText(/owes you/)).parentElement).toHaveStyle(
+      `color: green`
+    );
+    expect((await screen.findByText(/you owe/)).parentElement).toHaveStyle(
+      `color: orange`
+    );
+
     expect(
-      await screen.findByText("Overall, people owe you $" + total)
-    ).toBeInTheDocument();
+      (await screen.findByText("$" + Math.abs(firstUserDebt))).parentElement
+    ).toHaveStyle(`color: orange`);
+    expect(
+      (await screen.findByText("$" + Math.abs(secondUserOwning))).parentElement
+    ).toHaveStyle(`color: green`);
 
     // check if there are tu summary components
     const boxes = container.getElementsByClassName("MuiPaper-elevation5");
     expect(boxes).toHaveLength(2);
     expect(boxes.item(0).querySelector("span").innerHTML == firstUsername);
     expect(boxes.item(1).querySelector("span").innerHTML == secondUsername);
-    screen.debug();
-  });
-  it("Not logged in - redirect", () => {
-    render(<Summary />);
+    // screen.logTestingPlaygroundURL();
   });
 
-  it("Entering data", () => {
+  it("Fetch - user has debts", async () => {
     render(<Summary />);
+    server.use(
+      // Runtime request handler override for the "GET /api/summarize".
+      rest.get(Constants.SERVER + "/api/summarize", (req, res, ctx) => {
+        return res(ctx.json({ [firstUsername]: [firstUserDebt, firstUserID] }));
+      })
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByRole(
+          "heading",
+          { level: 5 },
+          { description: "Overall, you owe $" + Math.abs(firstUserDebt) }
+        )
+      ).toHaveStyle(`color: orange`)
+    );
+  });
+
+  it("Fetch - error", async () => {
+    render(<Summary />);
+    server.use(
+      // Runtime request handler override for the "GET /api/summarize".
+      rest.get(Constants.SERVER + "/api/summarize", (req, res, ctx) => {
+        return res(ctx.status(400));
+      })
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByRole(
+          "heading",
+          { level: 5 },
+          { description: "Aaaah! Something went wrong" }
+        )
+      ).toBeInTheDocument()
+    );
+
+    expect(screen.getAllByRole("heading", { level: 6 })).toHaveLength(2);
+
+    expect(screen.getByRole("button", { name: "Refresh" })).toBeInTheDocument();
+    // screen.debug();
   });
 });
