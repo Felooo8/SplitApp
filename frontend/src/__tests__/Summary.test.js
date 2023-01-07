@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import Summary from "../screens/Summary";
+import GroupItem from "../components/GroupItem";
 import userEvent from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
 import { rest } from "msw";
@@ -140,9 +141,41 @@ describe("Summary component", () => {
       ).toBeInTheDocument()
     );
 
-    expect(screen.getAllByRole("heading", { level: 6 })).toHaveLength(2);
+    expect(
+      await screen.findByText(/Brace yourself till we get the error fixed./)
+    ).toBeInTheDocument();
+
+    expect(
+      await screen.findByText(
+        /You may also refresh the page or try again later/
+      )
+    ).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: "Refresh" })).toBeInTheDocument();
     // screen.debug();
+  });
+
+  it("BottomAppBar", async () => {
+    const selectedColor = `color: rgb(25 118 210)`;
+    const notSelectedColor = `color: rgb(0, 0, 0, 0.6)`;
+    render(<Summary />);
+    const homeIcon = screen.getByTestId("HomeIcon");
+    await waitFor(() => expect(homeIcon).toBeInTheDocument());
+    expect(homeIcon).toHaveStyle(selectedColor);
+    const groupsIcon = screen.getByTestId("GroupsIcon");
+    expect(groupsIcon).toBeInTheDocument();
+    expect(groupsIcon).toHaveStyle(notSelectedColor);
+    const paymentsIcon = screen.getByTestId("PaymentsIcon");
+    expect(paymentsIcon).toBeInTheDocument();
+    expect(paymentsIcon).toHaveStyle(notSelectedColor);
+    const addCardIcon = screen.getByTestId("AddCardIcon");
+    expect(addCardIcon).toBeInTheDocument();
+    expect(addCardIcon).toHaveStyle(notSelectedColor);
+    const mailIcon = screen.getByTestId("MailIcon");
+    expect(mailIcon).toBeInTheDocument();
+    expect(mailIcon).toHaveStyle(notSelectedColor);
+    const addIcon = screen.getByTestId("AddIcon");
+    expect(addIcon).toBeInTheDocument();
+    expect(addIcon).toHaveStyle(`color: rgb(255 255 255)`);
   });
 });

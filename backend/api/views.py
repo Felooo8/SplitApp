@@ -7,7 +7,7 @@ from .serializers import (
     GroupSerializer,
     GroupExpenseSerializer,
     FriendsInvitationSerializer,
-    AccountSerializer
+    AccountSerializer, SimpleGroupSerializer
 )
 from .models import (Expense, Group, types, GroupExpense,Account,FriendsInvitation)
 from rest_framework.views import APIView
@@ -78,6 +78,19 @@ class GetUserByID(APIView):
             {"Bad Request": "User ID paramater not found in request"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+class GetAllUsersGroups(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        user = request.user
+        try:
+            sorted_groups = Group.objects.filter(users=user)
+            data = SimpleGroupSerializer(sorted_groups, many=True, context={'user': user}).data
+            return Response(data, status=status.HTTP_200_OK)
+        except:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetUsersGroups(APIView):

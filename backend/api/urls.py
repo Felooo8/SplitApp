@@ -12,6 +12,7 @@ from .views import (
     CreateNewUser,
     SearchUsersToAdd,
     Profile,
+    GetAllUsersGroups
 )
 from .groups.views import (
     GetGroupExpenses,
@@ -43,6 +44,7 @@ app_name = "api"
 urlpatterns = [
     path("sign-up", CreateNewUser.as_view(), name="sign-up"),
     path("username", GetUserByID.as_view(), name="username"),
+    path("groups", GetAllUsersGroups.as_view(), name="groups"),
     path("group", GetUsersGroups.as_view(), name="group"),
     path("groupExpenses/<int:id>", GetGroupExpenses.as_view(), name="groupExpenses"),
     path("chartData/<int:id>", GetChartValues.as_view(), name="chartData"),

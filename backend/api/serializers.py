@@ -15,6 +15,18 @@ class AccountSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class SimpleGroupSerializer(serializers.ModelSerializer):
+    balance = serializers.SerializerMethodField()
+
+    def get_balance(self, obj):
+        user = self.context.get("user")
+        return obj.balance(user)
+
+    class Meta:
+        model = Group
+        fields = ('id', 'group_name', 'balance')
+
+
 class GroupSerializer(serializers.ModelSerializer):
     usernames = serializers.SerializerMethodField()
     balance = serializers.SerializerMethodField()

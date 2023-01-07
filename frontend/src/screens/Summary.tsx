@@ -10,7 +10,6 @@ import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
 import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
-import SummaryItem from "../components/SummaryItem";
 import GroupItem from "../components/GroupItem";
 
 type Errors = {
@@ -103,7 +102,7 @@ function Summary() {
       getSummarize();
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
-  }, []);
+  }, []); 
 
   if (Object.values(errors).some((error) => error === true)) {
     return (

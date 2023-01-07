@@ -43,7 +43,6 @@ export const style = {
 };
 type Group = {
   id: number;
-  spent_by_category: number;
   group_name: string;
   balance: number;
 };
@@ -99,7 +98,7 @@ function Groups() {
   };
 
   const getGroups = () => {
-    fetch(Constants.SERVER + "/api/group", {
+    fetch(Constants.SERVER + "/api/groups", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -109,6 +108,7 @@ function Groups() {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
+            console.log(data);
             setGroups(data);
             setLoading(false);
             setError(false);
