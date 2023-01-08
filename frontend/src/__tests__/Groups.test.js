@@ -6,6 +6,7 @@ import { act } from "react-dom/test-utils";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import Constants from "../apis/Constants";
+import { MemoryRouter } from "react-router-dom";
 
 const firstGroupID = 1;
 const firstGroupName = "First group";
@@ -33,10 +34,13 @@ const server = setupServer(
       ])
     );
   }),
-  rest.get(Constants.SERVER + "/api/getAvatar/:userID", (req, res, ctx) => {
-    // respond using a mocked JSON body
-    return res(ctx.json({}));
-  }),
+  rest.get(
+    Constants.SERVER + "/api/getGroupAvatar/:groupID",
+    (req, res, ctx) => {
+      // respond using a mocked JSON body
+      return res(ctx.json({}));
+    }
+  ),
   rest.get(Constants.SERVER + "/api/getNotifications", (req, res, ctx) => {
     // respond using a mocked JSON body
     return res(ctx.status(400), ctx.json({}));
@@ -73,7 +77,79 @@ describe("Groups component", () => {
       await screen.findByText(/When you join one, it'll show up here/)
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Refresh/ })).toBeInTheDocument();
-    screen.debug();
+  });
+
+  it("Fetch", async () => {
+    const { container } = render(<Groups />, { wrapper: MemoryRouter });
+    await waitFor(() =>
+      expect(
+        screen.getByRole(
+          "heading",
+          { level: 5 },
+          { description: "Your groups:" }
+        )
+      ).toBeInTheDocument()
+    );
+
+    expect(await screen.findByText(firstGroupName)).toBeInTheDocument();
+    expect(await screen.findByText(secondGroupName)).toBeInTheDocument();
+
+    expect((await screen.findByText(/owes you/)).parentElement).toHaveStyle(
+      `color: green`
+    );
+    expect((await screen.findByText(/you owe/)).parentElement).toHaveStyle(
+      `color: orange`
+    );
+
+    expect(
+      (await screen.findByText("$" + Math.abs(firstBalance))).parentElement
+    ).toHaveStyle(`color: orange`);
+    expect(
+      (await screen.findByText("$" + Math.abs(secondBalance))).parentElement
+    ).toHaveStyle(`color: green`);
+
+    // check if there are tu summary components
+    const boxes = container.getElementsByClassName("MuiPaper-elevation5");
+    expect(boxes).toHaveLength(2);
+    expect(boxes.item(0).querySelector("span").innerHTML == firstGroupName);
+    expect(boxes.item(1).querySelector("span").innerHTML == secondGroupName);
+  });
+
+  it("Are links correct", async () => {
+    const { container } = render(<Groups />, { wrapper: MemoryRouter });
+    await waitFor(() =>
+      expect(
+        screen.getByRole(
+          "heading",
+          { level: 5 },
+          { description: "Your groups:" }
+        )
+      ).toBeInTheDocument()
+    );
+
+    const iconButton1 = screen.getByRole("link", {
+      name: new RegExp(firstGroupName),
+      exact: false,
+    });
+    expect(iconButton1).toHaveAttribute(
+      "href",
+      "/mygroup/" + firstGroupID + "/" + firstGroupName
+    );
+
+    const iconButton2 = screen.getByRole("link", {
+      name: new RegExp(secondGroupName),
+      exact: false,
+    });
+    expect(iconButton2).toHaveAttribute(
+      "href",
+      "/mygroup/" + secondGroupID + "/" + secondGroupName
+    );
+
+    expect(
+      screen.getAllByRole("link", {
+        name: /owe/,
+      })
+    ).toHaveLength(2);
   });
 
   it("BottomAppBar", async () => {
