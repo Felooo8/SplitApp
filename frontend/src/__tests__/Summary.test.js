@@ -96,7 +96,7 @@ describe("Summary component", () => {
       (await screen.findByText("$" + Math.abs(secondUserOwning))).parentElement
     ).toHaveStyle(`color: green`);
 
-    // check if there are tu summary components
+    // check if there are two summary components
     const boxes = container.getElementsByClassName("MuiPaper-elevation5");
     expect(boxes).toHaveLength(2);
     expect(boxes.item(0).querySelector("span").innerHTML == firstUsername);

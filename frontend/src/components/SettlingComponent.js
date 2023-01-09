@@ -11,7 +11,7 @@ export default function Settling(props) {
     if (isBorrowed) {
       return "Set as Paid";
     }
-    console.log(props);
+    // console.log(props);
     return "Settle";
   };
 
@@ -36,6 +36,7 @@ export default function Settling(props) {
       );
       props.expense["settled"] = event.target.checked;
     }
+    props.toggle();
   };
 
   return (
