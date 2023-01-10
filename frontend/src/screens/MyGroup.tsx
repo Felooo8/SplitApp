@@ -22,7 +22,7 @@ import BottomAppBar from "../components/Appbar";
 import ChartPie from "../components/chart";
 import CreateNewGroup from "../components/CreateNewGroup";
 import Error from "../components/Error";
-import ExpenseItemGroup from "../components/ExpenseGroup";
+import ExpenseItem from "../components/Expense";
 import SkeletonItem from "../components/SkeletonItem";
 import { style } from "./Groups";
 
@@ -31,10 +31,10 @@ type Expense = {
   name: string;
   category: string;
   amount: number;
-  splitted: boolean;
-  date: string;
-  ower: number;
+  short_date: string;
   payer: number;
+  payer_username: string;
+  ower_username: "You";
   is_paid: boolean;
   settled: boolean;
 };
@@ -46,16 +46,11 @@ type Errors = {
   leave: boolean;
 };
 
-type Params = {
-  id: string | undefined;
-  groupName: SetStateAction<string>;
-};
-
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
 
-function Group() {
+export default function Group() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState([]);
@@ -64,7 +59,6 @@ function Group() {
   const [newGroupName, setNewGroupName] = useState<string>("");
   const [alertType, setAlertType] = useState<any>(undefined);
   const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
-  const [inputText, setInputText] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [openChangeName, setOpenChangeName] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -87,6 +81,7 @@ function Group() {
   };
   const handleCloseChangeName = () => setOpenChangeName(false);
 
+  // FETCH
   const getUser = () => {
     fetch(Constants.SERVER + "/api/auth/users/me/", {
       headers: {
@@ -153,7 +148,6 @@ function Group() {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            console.log(data);
             setKeys(data["keys"]);
             setValues(data["values"]);
             setErrors((errors) => ({
@@ -273,7 +267,7 @@ function Group() {
       });
   };
 
-  const getGroups = () => {
+  const getGroupExpenses = () => {
     fetch(Constants.SERVER + "/api/groupExpenses/" + id, {
       method: "GET",
       headers: {
@@ -303,6 +297,7 @@ function Group() {
       });
   };
 
+  // SNACKBARS
   const handleCloseSnackBar = (_event: any, reason: string) => {
     if (reason === "clickaway") {
       return;
@@ -314,6 +309,7 @@ function Group() {
     setOpenSnackBar(false);
   };
 
+  // TOGGLE
   const errorToggle = () => {
     setAlertText("Something went wrong");
     setAlertType("error");
@@ -325,12 +321,12 @@ function Group() {
       ...errors,
       delete: false,
     }));
-    getGroups();
+    getGroupExpenses();
     getTotalExpenses();
     getUser();
   };
 
-  const toggleSave = (user_id: number, userName: string) => {
+  const toggleSaveAddingUser = (user_id: number, userName: string) => {
     addUserToGroup(user_id, userName);
     setOpen(false);
     setAlertText("User " + userName + " is being added");
@@ -369,7 +365,7 @@ function Group() {
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
-      getGroups();
+      getGroupExpenses();
       getTotalExpenses();
       getUser();
     }, Constants.LOADING_DATA_DELAY);
@@ -392,7 +388,6 @@ function Group() {
     );
   }
 
-  console.log(expenses);
   return (
     <div style={{ marginBottom: "65px" }}>
       <Snackbar
@@ -438,9 +433,9 @@ function Group() {
         <div>
           <Stack spacing={2}>
             {expenses.map((expense, index) => (
-              <ExpenseItemGroup
+              <ExpenseItem
                 key={expense.id}
-                expense={expense}
+                expense={{ ...expense, ower_username: "You" }}
                 index={index}
                 currentUser={currentUser}
                 errorToggle={errorToggle}
@@ -452,7 +447,7 @@ function Group() {
               <ChartPie keys={keys} values={values} />
             </div>
           ) : null}
-          <Box>
+          <Box id="Managing group">
             <Button
               onClick={handleOpen}
               variant="outlined"
@@ -482,6 +477,7 @@ function Group() {
             </Button>
           </Box>
           <Modal
+            id="Adding user to group"
             open={open}
             onClose={handleClose}
             aria-labelledby="modal-modal-title"
@@ -491,11 +487,12 @@ function Group() {
               <AddUserToGroup
                 id={id}
                 toggleClose={toggleClose}
-                toggleSave={toggleSave}
+                toggleSave={toggleSaveAddingUser}
               />
             </Box>
           </Modal>
           <Modal
+            id="Change group name"
             open={openChangeName}
             onClose={handleCloseChangeName}
             aria-labelledby="modal-modal-title"
@@ -505,6 +502,8 @@ function Group() {
               <CreateNewGroup
                 toggleClose={toggleCloseChangeName}
                 toggleSave={toggleSaveChangeName}
+                basic={true}
+                heading="Change group name"
               />
             </Box>
           </Modal>
@@ -514,8 +513,6 @@ function Group() {
     </div>
   );
 }
-
-export default Group;
 
 const chart = {
   width: "30%",

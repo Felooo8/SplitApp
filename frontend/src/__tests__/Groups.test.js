@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import Groups from "../screens/Groups";
-import GroupItem from "../components/GroupItem";
+import SummaryItem from "../components/SummaryItem";
 import userEvent from "@testing-library/user-event";
 import { act } from "react-dom/test-utils";
 import { rest } from "msw";

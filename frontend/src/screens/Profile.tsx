@@ -26,7 +26,7 @@ function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
 
-type Profile = {
+type ProfileType = {
   id: number;
   username: string;
   email: string;
@@ -39,10 +39,19 @@ type Errors = {
   data: boolean;
 };
 
+const defaultProfile = {
+  id: 1,
+  username: "username",
+  email: "email",
+  first_name: "First name",
+  last_name: "Second name",
+  avatarURL: "avatar",
+};
+
 export default function Profile() {
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<ProfileType>(defaultProfile);
   const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
   const timerAlert = React.useRef<number>();
   const [alertText, setAlertText] = useState<string>("");
@@ -155,7 +164,7 @@ export default function Profile() {
       /\s/g,
       ""
     );
-    profile[keyName] = event.target.value;
+    (profile as any)[keyName] = event.target.value;
     setProfile({ ...profile });
   };
 

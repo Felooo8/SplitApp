@@ -10,17 +10,20 @@ import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
 import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
-import GroupItem from "../components/GroupItem";
+import SummaryItem from "../components/SummaryItem";
 
 type Errors = {
   summary: boolean;
 };
 
-function Summary() {
-  const [summaries, setSummaries] = useState<{
-    [key: string]: [number, number];
-  }>({});
-  const [total, setTotal] = useState<number>(0);
+// key == username, [number, number] == [user balance, user id]
+type SummaryType = {
+  [key: string]: [number, number];
+};
+
+export default function Summary() {
+  const [summaries, setSummaries] = useState<SummaryType>({});
+  const [totalBalance, setTotalBalance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [errors, setErrors] = useState<Errors>({
@@ -41,7 +44,7 @@ function Summary() {
           response.json().then((data) => {
             console.log(data);
             setSummaries(data);
-            inTotal(data);
+            settingTotalBalance(data);
             setLoading(false);
             setErrors((errors) => ({
               ...errors,
@@ -61,21 +64,21 @@ function Summary() {
       });
   };
 
-  const Overrall = () => {
-    if (total < 0) {
+  const OverrallHeading = () => {
+    if (totalBalance < 0) {
       return (
         <h5 style={{ color: "orange", padding: "10px" }}>
-          Overall, you owe ${Math.abs(total).toFixed(2)}
+          Overall, you owe ${Math.abs(totalBalance).toFixed(2)}
         </h5>
       );
-    } else if (total === 0) {
+    } else if (totalBalance === 0) {
       return (
         <h5 style={{ color: "black", padding: "10px" }}>You have no debts!</h5>
       );
     }
     return (
       <h5 style={{ color: "green", padding: "10px" }}>
-        Overall, people owe you ${Math.abs(total).toFixed(2)}
+        Overall, people owe you ${Math.abs(totalBalance).toFixed(2)}
       </h5>
     );
   };
@@ -88,12 +91,12 @@ function Summary() {
     getSummarize();
   };
 
-  const inTotal = (summaries: { [key: string]: [number, number] }) => {
-    var total = 0;
+  const settingTotalBalance = (summaries: SummaryType) => {
+    var totalBalance = 0;
     for (let key in summaries) {
-      total += summaries[key][0];
+      totalBalance += summaries[key][0];
     }
-    setTotal(total);
+    setTotalBalance(totalBalance);
   };
 
   useEffect(() => {
@@ -102,7 +105,7 @@ function Summary() {
       getSummarize();
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
-  }, []); 
+  }, []);
 
   if (Object.values(errors).some((error) => error === true)) {
     return (
@@ -132,7 +135,7 @@ function Summary() {
               <LinearProgress sx={{ height: "8px" }} />
             </Fade>
           </Box>
-          {total !== null ? Overrall() : null}
+          {totalBalance !== null ? OverrallHeading() : null}
           <Stack spacing={2} style={{ marginBottom: "10px" }}>
             {Object.keys(summaries).length === 0 ? (
               <NothingToDisplay
@@ -144,7 +147,7 @@ function Summary() {
               />
             ) : (
               Object.entries(summaries).map(([key, value], index) => (
-                <GroupItem
+                <SummaryItem
                   key={index}
                   id={value[1]}
                   balance={value[0]}
@@ -161,5 +164,3 @@ function Summary() {
     </div>
   );
 }
-
-export default Summary;

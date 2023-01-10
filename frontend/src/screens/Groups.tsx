@@ -21,7 +21,7 @@ import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
 import CreateNewGroup from "../components/CreateNewGroup";
 import Error from "../components/Error";
-import GroupItem from "../components/GroupItem";
+import SummaryItem from "../components/SummaryItem";
 import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
 
@@ -29,25 +29,13 @@ function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
 
-export const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "100%",
-  height: "100%",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  padding: "0",
-};
 type Group = {
   id: number;
   group_name: string;
   balance: number;
 };
 
-function Groups() {
+export default function Groups() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
@@ -58,12 +46,8 @@ function Groups() {
   const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
   const [open, setOpen] = useState(false);
   const timerAlert = React.useRef<number>();
-  const handleOpen = () => {
-    setOpenSnackBar(false);
-    setOpen(true);
-  };
-  const handleClose = () => setOpen(false);
 
+  //FETCH
   const createNewGroup = (groupName: string) => {
     fetch(Constants.SERVER + "/api/createGroup", {
       method: "POST",
@@ -123,6 +107,7 @@ function Groups() {
       });
   };
 
+  //TOGGLE
   const toggleFetch = () => {
     setRefreshing(true);
     timer.current = window.setTimeout(() => {
@@ -131,7 +116,7 @@ function Groups() {
     getGroups();
   };
 
-  const toggleSave = (groupName: string) => {
+  const toggleSaveCreatingGroup = (groupName: string) => {
     createNewGroup(groupName);
     setOpen(false);
     setAlertText("Group " + groupName + " is being created");
@@ -139,12 +124,14 @@ function Groups() {
     setOpenSnackBar(true);
   };
 
-  const toggleClose = () => {
+  const toggleCloseCreatingGroup = () => {
     setOpen(false);
     setAlertText("Group not created");
     setAlertType("warning");
     setOpenSnackBar(true);
   };
+
+  //SNACKBARS
   const handleCloseSnackBar = (
     event: Event | SyntheticEvent<Element, Event>,
     reason: string
@@ -154,6 +141,12 @@ function Groups() {
     }
     setOpenSnackBar(false);
   };
+
+  const handleOpen = () => {
+    setOpenSnackBar(false);
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
 
   const handleCloseSnackBarAlert = (event: SyntheticEvent<Element, Event>) => {
     setOpenSnackBar(false);
@@ -176,7 +169,6 @@ function Groups() {
     );
   }
 
-  console.log(groups);
   return (
     <div style={{ marginBottom: "65px" }}>
       <Snackbar
@@ -239,7 +231,7 @@ function Groups() {
                   }}
                   key={index}
                 >
-                  <GroupItem
+                  <SummaryItem
                     name={group.group_name}
                     index={index}
                     balance={group.balance}
@@ -266,8 +258,10 @@ function Groups() {
           >
             <Box sx={style}>
               <CreateNewGroup
-                toggleClose={toggleClose}
-                toggleSave={toggleSave}
+                toggleClose={toggleCloseCreatingGroup}
+                toggleSave={toggleSaveCreatingGroup}
+                basic={false}
+                heading="Create group"
               />
             </Box>
           </Modal>
@@ -278,4 +272,15 @@ function Groups() {
   );
 }
 
-export default Groups;
+export const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "100%",
+  height: "100%",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  padding: "0",
+};

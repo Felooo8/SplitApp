@@ -12,7 +12,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import Constants from "../apis/Constants";
 import Error from "../components/Error";
@@ -42,7 +41,6 @@ export default function SignIn() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [, setError] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   function ValidData() {
     if (!ifValidData) {

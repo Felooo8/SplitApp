@@ -1,22 +1,21 @@
-import "../App.css";
-
-import Paper from "@mui/material/Paper";
-import Slide from "@mui/material/Slide";
 import React from "react";
 import styled from "styled-components";
-
+import "../App.css";
+import Slide from "@mui/material/Slide";
+import Paper from "@mui/material/Paper";
 import Constants from "../apis/Constants";
-import DisplayAvatar from "../components/DisplayAvatar";
+import DisplayAvatar from "./DisplayAvatar";
 
-export default function GroupItem(props) {
+export default function SummaryItem(props) {
   console.log(props);
 
   const isBorrowed = (debt) => {
-    return debt < 0;
+    return debt > 0;
   };
 
   return (
-    <div style={body}>
+    <div style={summarizing}>
+      {/* <div style={{ padding: "5px" }}> */}
       <Slide
         direction="right"
         in={true}
@@ -25,7 +24,6 @@ export default function GroupItem(props) {
           display: "inline-flex",
           width: "90%",
           padding: "16px",
-          maxWidth: Constants.ITEM_MAX_WIDTH,
         }}
       >
         <Paper
@@ -33,36 +31,32 @@ export default function GroupItem(props) {
           style={{ minHeight: "100px", borderRadius: "10px" }}
         >
           <WholeStack>
-            <DisplayAvatar
-              user={{
-                id: props.id,
-                username: props.name,
-              }}
-              isGroup={props.isGroup}
-            />
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 flexWrap: "wrap",
                 marginRight: "auto",
-                width: "-webkit-fill-available",
               }}
             >
-              <Text>{props.name}</Text>
+              {/* <Avatar sx={{ width: 56, height: 56, fontSize: "2rem" }}>
+                {props.username[0]}
+              </Avatar> */}
+              <DisplayAvatar user={props.user} />
+              <Text>{props.user.username}</Text>
             </div>
             <RowStack
               style={{
                 display: "table",
                 width: "min-content",
                 marginRight: "4px",
-                color: isBorrowed(props.balance) ? "orange" : "green",
+                color: isBorrowed(props.debt) ? "orange" : "green",
               }}
             >
               <YouBorrowed>
-                {isBorrowed(props.balance) ? "you owe" : "owes you"}
+                {isBorrowed(props.debt) ? "you owe" : "owes you"}
               </YouBorrowed>
-              <Price>${Math.abs(props.balance)}</Price>
+              <Price>${Math.abs(props.debt)}</Price>
             </RowStack>
           </WholeStack>
         </Paper>
@@ -72,7 +66,8 @@ export default function GroupItem(props) {
   );
 }
 
-const body = {
+const summarizing = {
+  maxWidth: Constants.ITEM_MAX_WIDTH,
   width: "100%",
   marginLeft: "auto",
   marginRight: "auto",

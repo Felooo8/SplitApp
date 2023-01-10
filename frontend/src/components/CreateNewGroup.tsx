@@ -47,7 +47,7 @@ export default function CreateNewGroup(props: any) {
           variant="h5"
           gutterBottom
         >
-          Create a group
+          {props.heading}
         </Typography>
         <Button
           style={right}
@@ -72,23 +72,27 @@ export default function CreateNewGroup(props: any) {
           onChange={handleInputChange}
         />
       </Row>
-      <Box style={{ marginTop: "1rem", padding: "0 32px" }}>
-        <Typography variant="subtitle2" gutterBottom>
-          Group members
-        </Typography>
-        <Row>
-          <PersonAddIcon
-            style={{
-              fontSize: "38",
-              margin: "auto",
-              marginRight: "10px",
-            }}
-          />
-          <Typography variant="body1" style={text} gutterBottom>
-            You will be able to add group members after you save this new group.
+
+      {!props.basic ? (
+        <Box style={{ marginTop: "1rem", padding: "0 32px" }}>
+          <Typography variant="subtitle2" gutterBottom>
+            Group members
           </Typography>
-        </Row>
-      </Box>
+          <Row>
+            <PersonAddIcon
+              style={{
+                fontSize: "38",
+                margin: "auto",
+                marginRight: "10px",
+              }}
+            />
+            <Typography variant="body1" style={text} gutterBottom>
+              You will be able to add group members after you save this new
+              group.
+            </Typography>
+          </Row>
+        </Box>
+      ) : null}
     </div>
   );
 }
