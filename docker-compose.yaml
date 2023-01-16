@@ -6,6 +6,7 @@ services:
     volumes:
       - ./backend:/backend
     command: bash -c "python /backend/manage.py runserver 0.0.0.0:8000"
+    stop_signal: SIGINT
 
   frontend:
     build: ./frontend

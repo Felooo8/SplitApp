@@ -21,8 +21,6 @@ import ExpenseItem from "../components/Expense";
 import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
 
-// import FormLabel from "@mui/material/FormLabel";
-
 type Expense = {
   id: number;
   name: string;
@@ -41,10 +39,6 @@ type Errors = {
   expenses: boolean;
 };
 
-// const Alert = React.forwardRef<HTMLInputElement>(function Alert(props, ref) {
-//   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-// });
-
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;
 }
@@ -53,7 +47,7 @@ function AllExpenses() {
   const [userExpenses, setUserExpenses] = useState<Expense[]>([]);
   const [filtredExpenses, setFiltredExpenses] = useState<Expense[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState<string>("all");
   const [showSettled, setShowSettled] = useState<boolean>(false);
   const [showBorrowed, setShowBorrowed] = useState<boolean>(true);
   const [showLent, setShowLent] = useState<boolean>(true);
@@ -161,7 +155,9 @@ function AllExpenses() {
     }
   };
 
-  const displaySettled = () => (event: React.ChangeEvent<HTMLInputElement>) => {
+  const updateDisplaySettled = () => (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setShowSettled(event.target.checked);
     if (event.target.checked) {
       if (showBorrowed) {
@@ -196,7 +192,6 @@ function AllExpenses() {
       <div>
         <h5>Your expenses:</h5>
         <FormControl>
-          {/* <FormLabel id="filter-row-radio">Filter</FormLabel> */}
           <RadioGroup
             row
             aria-labelledby="filter-row-radio-label"
@@ -253,7 +248,7 @@ function AllExpenses() {
               control={
                 <Checkbox
                   checked={showSettled}
-                  onChange={displaySettled()}
+                  onChange={updateDisplaySettled()}
                   disabled={showBorrowed && !showLent}
                   sx={{
                     color: "red",

@@ -41,16 +41,11 @@ function SlideTransition(props) {
 }
 
 const style = {
-  // position: "absolute",
-  // top: "50%",
-  // left: "50%",
-  // transform: "translate(-50%, -50%)",
-  // width: 400,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
-  // p: 4,
 };
+
 const defaultValues = {
   amount: "",
   name: "",
@@ -63,7 +58,7 @@ const defaultValues = {
   owers_groups: [],
 };
 
-export default function AddingExpense(props) {
+export default function AddingExpense() {
   const [open, setOpen] = useState(false);
   const [openGroup, setOpenGroup] = useState(false);
   const [groups, setGroups] = useState([]);
@@ -73,7 +68,7 @@ export default function AddingExpense(props) {
   const [alertText, setAlertText] = useState("");
   const [alertType, setAlertType] = useState(undefined);
   const [openSnackBar, setOpenSnackBar] = useState(false);
-  const [chosenGroupsName, setChosenGroupsName] = useState([]);
+  const [chosenExpenseIncurer, setChosenExpenseIncurer] = useState([]);
   const [chosenIsGroup, setChosenIsGroup] = useState([]);
   const [errors, setErrors] = useState({
     user: false,
@@ -107,6 +102,7 @@ export default function AddingExpense(props) {
     );
   };
 
+  //API
   const getGroups = () => {
     fetch(Constants.SERVER + "/api/group", {
       method: "GET",
@@ -119,7 +115,6 @@ export default function AddingExpense(props) {
         if (response.ok) {
           response.json().then((data) => {
             setGroups(data);
-            console.log(data);
             setErrors((errors) => ({
               ...errors,
               groups: false,
@@ -197,16 +192,6 @@ export default function AddingExpense(props) {
       });
   };
 
-  useEffect(() => {
-    setLoading(true);
-    const timer = setTimeout(() => {
-      getGroups();
-      getFriends();
-      getUser();
-    }, Constants.LOADING_DATA_DELAY);
-    return () => clearTimeout(timer);
-  }, []);
-
   const sendRequest = () => {
     fetch(Constants.SERVER + "/api/addExpense", {
       method: "POST",
@@ -220,7 +205,7 @@ export default function AddingExpense(props) {
         if (response.ok) {
           console.log("Good");
           setValues(defaultValues);
-          setChosenGroupsName([]);
+          setChosenExpenseIncurer([]);
           setPayers([]);
           setChosenIsGroup([]);
           setAlertText("Expense was added");
@@ -239,12 +224,25 @@ export default function AddingExpense(props) {
       });
   };
 
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      getGroups();
+      getFriends();
+      getUser();
+    }, Constants.LOADING_DATA_DELAY);
+    return () => clearTimeout(timer);
+  }, []);
+
   const setPayersData = (id, isGroup, username) => {
+    // Set list of available payers to choose
     if (isGroup) {
+      // Add all group members
       for (const group of groups) {
         if (group["id"] === id) {
           setPayers([{ id: currentUser.id, username: "You" }]);
           for (var i = 0; i < group["users"].length; i++) {
+            // Add each user
             if (group["users"][i] !== currentUser.id) {
               let newArray = {
                 id: group["users"][i],
@@ -253,25 +251,19 @@ export default function AddingExpense(props) {
               setPayers((payers) => [...payers, newArray]);
             }
           }
-          values.payer = currentUser.id;
-          setValues({
-            ...values,
-            payer: currentUser.id,
-          });
-          return;
         }
       }
     } else {
+      // Set currentUser and the other user as a possible
       setPayers([
         { id: currentUser.id, username: "You" },
         { id: id, username: username },
       ]);
-      values.payer = currentUser.id;
-      setValues({
-        ...values,
-        payer: currentUser.id,
-      });
     }
+    setValues({
+      ...values,
+      payer: currentUser.id,
+    });
   };
 
   const isPayerUpdated = () => {
@@ -280,7 +272,6 @@ export default function AddingExpense(props) {
 
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
-    console.log(values);
   };
 
   const handleChangePayer = () => (event) => {
@@ -288,6 +279,7 @@ export default function AddingExpense(props) {
     setValues({ ...values, payer: event.target.value });
     if (event.target.value === values["owers"][0]) {
       if (event.target.value === currentUser.id) {
+        // If new payer is currentUser we need to change ower to the other user
         let new_ower = payers[1]["id"];
         setValues({
           ...values,
@@ -306,56 +298,57 @@ export default function AddingExpense(props) {
   const handleChangeSwitch = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.checked });
   };
+
+  // TOGGLES
   const toggleSave = (category) => {
     setOpen(false);
     setValues({ ...values, category: category });
   };
-  const toggleSaveGroup = (group_friend_id, isGroup, group_friend_name) => {
-    values.is_group = isGroup;
+  const toggleSaveGroup = (incrurer_id, isGroup, incrurer_name) => {
     if (isGroup) {
-      values.owers_groups = [...values.owers_groups, group_friend_id];
+      values.owers_groups = [...values.owers_groups, incrurer_id];
     } else {
-      values.owers = [...values.owers, group_friend_id];
+      values.owers = [...values.owers, incrurer_id];
     }
     setOpenGroup(false);
-    setChosenGroupsName((chosenGroupsName) => [
-      ...chosenGroupsName,
-      group_friend_name,
+    setChosenExpenseIncurer((chosenExpenseIncurer) => [
+      ...chosenExpenseIncurer,
+      incrurer_name,
     ]);
     setChosenIsGroup((chosenIsGroup) => [...chosenIsGroup, isGroup]);
-    if (chosenGroupsName.length > 0) {
+    // If there more incurers only possible payer is "You"
+    if (chosenExpenseIncurer.length > 0) {
       setValues({ ...values, payer: currentUser.id });
       setPayers([{ id: currentUser.id, username: "You" }]);
     } else {
-      setPayersData(group_friend_id, isGroup, group_friend_name);
+      setPayersData(incrurer_id, isGroup, incrurer_name);
     }
   };
 
   const afterDeletingGroup = (index) => {
-    if (chosenGroupsName.length > 2) {
+    // If there are more than 2 groups then after deleting one
+    // we will still have more than 1 group so we want only currentuser to be payer
+    const sliceIndex = chosenExpenseIncurer.length - index - 1;
+    if (chosenExpenseIncurer.length > 2) {
       setValues({ ...values, payer: currentUser.id });
       setPayers([{ id: currentUser.id, username: "You" }]);
-    } else if (chosenGroupsName.length === 2) {
-      if (chosenIsGroup[chosenGroupsName.length - index - 1]) {
-        values.owers_groups = [
-          values.owers_groups[chosenGroupsName.length - index - 1],
-        ];
+    } else if (chosenExpenseIncurer.length === 2) {
+      // If there are 2 group then after deleting one we will have only 1 group, so
+      // we want all of the group members to be possible payers
+      if (chosenIsGroup[sliceIndex]) {
+        values.owers_groups = [values.owers_groups[sliceIndex]];
         setPayersData(
           values.owers_groups[0],
           true,
-          chosenGroupsName[chosenGroupsName.length - index - 1]
+          chosenExpenseIncurer[sliceIndex]
         );
       } else {
-        values.owers_groups = [
-          values.owers[chosenGroupsName.length - index - 1],
-        ];
-        setPayersData(
-          values.owers[0],
-          false,
-          chosenGroupsName[chosenGroupsName.length - index - 1]
-        );
+        // No group left -> only one user
+        values.owers_groups = [];
+        setPayersData(values.owers[0], false, chosenExpenseIncurer[sliceIndex]);
       }
     } else {
+      // deleting last Incurer
       setValues({ ...values, payer: undefined });
       values.owers = [];
       values.owers_groups = [];
@@ -368,9 +361,9 @@ export default function AddingExpense(props) {
   };
 
   const handleDeleteGroup = (index) => {
-    setChosenGroupsName([
-      ...chosenGroupsName.slice(0, index),
-      ...chosenGroupsName.slice(index + 1, chosenGroupsName.length),
+    setChosenExpenseIncurer([
+      ...chosenExpenseIncurer.slice(0, index),
+      ...chosenExpenseIncurer.slice(index + 1, chosenExpenseIncurer.length),
     ]);
     setChosenIsGroup([
       ...chosenIsGroup.slice(0, index),
@@ -391,6 +384,7 @@ export default function AddingExpense(props) {
     return returnIcon(values["category"]);
   };
 
+  // SNACKBARS
   const handleCloseSnackBar = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -556,8 +550,8 @@ export default function AddingExpense(props) {
                     </Box>
                   ) : null}
                 </Modal>
-                {chosenGroupsName !== []
-                  ? chosenGroupsName.map((group, index) => (
+                {chosenExpenseIncurer !== []
+                  ? chosenExpenseIncurer.map((group, index) => (
                       <Chip
                         color="success"
                         style={chipstyling}

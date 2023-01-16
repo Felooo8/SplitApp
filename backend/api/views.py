@@ -59,7 +59,6 @@ class CreateNewUser(APIView):
             return Response({"data": "Wrong data"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
 class GetUserByID(APIView):
     lookup_url_kwarg = "id"
 

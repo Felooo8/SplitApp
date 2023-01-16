@@ -44,6 +44,7 @@ type Errors = {
   total: boolean;
   groups: boolean;
   leave: boolean;
+  addUser: boolean;
 };
 
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
@@ -68,6 +69,7 @@ export default function Group() {
     total: false,
     groups: false,
     leave: false,
+    addUser: false,
   });
   const { id, groupName } = useParams<"id" | "groupName">();
 
@@ -319,7 +321,7 @@ export default function Group() {
   const toggleFetch = () => {
     setErrors((errors) => ({
       ...errors,
-      delete: false,
+      addUser: false,
     }));
     getGroupExpenses();
     getTotalExpenses();
@@ -339,6 +341,10 @@ export default function Group() {
     setAlertText("User was not added");
     setAlertType("warning");
     setOpenSnackBar(true);
+  };
+
+  const toggleAddUserError = (error: boolean) => {
+    setErrors({ ...errors, addUser: error });
   };
 
   const toggleSaveChangeName = (newGroupName: string) => {
@@ -486,6 +492,7 @@ export default function Group() {
             <Box sx={style}>
               <AddUserToGroup
                 id={id}
+                toggleError={toggleAddUserError}
                 toggleClose={toggleClose}
                 toggleSave={toggleSaveAddingUser}
               />

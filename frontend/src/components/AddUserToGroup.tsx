@@ -36,10 +36,7 @@ export default function AddUserToGroup(props: any) {
   const [loadingFriends, setLoadingFriends] = useState<boolean>(false);
   const [friends, setFriends] = useState([]);
   const timer = React.useRef<number>();
-  const [errors, setErrors] = useState({
-    friends: false,
-    request: false,
-  });
+  const [searchError, setSearchError] = useState<boolean>(false);
 
   const filtredFriends = friends.filter((friend: User) =>
     friend.username.toLowerCase().includes(search.toLowerCase())
@@ -73,15 +70,11 @@ export default function AddUserToGroup(props: any) {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            console.log(data);
             setUsers(data);
             timer.current = window.setTimeout(() => {
               setLoading(false);
             }, Constants.PROGRESS_ANIMATION_TIME);
-            setErrors((errors) => ({
-              ...errors,
-              request: false,
-            }));
+            setSearchError(false);
           });
         } else {
           throw Error("Something went wrong");
@@ -89,10 +82,7 @@ export default function AddUserToGroup(props: any) {
       })
       .catch((error) => {
         console.log(error);
-        setErrors((errors) => ({
-          ...errors,
-          request: false,
-        }));
+        setSearchError(true);
         const timer = setTimeout(() => {
           setLoading(false);
         }, Constants.PROGRESS_ANIMATION_TIME);
@@ -115,10 +105,7 @@ export default function AddUserToGroup(props: any) {
             const timer = setTimeout(() => {
               setLoadingFriends(false);
             }, 1000);
-            setErrors((errors) => ({
-              ...errors,
-              friends: false,
-            }));
+            props.toggleError(false);
             return () => clearTimeout(timer);
           });
         } else {
@@ -127,19 +114,24 @@ export default function AddUserToGroup(props: any) {
       })
       .catch((error) => {
         console.log(error);
-        setErrors((errors) => ({
-          ...errors,
-          friends: true,
-        }));
+        props.toggleError(true);
         const timer = setTimeout(() => {
           setLoadingFriends(false);
         }, 1000);
         return () => clearTimeout(timer);
       });
   };
-  const refresh = () => {
+  const toggleFetch = () => {
     setLoadingFriends(true);
     getFriends();
+  };
+
+  const handleSave = (user_id: number, username: string) => {
+    props.toggleSave(user_id, username);
+  };
+
+  const handleClose = () => {
+    props.toggleClose();
   };
 
   useEffect(() => {
@@ -155,14 +147,6 @@ export default function AddUserToGroup(props: any) {
       clearTimeout(timer2);
     };
   }, []);
-
-  const handleSave = (user_id: number, username: string) => {
-    props.toggleSave(user_id, username);
-  };
-
-  const handleClose = () => {
-    props.toggleClose();
-  };
 
   return (
     <div>
@@ -243,33 +227,43 @@ export default function AddUserToGroup(props: any) {
           // </Button>
         )}
         {search ? (
-          <div>
-            <Divider />
-            <ListItemButton>Search results:</ListItemButton>
-            <Fade in={loading} unmountOnExit>
-              <LinearProgress sx={{ height: "8px" }} />
-            </Fade>
-            {filtredUsers.length !== 0 ? (
-              filtredUsers.map((user, index) => (
-                <ListItemButton
-                  key={index}
-                  onClick={() => handleSave(user.id, user.username)}
-                >
-                  <ListItemIcon>
-                    <PersonAddIcon
-                      sx={{ color: colors[index % colors.length] }}
-                      style={{ width: "2em", height: "2em" }}
-                    />
-                  </ListItemIcon>
-                  {user.username}
+          searchError ? (
+            <div>
+              <Divider />
+              <ListItemButton>Aaaah! Something went wrong</ListItemButton>
+              <Fade in={loading} unmountOnExit>
+                <LinearProgress sx={{ height: "8px" }} />
+              </Fade>
+            </div>
+          ) : (
+            <div>
+              <Divider />
+              <ListItemButton>Search results:</ListItemButton>
+              <Fade in={loading} unmountOnExit>
+                <LinearProgress sx={{ height: "8px" }} />
+              </Fade>
+              {filtredUsers.length !== 0 ? (
+                filtredUsers.map((user, index) => (
+                  <ListItemButton
+                    key={index}
+                    onClick={() => handleSave(user.id, user.username)}
+                  >
+                    <ListItemIcon>
+                      <PersonAddIcon
+                        sx={{ color: colors[index % colors.length] }}
+                        style={{ width: "2em", height: "2em" }}
+                      />
+                    </ListItemIcon>
+                    {user.username}
+                  </ListItemButton>
+                ))
+              ) : (
+                <ListItemButton style={{ fontStyle: "italic" }}>
+                  No users found
                 </ListItemButton>
-              ))
-            ) : (
-              <ListItemButton style={{ fontStyle: "italic" }}>
-                No users found
-              </ListItemButton>
-            )}
-          </div>
+              )}
+            </div>
+          )
         ) : null}
       </List>
     </div>
