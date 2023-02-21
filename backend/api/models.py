@@ -7,6 +7,8 @@ from django.utils.crypto import get_random_string
 from django.core.exceptions import ValidationError
 from django.db.models.signals import post_save, pre_save, m2m_changed
 from django.dispatch import receiver
+import io
+
 # Create your models here.
 
 
@@ -24,8 +26,14 @@ def upload_to(instance, filename):
     return f'avatars/{name}.png'.format(filename=filename)
 
 
-def validate_image(fieldfile_obj):
-    filesize = fieldfile_obj.file.size
+def validate_image(file_obj):
+     # If the file is a BytesIO object, get its length using getbuffer().nbytes
+    if isinstance(file_obj.file, io.BytesIO):
+        filesize = file_obj.file.getbuffer().nbytes
+    # Otherwise, get the length from the file object's size attribute
+    else:
+        filesize = file_obj.file.size
+    
     megabyte_limit = 0.3
     if filesize > megabyte_limit*1024*1024:
         raise ValidationError("Max file size is %sMB" % str(megabyte_limit))

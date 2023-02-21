@@ -25,6 +25,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from rest_framework.decorators import parser_classes
 from rest_framework.parsers import MultiPartParser,FileUploadParser
+from rest_framework.exceptions import ValidationError
+from .models import validate_image 
 
 # Create your views here.
 
@@ -567,14 +569,19 @@ class SetAvatar(APIView):
 
     def post(self, request, format=None):
         try:
-            image = request.FILES.get('image')
+            image_data = request.FILES.get('image')
+            validate_image(image_data)  # Manually call the validator
             user = request.user
             account = Account.objects.get(user=user)
-            account.avatar = image
+            account.avatar = image_data
             account.save()
 
             return Response(None, status=status.HTTP_204_NO_CONTENT)
+        except ValidationError as e:
+            print(e)
+            return Response({"Error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
+            print(e)
             return Response({"Error": "No file attached"}, status=status.HTTP_400_BAD_REQUEST)
 
 

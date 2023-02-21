@@ -1,7 +1,7 @@
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import { grey } from "@mui/material/colors";
 import IconButton from "@mui/material/IconButton";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import Constants from "../apis/Constants";
 
 import DisplayAvatar from "../components/DisplayAvatar";
@@ -21,7 +21,6 @@ export default function ChangeAvatar(props: props) {
     if (!fileList) return;
 
     setAvatar(fileList[0]);
-    handleUploadAvatar();
   };
 
   const handleUploadAvatar = () => {
@@ -41,6 +40,7 @@ export default function ChangeAvatar(props: props) {
         console.log(response);
         if (response.ok) {
           console.log("CHANGED");
+          setAvatar(null);
         } else {
           throw Error("Something went wrong");
         }
@@ -49,6 +49,10 @@ export default function ChangeAvatar(props: props) {
         console.log(error);
       });
   };
+
+  useEffect(() => {
+    handleUploadAvatar();
+  }, [avatar]);
 
   return (
     <div style={{ minWidth: "auto", padding: "0", position: "relative" }}>
