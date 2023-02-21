@@ -12,7 +12,7 @@ type props = {
 };
 
 export default function ChangeAvatar(props: props) {
-  const [avatar, setAvatar] = useState<File>();
+  const [avatar, setAvatar] = useState<File | null>(null);
   console.log(avatar);
 
   const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -27,7 +27,7 @@ export default function ChangeAvatar(props: props) {
   const handleUploadAvatar = () => {
     if (!avatar) return;
     const formData = new FormData();
-    formData.append("image", avatar);
+    formData.append("image", avatar, avatar.name);
 
     fetch(Constants.SERVER + "/api/setAvatar", {
       method: "POST",

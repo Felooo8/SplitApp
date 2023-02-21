@@ -564,19 +564,18 @@ class GetNotifications(APIView):
 
 class SetAvatar(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes = (FileUploadParser,)
 
     def post(self, request, format=None):
         try:
-            image = request.body
+            image = request.FILES.get('image')
             user = request.user
             account = Account.objects.get(user=user)
             account.avatar = image
             account.save()
 
             return Response(None, status=status.HTTP_204_NO_CONTENT)
-        except:
-            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"Error": "No file attached"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SetGroupName(APIView):
