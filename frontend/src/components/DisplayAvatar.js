@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Avatar from "@mui/material/Avatar";
 import Constants from "../apis/Constants";
 
 export default function DisplayAvatar(props) {
   const [avatarURL, setAvatarURL] = useState("");
+
   let size =
     props.size !== "large"
       ? Constants.AVATAR_SIZE
@@ -38,7 +39,7 @@ export default function DisplayAvatar(props) {
     } else {
       getAvatar("/api/getAvatar/");
     }
-  }, []);
+  }, [props.reload]);
 
   return (
     <React.Fragment>

@@ -3,7 +3,6 @@ import { grey } from "@mui/material/colors";
 import IconButton from "@mui/material/IconButton";
 import React, { useState, ChangeEvent, useEffect } from "react";
 import Constants from "../apis/Constants";
-
 import DisplayAvatar from "../components/DisplayAvatar";
 
 type props = {
@@ -13,7 +12,9 @@ type props = {
 
 export default function ChangeAvatar(props: props) {
   const [avatar, setAvatar] = useState<File | null>(null);
-  console.log(avatar);
+  const [avatarChanged, setAvatarChanged] = useState(false);
+
+  // console.log(avatar);
 
   const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
@@ -41,6 +42,7 @@ export default function ChangeAvatar(props: props) {
         if (response.ok) {
           console.log("CHANGED");
           setAvatar(null);
+          setAvatarChanged(!avatarChanged);
         } else {
           throw Error("Something went wrong");
         }
@@ -73,6 +75,7 @@ export default function ChangeAvatar(props: props) {
       </IconButton>
       <DisplayAvatar
         user={{ id: props.id, username: props.username }}
+        reload={avatarChanged}
         size="large"
       />
     </div>

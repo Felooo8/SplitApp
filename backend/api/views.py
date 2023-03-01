@@ -578,10 +578,8 @@ class SetAvatar(APIView):
 
             return Response(None, status=status.HTTP_204_NO_CONTENT)
         except ValidationError as e:
-            print(e)
             return Response({"Error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            print(e)
             return Response({"Error": "No file attached"}, status=status.HTTP_400_BAD_REQUEST)
 
 

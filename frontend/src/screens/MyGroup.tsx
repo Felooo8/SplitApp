@@ -445,6 +445,7 @@ export default function Group() {
                 index={index}
                 currentUser={currentUser}
                 errorToggle={errorToggle}
+                toggle={toggleFetch}
               />
             ))}
           </Stack>
