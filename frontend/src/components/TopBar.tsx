@@ -20,7 +20,8 @@ type Props = {
 
 export default function SearchAppBar(props: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+  const username = localStorage.getItem("UserName");
+  const isAuth = Boolean(localStorage.getItem("token"));
   const handleLogout = () => {
     logout();
     localStorage.clear();
@@ -98,11 +99,9 @@ export default function SearchAppBar(props: Props) {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              {props.isAuth ? (
+              {isAuth ? (
                 <Box>
-                  <MenuItem style={{ minHeight: "20px" }}>
-                    {props.username}
-                  </MenuItem>
+                  <MenuItem style={{ minHeight: "20px" }}>{username}</MenuItem>
                   <Divider />
                   <MenuItem onClick={() => handleAction("/profile")}>
                     <Avatar />

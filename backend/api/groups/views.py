@@ -1,25 +1,14 @@
 import json
-from collections import defaultdict
-from itertools import chain
 
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
-from django.db.models import Q
-from django.forms import BooleanField
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.utils.crypto import get_random_string
-from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..models import (Account, Expense, FriendsInvitation, Group, GroupExpense,
-                      types)
-from ..serializers import (AccountSerializer, ExpenseSerializer,
-                           FriendsInvitationSerializer, GroupExpenseSerializer,
-                           GroupSerializer, UserSerializer)
+from ..models import (Group, types)
+from ..serializers import (GroupExpenseSerializer,
+                           GroupSerializer)
 
 # Create your views here.
 
@@ -116,10 +105,6 @@ class DeleteGroup(APIView):
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-
-
-
 class SetGroupName(APIView):
     def post(self, request, format=None):
         user = request.user
@@ -144,8 +129,11 @@ class GetGroupAvatar(APIView):
     def get(self, request, id, format=None):
         try:
             group = Group.objects.get(id=id)
-            avatar = group.avatar
-            return Response(avatar.url, status=status.HTTP_200_OK)
+            try:
+                avatar = group.avatar
+                return Response(avatar.url, status=status.HTTP_200_OK)
+            except BaseException:
+                return Response({"Avatar not found": "This group has no avatar"}, status=status.HTTP_204_NO_CONTENT)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
@@ -165,7 +153,7 @@ class CreateNewGroup(APIView):
                 group.admins.add(user)
                 return Response(None, status=status.HTTP_204_NO_CONTENT)
             except Group.DoesNotExist:
-                return Response(None, status=status.HTTP_400_BAD_REQUEST)
+                return Response(None, status=status.HTTP_404_NOT_FOUND)
         except:
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 

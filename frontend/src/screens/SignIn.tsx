@@ -65,6 +65,7 @@ export default function SignIn() {
             .json()
             .then((data) => {
               localStorage.setItem("UserName", data.username);
+              localStorage.setItem("userID", data.id);
             })
             .then(() => window.location.replace("/"));
         } else {

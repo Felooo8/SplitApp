@@ -1,13 +1,12 @@
 import json
-from django.test import TestCase, Client
-from django.urls import reverse
-from rest_framework.test import APITestCase
+
 from django.contrib.auth.models import User
+from django.urls import reverse
 from rest_framework import status
-from .models import (Account, Expense, FriendsInvitation, Group, GroupExpense)
-from .serializers import (AccountSerializer, ExpenseSerializer,
-                           FriendsInvitationSerializer, GroupExpenseSerializer,
-                           GroupSerializer, UserSerializer)
+from rest_framework.test import APITestCase
+
+from .models import Account, FriendsInvitation
+from .serializers import (UserSerializer)
 
 
 class InviteFriendViewTest(APITestCase):

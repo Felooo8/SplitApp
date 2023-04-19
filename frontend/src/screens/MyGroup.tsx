@@ -34,7 +34,8 @@ type Expense = {
   short_date: string;
   payer: number;
   payer_username: string;
-  ower_username: "You";
+  ower: number;
+  ower_username: string;
   is_paid: boolean;
   settled: boolean;
 };
@@ -52,7 +53,6 @@ function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
 }
 
 export default function Group() {
-  const [currentUser, setCurrentUser] = useState<any>(null);
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -72,6 +72,7 @@ export default function Group() {
     addUser: false,
   });
   const { id, groupName } = useParams<"id" | "groupName">();
+  const currentUser: number | null = Number(localStorage.getItem("userID"));
 
   const handleOpen = () => {
     setOpen(true);
@@ -84,35 +85,6 @@ export default function Group() {
   const handleCloseChangeName = () => setOpenChangeName(false);
 
   // FETCH
-  const getUser = () => {
-    fetch(Constants.SERVER + "/api/auth/users/me/", {
-      headers: {
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            setCurrentUser(data);
-            setLoading(false);
-            setErrors((errors) => ({
-              ...errors,
-              user: false,
-            }));
-          });
-        } else {
-          throw Error("Something went wrong");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setErrors((errors) => ({
-          ...errors,
-          user: true,
-        }));
-      });
-  };
-
   const fetchNewGroupName = (newName: string) => {
     fetch(Constants.SERVER + "/api/setGroupName", {
       method: "POST",
@@ -152,6 +124,7 @@ export default function Group() {
           response.json().then((data) => {
             setKeys(data["keys"]);
             setValues(data["values"]);
+            setLoading(false);
             setErrors((errors) => ({
               ...errors,
               total: false,
@@ -325,7 +298,6 @@ export default function Group() {
     }));
     getGroupExpenses();
     getTotalExpenses();
-    getUser();
   };
 
   const toggleSaveAddingUser = (user_id: number, userName: string) => {
@@ -373,7 +345,6 @@ export default function Group() {
     const timer = setTimeout(() => {
       getGroupExpenses();
       getTotalExpenses();
-      getUser();
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);
   }, []);
@@ -441,11 +412,12 @@ export default function Group() {
             {expenses.map((expense, index) => (
               <ExpenseItem
                 key={expense.id}
-                expense={{ ...expense, ower_username: "You" }}
+                expense={expense}
                 index={index}
                 currentUser={currentUser}
                 errorToggle={errorToggle}
                 toggle={toggleFetch}
+                isGroupExpense={true}
               />
             ))}
           </Stack>

@@ -1,18 +1,14 @@
 import json
-from collections import defaultdict
 from itertools import chain
 
 from django.contrib.auth.models import User
-from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..models import (Account, Expense, FriendsInvitation, Group, GroupExpense,
-                      types)
-from ..serializers import (AccountSerializer, ExpenseSerializer,
-                           FriendsInvitationSerializer, GroupExpenseSerializer,
-                           GroupSerializer, UserSerializer)
+from ..models import (Account, FriendsInvitation)
+from ..serializers import (FriendsInvitationSerializer, UserSerializer)
 
 # Create your views here.
 
@@ -81,7 +77,7 @@ class AcceptInvitation(APIView):
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AcceptInvitationByUser(APIView):
+class AcceptInvitationByUserID(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
@@ -122,7 +118,7 @@ class DeclineInvitation(APIView):
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
-class DeclineInvitationByUser(APIView):
+class DeclineInvitationByUserID(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
@@ -155,7 +151,7 @@ class SeeFriends(APIView):
             return Response(None, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CancelInvitationByUser(APIView):
+class CancelInvitationByUserID(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):

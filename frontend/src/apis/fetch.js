@@ -14,14 +14,23 @@ export const getGroups = () => {
     });
 };
 
-export const postSetAsPaid = async (id, isPaid, errorToggle = null) => {
+export const postSetAsPaid = async (
+  id,
+  isPaid,
+  isGroupExpense = false,
+  errorToggle = null
+) => {
   return fetch(Constants.SERVER + "/api/setAsPaid", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Token ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify({ id: id, paid: isPaid }),
+    body: JSON.stringify({
+      id: id,
+      paid: isPaid,
+      isGroupExpense: isGroupExpense,
+    }),
   })
     .then((response) => {
       if (response.ok) {
@@ -39,14 +48,23 @@ export const postSetAsPaid = async (id, isPaid, errorToggle = null) => {
     });
 };
 
-export const postSettled = async (id, settled, errorToggle = null) => {
+export const postSettled = async (
+  id,
+  settled,
+  isGroupExpense = false,
+  errorToggle = null
+) => {
   return fetch(Constants.SERVER + "/api/settle", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Token ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify({ id: id, settled: settled }),
+    body: JSON.stringify({
+      id: id,
+      settled: settled,
+      isGroupExpense: isGroupExpense,
+    }),
   })
     .then((response) => {
       if (response.ok) {

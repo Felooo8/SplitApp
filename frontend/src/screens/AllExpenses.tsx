@@ -46,7 +46,7 @@ function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
 function AllExpenses() {
   const [userExpenses, setUserExpenses] = useState<Expense[]>([]);
   const [filtredExpenses, setFiltredExpenses] = useState<Expense[]>([]);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  // const [currentUser, setCurrentUser] = useState<any>(null);
   const [filter, setFilter] = useState<string>("all");
   const [showSettled, setShowSettled] = useState<boolean>(false);
   const [showBorrowed, setShowBorrowed] = useState<boolean>(true);
@@ -60,6 +60,7 @@ function AllExpenses() {
     expenses: false,
   });
   const timer = React.useRef<number>();
+  const currentUser: number | null = Number(localStorage.getItem("userID"));
 
   const getExpenses = () => {
     fetch(Constants.SERVER + "/api/userExpenses", {
@@ -96,33 +97,33 @@ function AllExpenses() {
       });
   };
 
-  const getUser = () => {
-    fetch(Constants.SERVER + "/api/auth/users/me/", {
-      headers: {
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            setCurrentUser(data);
-            setErrors((errors) => ({
-              ...errors,
-              user: false,
-            }));
-          });
-        } else {
-          throw Error("Something went wrong");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setErrors((errors) => ({
-          ...errors,
-          user: true,
-        }));
-      });
-  };
+  // const getUser = () => {
+  //   fetch(Constants.SERVER + "/api/auth/users/me/", {
+  //     headers: {
+  //       Authorization: `Token ${localStorage.getItem("token")}`,
+  //     },
+  //   })
+  //     .then((response) => {
+  //       if (response.ok) {
+  //         response.json().then((data) => {
+  //           setCurrentUser(data);
+  //           setErrors((errors) => ({
+  //             ...errors,
+  //             user: false,
+  //           }));
+  //         });
+  //       } else {
+  //         throw Error("Something went wrong");
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       setErrors((errors) => ({
+  //         ...errors,
+  //         user: true,
+  //       }));
+  //     });
+  // };
 
   const filterExpenses = (event: {
     target: { value: React.SetStateAction<string> };
@@ -142,7 +143,7 @@ function AllExpenses() {
       setFiltredExpenses(
         userExpenses.filter(
           (expense) =>
-            expense.payer === currentUser.id &&
+            expense.payer === currentUser &&
             (expense.settled === showSettled || showSettled)
         )
       );
@@ -150,7 +151,7 @@ function AllExpenses() {
       setShowLent(false);
       setShowBorrowed(true);
       setFiltredExpenses(
-        userExpenses.filter((expense) => expense.ower === currentUser.id)
+        userExpenses.filter((expense) => expense.ower === currentUser)
       );
     }
   };
@@ -164,7 +165,7 @@ function AllExpenses() {
         setFiltredExpenses(userExpenses);
       } else {
         setFiltredExpenses(
-          userExpenses.filter((expense) => expense.payer === currentUser.id)
+          userExpenses.filter((expense) => expense.payer === currentUser)
         );
       }
     } else {
@@ -176,7 +177,7 @@ function AllExpenses() {
         setFiltredExpenses(
           userExpenses.filter(
             (expense) =>
-              expense.payer === currentUser.id && expense.settled === false
+              expense.payer === currentUser && expense.settled === false
           )
         );
       }
@@ -285,7 +286,7 @@ function AllExpenses() {
     timer.current = window.setTimeout(() => {
       setRefreshing(false);
     }, Constants.PROGRESS_ANIMATION_TIME);
-    getUser();
+    // getUser();
     getExpenses();
   };
 
@@ -296,7 +297,7 @@ function AllExpenses() {
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => {
-      getUser();
+      // getUser();
       getExpenses();
     }, Constants.LOADING_DATA_DELAY);
     return () => clearTimeout(timer);

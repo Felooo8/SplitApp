@@ -25,7 +25,8 @@ export default function DisplayAvatar(props) {
             setAvatarURL(data);
           });
         } else if (response.status === 204) {
-          console.log("User " + props.user.username + " has no avatar");
+          let type = props.isGroup ? "Group " : "User ";
+          console.log(type + props.user.username + " has no avatar");
         }
       } else {
         console.log("invalid data");

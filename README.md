@@ -51,8 +51,8 @@ pip install django-rest-authtoken
 2.  In folder _backend type:_
 
 ```
-python manage.py migrate
 python manage.py makemigrations
+python manage.py migrate
 python manage.py run
 ```
 
@@ -62,7 +62,6 @@ python manage.py run
 npm install
 npm start
 ```
-
 
 ## Features
 

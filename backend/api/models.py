@@ -93,8 +93,11 @@ class Expense(models.Model):
         return self.name
 
     def delete_group_expense(self):
+        # Run while deleting 
+        # to check if we deleted last expense in it's GroupExpense
         similar_expenses = Expense.objects.filter(hash=self.hash).exclude(id=self.id)
         if not similar_expenses:
+            # We are deleting last Expense of GroupExpense -> delete GroupExpense
             group_expense = GroupExpense.objects.get(expenses=self)
             if group_expense:
                 group_expense.delete()
@@ -132,7 +135,6 @@ class Group(models.Model):
     avatar = models.ImageField(upload_to=upload_to, blank=True, null=True, validators=[validate_image])
 
     __previous_avatar_name = None
-    __previous_users_ids = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -140,7 +142,7 @@ class Group(models.Model):
             self.__previous_avatar_name = self.avatar.name
 
 
-    def delete(self, using=None, keep_parents=False):
+    def delete(self):
         if self.avatar.name:
             self.avatar.storage.delete(self.__previous_avatar_name)
         super().delete()
@@ -173,9 +175,6 @@ class Group(models.Model):
         return spent
 
     def balance(self, user):
-
-        def def_value():
-            return 0
 
         balance = 0
 

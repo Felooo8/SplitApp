@@ -22,15 +22,15 @@ export default function ExpenseItem(props) {
   };
 
   const isBorrowed = (expense) => {
-    if (expense.payer === props.currentUser.id) {
+    if (expense.payer === props.currentUser) {
       return false;
     }
     return true;
   };
 
   const isPendning = () => {
-    if (!isBorrowed(props.expense)) {
-      if (props.expense.is_paid) {
+    if (props.expense.is_paid) {
+      if (!isBorrowed(props.expense) && !props.expense.settled) {
         return true;
       }
     }
@@ -97,7 +97,7 @@ export default function ExpenseItem(props) {
               </WholeStack>
               {isPendning() ? (
                 <Alert severity="info">
-                  {displayUser()} has marked as paid
+                  {props.expense.ower_username} has marked as paid
                 </Alert>
               ) : null}
             </AccordionSummary>
@@ -109,6 +109,7 @@ export default function ExpenseItem(props) {
                 marked={marked(props.expense)}
                 toggle={props.toggle}
                 errorToggle={props.errorToggle}
+                isGroupExpense={props.isGroupExpense}
               />
             </AccordionDetails>
           </Accordion>
