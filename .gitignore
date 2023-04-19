@@ -30,6 +30,7 @@ frontend/npm
 frontend/README.md
 
 frontend/src/components/selectComponent.js
+frontend/src/components/AddingExpenseComponent.js
 backend/media/avatars/*
 frontend/build
 pytest.ini

@@ -62,15 +62,6 @@ export default function SearchBar() {
     return search !== "";
   };
 
-  // <Search>
-  //   <SearchIconWrapper>
-  //     <SearchIcon />
-  //   </SearchIconWrapper>
-  //   <StyledInputBase
-  //     placeholder="Search…"
-  //     inputProps={{ "aria-label": "search" }}
-  //   />
-  // </Search>;
   return (
     <Search>
       <Form onSubmit={handleSumbit}>

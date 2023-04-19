@@ -135,13 +135,3 @@ function Notifications() {
 export default Notifications;
 
 const IconSize = "140px";
-
-const icon = {
-  top: "0",
-  left: "0",
-  fontSize: "56",
-  height: IconSize,
-  width: IconSize,
-  display: "table",
-  margin: "auto",
-};
