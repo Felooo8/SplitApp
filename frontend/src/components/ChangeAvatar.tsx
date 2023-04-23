@@ -1,7 +1,7 @@
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import { grey } from "@mui/material/colors";
 import IconButton from "@mui/material/IconButton";
-import React, { useState, ChangeEvent, useEffect } from "react";
+import { grey } from "@mui/material/colors";
+import { ChangeEvent, useEffect, useState } from "react";
 import Constants from "../apis/Constants";
 import DisplayAvatar from "../components/DisplayAvatar";
 

@@ -11,10 +11,6 @@ import Error from "../components/Error";
 import SearchResult from "../components/SearchResult";
 import SkeletonItem from "../components/SkeletonItem";
 
-// const Alert = React.forwardRef(function Alert(props, ref) {
-//   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-// });
-
 type User = {
   id: number;
   username: string;
@@ -33,7 +29,6 @@ function FriendsFinder() {
   const [error, setError] = useState<boolean>(false);
   const [lastAction, setLastAction] = useState<string>("");
   const [openSnackBar, setOpenSnackBar] = useState<boolean>(false);
-  // const [currentUser, setCurrentUser] = useState(undefined);
   const params = useParams();
 
   const findFriends = () => {

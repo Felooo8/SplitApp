@@ -21,9 +21,9 @@ import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
 import CreateNewGroup from "../components/CreateNewGroup";
 import Error from "../components/Error";
-import SummaryItem from "../components/SummaryItem";
 import NothingToDisplay from "../components/NothingToDisplay";
 import SkeletonItem from "../components/SkeletonItem";
+import SummaryItem from "../components/SummaryItem";
 
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;

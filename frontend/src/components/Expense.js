@@ -1,17 +1,19 @@
-import React from "react";
-import Settling from "./SettlingComponent";
-import styled from "styled-components";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-// import Typography from "@mui/material/Typography";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "../App.css";
-import Slide from "@mui/material/Slide";
-import returnIcon from "../apis/returnIcon";
-import Alert from "@mui/material/Alert";
-import Constants from "../apis/Constants";
 
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Alert from "@mui/material/Alert";
+import Slide from "@mui/material/Slide";
+import React from "react";
+import styled from "styled-components";
+
+import Constants from "../apis/Constants";
+import returnIcon from "../apis/returnIcon";
+import Settling from "./SettlingComponent";
+
+// import Typography from "@mui/material/Typography";
 export default function ExpenseItem(props) {
   // console.log(props);
   const displayUser = () => {

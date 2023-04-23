@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
-import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
+import InputBase from "@mui/material/InputBase";
+import { alpha, styled } from "@mui/material/styles";
+import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 
 const widthSearchExpanded = 350;
@@ -50,7 +50,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function SearchBar() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
 
   const handleSumbit = () => {
     const location = "/friends/" + search;

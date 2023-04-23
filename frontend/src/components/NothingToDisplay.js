@@ -1,9 +1,9 @@
-import React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Fade from "@mui/material/Fade";
 import Typography from "@mui/material/Typography";
+import React from "react";
 
 export default function NothingToDisplay(props) {
   const StatusIcon = props.statusIcon;

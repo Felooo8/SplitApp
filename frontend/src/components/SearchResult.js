@@ -1,3 +1,5 @@
+import "../App.css";
+
 import CancelIcon from "@mui/icons-material/Cancel";
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import PersonAddDisabledIcon from "@mui/icons-material/PersonAddDisabled";
@@ -7,8 +9,8 @@ import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
 import React from "react";
 import styled from "styled-components";
+
 import Constants from "../apis/Constants";
-import "../App.css";
 import DisplayAvatar from "../components/DisplayAvatar";
 
 const inviteFriendUrl = "/api/inviteFriend";

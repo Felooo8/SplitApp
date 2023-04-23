@@ -1,26 +1,16 @@
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import {
-  Alert,
-  Box,
-  Divider,
-  Slide,
-  SlideProps,
-  Snackbar,
-  Typography,
-} from "@mui/material";
+import { Alert, Box, Slide, SlideProps, Snackbar } from "@mui/material";
 import Button from "@mui/material/Button";
+import Fade from "@mui/material/Fade";
+import LinearProgress from "@mui/material/LinearProgress";
 import TextField from "@mui/material/TextField";
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 
 import Constants from "../apis/Constants";
 import BottomAppBar from "../components/Appbar";
-import DisplayAvatar from "../components/DisplayAvatar";
-import SkeletonItem from "../components/SkeletonItem";
 import ChangeAvatar from "../components/ChangeAvatar";
 import Error from "../components/Error";
-import Fade from "@mui/material/Fade";
-import LinearProgress from "@mui/material/LinearProgress";
+import SkeletonItem from "../components/SkeletonItem";
 
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;

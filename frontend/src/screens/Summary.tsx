@@ -1,16 +1,16 @@
-import MoneyOffIcon from "@mui/icons-material/MoneyOff";
-import Box from "@mui/material/Box";
-import Fade from "@mui/material/Fade";
-import LinearProgress from "@mui/material/LinearProgress";
-import Stack from "@mui/material/Stack";
-import React, { useEffect, useState } from "react";
+import MoneyOffIcon from '@mui/icons-material/MoneyOff';
+import Box from '@mui/material/Box';
+import Fade from '@mui/material/Fade';
+import LinearProgress from '@mui/material/LinearProgress';
+import Stack from '@mui/material/Stack';
+import React, { useEffect, useState } from 'react';
 
-import Constants from "../apis/Constants";
-import BottomAppBar from "../components/Appbar";
-import Error from "../components/Error";
-import NothingToDisplay from "../components/NothingToDisplay";
-import SkeletonItem from "../components/SkeletonItem";
-import SummaryItem from "../components/SummaryItem";
+import Constants from '../apis/Constants';
+import BottomAppBar from '../components/Appbar';
+import Error from '../components/Error';
+import NothingToDisplay from '../components/NothingToDisplay';
+import SkeletonItem from '../components/SkeletonItem';
+import SummaryItem from '../components/SummaryItem';
 
 type Errors = {
   summary: boolean;

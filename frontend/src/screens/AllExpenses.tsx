@@ -97,34 +97,6 @@ function AllExpenses() {
       });
   };
 
-  // const getUser = () => {
-  //   fetch(Constants.SERVER + "/api/auth/users/me/", {
-  //     headers: {
-  //       Authorization: `Token ${localStorage.getItem("token")}`,
-  //     },
-  //   })
-  //     .then((response) => {
-  //       if (response.ok) {
-  //         response.json().then((data) => {
-  //           setCurrentUser(data);
-  //           setErrors((errors) => ({
-  //             ...errors,
-  //             user: false,
-  //           }));
-  //         });
-  //       } else {
-  //         throw Error("Something went wrong");
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       setErrors((errors) => ({
-  //         ...errors,
-  //         user: true,
-  //       }));
-  //     });
-  // };
-
   const filterExpenses = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {

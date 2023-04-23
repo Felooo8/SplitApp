@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
-import InputBase from "@mui/material/InputBase";
 import IconButton from "@mui/material/IconButton";
+import InputBase from "@mui/material/InputBase";
+import { alpha, styled } from "@mui/material/styles";
+import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 
 const SearchBar = styled("div")(({ theme }) => ({

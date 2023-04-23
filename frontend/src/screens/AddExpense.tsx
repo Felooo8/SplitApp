@@ -1,5 +1,3 @@
-import BottomAppBar from "../components/Appbar";
-
 import "../App.css";
 
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
@@ -7,6 +5,7 @@ import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SendIcon from "@mui/icons-material/Send";
 import AccordionSummary from "@mui/material/AccordionSummary";
+import Alert, { AlertColor } from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Chip from "@mui/material/Chip";
@@ -22,21 +21,21 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 import Paper from "@mui/material/Paper";
-import Slide, { SlideProps } from "@mui/material/Slide";
-import Alert, { AlertColor } from "@mui/material/Alert";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Slide, { SlideProps } from "@mui/material/Slide";
+import Snackbar from "@mui/material/Snackbar";
 import Switch from "@mui/material/Switch";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import Snackbar from "@mui/material/Snackbar";
 
 import Constants from "../apis/Constants";
 import returnIcon from "../apis/returnIcon";
+import BottomAppBar from "../components/Appbar";
 import Error from "../components/Error";
-import SkeletonItem from "../components/SkeletonItem";
 import ListOfCategories from "../components/listOfCategoriesModal";
 import ListOfGroupsModal from "../components/listOfGroupsModal";
+import SkeletonItem from "../components/SkeletonItem";
 
 function SlideTransition(props: JSX.IntrinsicAttributes & SlideProps) {
   return <Slide {...props} direction="left" />;

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
 import Avatar from "@mui/material/Avatar";
+import React, { useContext, useEffect, useState } from "react";
+
 import Constants from "../apis/Constants";
 
 export default function DisplayAvatar(props) {

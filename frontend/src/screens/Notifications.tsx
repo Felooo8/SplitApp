@@ -133,5 +133,3 @@ function Notifications() {
 }
 
 export default Notifications;
-
-const IconSize = "140px";
