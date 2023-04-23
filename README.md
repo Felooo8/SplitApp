@@ -72,23 +72,19 @@ You may also check out images of each screen in SplitApp.pdf file.
 
 Allows users to create new account or login into an existing account -\> data is saved in database through Django. Username and email must be unique + email must be in proper format (checked in backend). No input can be empty (checked in frontend).
 
-### Manage account
+### Manage your account
 
-Allows user to change his name, username and avatar.
+Allows user to change his name, username and avatar (by uploading image file from disc).
 
-### Create expense
+### Create new expense
 
 Allows to create new expense (set category, name, amount, status), choose group or person with whom expense was incurred and the person who paid it.
-
-### Create group
-
-Create group – set its name and add users to this group. Quick search for friends and search bar to look for other users by their username.
 
 ### Summary
 
 Shows list of users whom user owes/lent money.
 
-### See expenses
+### See your expenses
 
 See and manage all expenses + filter them by their type.
 
@@ -96,9 +92,13 @@ See and manage all expenses + filter them by their type.
 
 Shows list of users group and they balance within this group.
 
-### Summary of group spendings
+### Summary of the group
 
-Shows list of group expenses and chart of categories of incurred expenses.
+Shows list of group expenses and chart of categories of incurred expenses. You can also add new users to the group, leave the group and change its name.
+
+### Create a group
+
+Create group – set its name and add users to this group. Quick search for friends and search bar to look for other users by their username.
 
 ### Manage friends
 
