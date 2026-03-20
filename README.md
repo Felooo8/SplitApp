@@ -1,119 +1,144 @@
-# SplitApp by Felo
+# SplitApp
 
-WebApp made in React + RESTful API + Django to allow people to split bills.
+SplitApp is a full-stack bill-splitting application built with a React frontend and a Django REST backend. The project focuses on the core workflows behind shared expenses: user accounts, friend connections, group expense tracking, settlement status, and per-group summaries.
 
-## Installing
+The codebase demonstrates end-to-end application structure, API-backed state management, relational data modeling, and a non-trivial UI flow around shared expenses. It is a strong showcase of practical full-stack development with a clear product domain and complete user workflows.
 
-### Docker:
+## Stack
 
-1.  Install docker <https://docs.docker.com/get-docker/>
-2.  Clone the repository and inside main folder run the following command:
+- **Frontend:** React 18, TypeScript, Material UI, Bootstrap, Chart.js
+- **Backend:** Django, Django REST Framework, Djoser auth, SQLite
+- **Local orchestration:** Docker Compose
 
-```
-sudo docker compose up
-```
+## What the application does
 
-### Without Docker
+SplitApp supports the main workflows you would expect in a shared-expense tracker:
 
-1.  Install Python3 and the following libraries:
+- account creation and sign-in,
+- friend invitations and friend management,
+- creation of one-to-one and group expenses,
+- paid / settled status tracking,
+- per-user summary balances,
+- group pages with category charts and expense history,
+- avatar uploads for users and groups.
 
-- Django
+The repository also includes a `SplitApp.pdf` file with screenshots of the UI flows.
 
-```
-pip install Django
-```
+## Repository layout
 
-- Rest framework
-
-```
-pip install djangorestframework
-```
-
-- Corsheaders
-
-```
-pip install django-cors-headers
-```
-
-- Djoser
-
-```
-pip install djoser
+```text
+.
+├── backend/                 # Django project, REST API, tests, Dockerfile
+│   ├── SplitApp/            # Django settings and project configuration
+│   └── api/                 # Models, serializers, views, and tests
+├── frontend/                # React client, tests, Dockerfile
+│   ├── src/apis/            # API helpers and client-side constants
+│   ├── src/components/      # Shared UI components
+│   └── src/screens/         # Page-level screens
+├── docker-compose.yaml      # Local development entrypoint
+└── SplitApp.pdf             # UI screenshots
 ```
 
-- Rest framework authtoken
+## Quick start
 
-```
-pip install django-rest-authtoken
+### Option 1: Docker Compose
+
+From the repository root:
+
+```bash
+docker compose up --build
 ```
 
-1.  Install NodeJS and npm
-2.  In folder _backend type:_
+Services:
 
-```
-python manage.py makemigrations
+- frontend: `http://localhost:3000`
+- backend: `http://127.0.0.1:8000`
+
+### Option 2: Run locally without Docker
+
+#### Backend
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env  # optional; settings also have sensible local defaults
 python manage.py migrate
-python manage.py run
+python manage.py runserver
 ```
 
-1.  In folder _frontend type:_
+#### Frontend
 
-```
+```bash
+cd frontend
 npm install
+cp .env.example .env
 npm start
 ```
 
-## Features
+## Configuration
 
-Every data is stored in the database (handled by Django backend).
-You may also check out images of each screen in SplitApp.pdf file.
+The project now supports small but useful environment-based configuration for local development.
 
-### SingUp and SignIn
+### Backend environment variables
 
-Allows users to create new account or login into an existing account -\> data is saved in database through Django. Username and email must be unique + email must be in proper format (checked in backend). No input can be empty (checked in frontend).
+Defined in `backend/.env.example`:
 
-### Manage your account
+- `DJANGO_SECRET_KEY`
+- `DJANGO_DEBUG`
+- `DJANGO_ALLOWED_HOSTS`
+- `DJANGO_CORS_ALLOWED_ORIGINS`
 
-Allows user to change his name, username and avatar (by uploading image file from disc).
+If these are not set, the app uses local-development defaults.
 
-### Create new expense
+### Frontend environment variables
 
-Allows to create new expense (set category, name, amount, status), choose group or person with whom expense was incurred and the person who paid it.
+Defined in `frontend/.env.example`:
 
-### Summary
+- `REACT_APP_API_BASE_URL` — base URL for the Django API.
 
-Shows list of users whom user owes/lent money.
+Default: `http://127.0.0.1:8000`
 
-### See your expenses
+## Tests
 
-See and manage all expenses + filter them by their type.
+### Backend
 
-### See your groups
+```bash
+cd backend
+python -m pip install -r requirements.txt
+python manage.py test
+```
 
-Shows list of users group and they balance within this group.
+### Frontend
 
-### Summary of the group
+```bash
+cd frontend
+npm test -- --watchAll=false
+```
 
-Shows list of group expenses and chart of categories of incurred expenses. You can also add new users to the group, leave the group and change its name.
+## Engineering notes
 
-### Create a group
+- The backend uses Django's built-in `User` model plus related domain models for accounts, friends, expenses, and groups.
+- The frontend mixes TypeScript and JavaScript, which is reasonable for an incremental project but is a natural future cleanup target.
+- API authentication uses token-based flows and authenticated REST endpoints for most application data.
+- Local SQLite keeps setup simple and makes the repository easy to evaluate.
 
-Create group – set its name and add users to this group. Quick search for friends and search bar to look for other users by their username.
+## Implementation notes
 
-### Manage friends
+A few practical notes for reviewers and contributors:
 
-Users may search for other users using the search bar in the Top Bar (In the screenshots searches for “e”). Users see all the matching users and their relationship status. He may send friend initiation, accept or decline invitation, decline sent invitation or remove a friend.
+- configuration is suitable for local development, not production deployment,
+- dependency management is still lightweight rather than fully locked and reproducible,
+- some backend views still use broad exception handling and would benefit from more explicit validation paths,
+- the frontend uses direct `fetch` calls instead of a more centralized API client abstraction.
 
-### Notifications
+## Highlights
 
-Users may see and manage pending friends' invitations. There is also a notification about pending invitations in the App Bar.
+The strongest engineering aspects of the repository are:
 
-### Skeletons and Errors
-
-Skeletons are displayed while loading data (sending API).
-
-Error screens are displayed when there is a problem with connecting to the server. Users may try to reconnect to API by clicking on the “Refresh” button.
-
-### Empty States
-
-Empty states are moments in a user’s experience with a product where there is nothing to display. User can also refresh data (last screen)
+- a clear full-stack boundary between UI and API,
+- a domain with real relational complexity,
+- end-to-end user workflows rather than isolated components,
+- included automated tests on both frontend and backend,
+- enough scope to show practical engineering decisions without becoming overengineered.

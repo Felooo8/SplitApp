@@ -10,8 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
+
+
+def get_list_env(name, default):
+    value = os.getenv(name)
+    if not value:
+        return default
+    return [item.strip() for item in value.split(',') if item.strip()]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +28,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-wwi7!^wu-^)-a7@i38a#^t$=#794s9cbnely123spuy3a06+gn'
+SECRET_KEY = os.getenv(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-dev-only-key-change-me',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.108', '0.0.0.0', '192.168.59.40', '192.168.1.106']
+ALLOWED_HOSTS = get_list_env(
+    'DJANGO_ALLOWED_HOSTS', ['127.0.0.1', 'localhost', '0.0.0.0']
+)
 
 
 # Application definition
@@ -60,14 +72,13 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'SplitApp.urls'
@@ -151,7 +162,10 @@ JWT_AUTH = {
 }
 
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGINS = get_list_env(
+    'DJANGO_CORS_ALLOWED_ORIGINS',
+    ['http://localhost:3000', 'http://127.0.0.1:3000'],
+)
 
 # AUTH_USER_MODEL = 'api.Account'
 

@@ -23,7 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 *.pyc
-00*.py
 db.sqlite3
 frontend/node_modules/*
 frontend/npm
@@ -36,3 +35,6 @@ frontend/build
 pytest.ini
 backend/api/friends/tests.py
 .vscode/settings.json
+backend/.env
+frontend/.env
+__pycache__/
